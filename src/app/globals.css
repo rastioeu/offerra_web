@@ -1,26 +1,105 @@
 @import "tailwindcss";
 
+/**
+ * Paleta prevzatá 1:1 z mobilnej appky (`/root/offerra/src/theme/tokens.ts`,
+ * schválená Rastiom 7.8.2026, "B — Navy & Azure", WCAG premerané) — jediný
+ * zdroj farieb pre appku aj web, aby si web a appka vizuálne zodpovedali.
+ * Typografia/spacing NIE sú prevzaté 1:1 — mobilné minimá (13px) sú pre
+ * web zbytočne malé, tu je normálna webová škála (Rastio: "prispôsobená
+ * desktopu, nie roztiahnutá mobilná verzia").
+ *
+ * Žiadna komponenta nesmie mať vlastnú hardcodovanú farbu mimo tejto
+ * palety — rovnaké pravidlo ako appka (CLAUDE.md §5).
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --color-background: #FBF7F2;
+  --color-surface: #FFFDFB;
+  --color-surface-pressed: #F3EAE0;
+  --color-border: #EFE6DC;
+  --color-border-strong: #8C8279;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-text-primary: #1C1815;
+  --color-text-secondary: #5C534B;
+  --color-text-muted: #7A7068;
+  --color-text-placeholder: #988E86;
+
+  --color-primary: #103A6B;
+  --color-secondary: #1B73D4;
+  --color-link: #1B71D0;
+  --color-accent: #C9703B;
+  --color-accent-deep: #A85526;
+  --color-accent-soft: #F2DFCE;
+  --color-on-primary: #FFFFFF;
+  --color-scrim: rgba(28, 24, 21, 0.55);
+
+  --color-success: #1D6B4A;
+  --color-warning: #8A5A12;
+  --color-danger: #A33528;
+  --color-favorite: #FF3040;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --color-background: #161311;
+    --color-surface: #211D1A;
+    --color-surface-pressed: #2C2724;
+    --color-border: #38322D;
+    --color-border-strong: #7E736A;
+
+    --color-text-primary: #F7F3EF;
+    --color-text-secondary: #C4B8AE;
+    --color-text-muted: #A2968C;
+    --color-text-placeholder: #75695F;
+
+    --color-primary: #7FB3F0;
+    --color-secondary: #7FB3F0;
+    --color-link: #7FB3F0;
+    --color-accent: #E39A5E;
+    --color-accent-deep: #E39A5E;
+    --color-accent-soft: #3A2C21;
+    --color-on-primary: #161311;
+    --color-scrim: rgba(0, 0, 0, 0.62);
+
+    --color-success: #5CC08E;
+    --color-warning: #E0A94A;
+    --color-danger: #EE7A6A;
+    --color-favorite: #FF3040;
   }
 }
 
+@theme inline {
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-surface-pressed: var(--color-surface-pressed);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-placeholder: var(--color-text-placeholder);
+
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-link: var(--color-link);
+  --color-accent: var(--color-accent);
+  --color-accent-deep: var(--color-accent-deep);
+  --color-accent-soft: var(--color-accent-soft);
+  --color-on-primary: var(--color-on-primary);
+  --color-scrim: var(--color-scrim);
+
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+  --color-favorite: var(--color-favorite);
+
+  /** Peniaze — pätkový rez, rovnaký dôvod ako appka (Money token v tokens.ts):
+   * oko má nájsť číslo bez čítania. Georgia je systémovo dostupná všade. */
+  --font-money: Georgia, "Times New Roman", serif;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
