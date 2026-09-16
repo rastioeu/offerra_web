@@ -3,13 +3,16 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { MessagesSection } from "@/components/messages-section";
+import { MortgageCalculatorCard } from "@/components/mortgage-calculator";
 import { OffersSection } from "@/components/offers-section";
 import { PhotoGallery } from "@/components/photo-gallery";
+import { RatingsSection } from "@/components/ratings-section";
 import { ViewingSection } from "@/components/viewing-section";
 import { fetchProperty } from "@/lib/detail";
 import { deadlineLabel, deadlineUrgency } from "@/lib/deadline";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { buildingRows, formatArea, formatPrice, formatRooms, rentalRows } from "@/lib/property";
+import { fetchOffers } from "@/lib/property-offers";
 import { createClient } from "@/lib/supabase/server";
 import { t, language } from "@/i18n";
 
@@ -59,6 +62,13 @@ export default async function PropertyDetailPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const topOffer =
+    property.transaction_type === "SALE"
+      ? (await fetchOffers(property.id))
+          .filter((o) => o.status === "PENDING")
+          .reduce<number | null>((max, o) => (max == null || o.amount > max ? o.amount : max), null)
+      : null;
 
   const transactionLabel = getTransactionLabel(t)[property.transaction_type];
   const typeLabel = getPropertyLabel(t)[property.property_type];
@@ -154,6 +164,12 @@ export default async function PropertyDetailPage({
 
       <OffersSection property={property} userId={user?.id ?? null} />
       <ViewingSection property={property} userId={user?.id ?? null} />
+
+      {property.transaction_type === "SALE" ? (
+        <MortgageCalculatorCard price={property.asking_price_hint} topOffer={topOffer} />
+      ) : null}
+
+      <RatingsSection property={property} userId={user?.id ?? null} />
       <MessagesSection property={property} userId={user?.id ?? null} />
     </main>
   );

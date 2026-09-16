@@ -44,6 +44,12 @@ export type Property = {
   utilities_included: Utilities | null;
   internet_included: boolean | null;
   pets_allowed: boolean | null;
+  /** Kedy vlastník obchod uzavrel. `null` = beží ďalej. */
+  closed_at: string | null;
+  /** Víťazná ponuka. `null` znamená obchod uzavretý mimo Offerry. */
+  closed_offer_id: string | null;
+  /** Suma, za ktorú sa to naozaj stalo — nemusí sedieť s ponukou. */
+  final_amount: number | null;
   view_count: number;
   is_seed: boolean;
   created_at: string;
@@ -99,6 +105,15 @@ export function getStatusLabel(t: TFunc): Record<PropertyStatus, string> {
 
 function localeTag(language: string): string {
   return language === 'sk' ? 'sk-SK' : language === 'de' ? 'de-DE' : 'en-GB';
+}
+
+/** Dátum (s časom v `iso`, ale zobrazí sa len deň) podľa jazyka. */
+export function formatDate(language: string, iso: string): string {
+  return new Intl.DateTimeFormat(localeTag(language), {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(iso));
 }
 
 /** Deň bez času (`YYYY-MM-DD`) naformátovaný podľa jazyka. */
