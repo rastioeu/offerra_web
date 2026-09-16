@@ -1,8 +1,9 @@
 import { OfferForm } from "@/components/offer-form";
+import { OwnerOfferActions } from "@/components/owner-offer-actions";
 import { WithdrawOfferButton } from "@/components/withdraw-offer-button";
-import { formatAmount, getOfferStatusLabel } from "@/lib/offers";
+import { formatAmount, getOfferStatusLabel, type OfferContact } from "@/lib/offers";
 import type { PropertyDetail } from "@/lib/detail";
-import { fetchOffers } from "@/lib/property-offers";
+import { fetchOffers, fetchOfferContact } from "@/lib/property-offers";
 import { t } from "@/i18n";
 
 const STATUS_COLOR: Record<string, string> = {
@@ -16,17 +17,26 @@ const STATUS_COLOR: Record<string, string> = {
 /**
  * Ponuky na inzeráte — verejný zoznam (appka: `useOffers` + `OffersTab`).
  * Otvorené, ale pseudonymné (Rastio, 7.8.2026) — vidí ich aj neprihlásený.
+ * Vlastník naviac vidí odkaz na ponuke (`offer_messages()`) a má
+ * tlačidlá Prijať/Odmietnuť/Uzavrieť obchod (appka: `OwnerOffers`).
  *
- * CHÝBA oproti appke: rozhodovanie MAJITEĽA (prijať/odmietnuť, odkrytie
- * kontaktu po prijatí — appkový `OwnerOffers`) a dotazník nájomcu pri
- * prenájme. Priznané v `reports/OFFERRA_WEB_MILNIK1.md`, nie tichá
- * medzera — majiteľ zatiaľ musí ponuky vybaviť v appke.
+ * CHÝBA oproti appke: dotazník nájomcu pri prenájme, appkový
+ * `OfferTimeline` (vizuálna história stavu). Priznané v reporte.
  */
 export async function OffersSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
   const offers = await fetchOffers(property.id);
   const statusLabel = getOfferStatusLabel(t);
   const isOwner = userId === property.owner_id;
   const mine = userId ? offers.find((o) => o.bidder_id === userId && o.status !== "WITHDRAWN") : undefined;
+
+  const contacts: Record<string, OfferContact | null> = {};
+  if (isOwner) {
+    for (const offer of offers) {
+      if (offer.status === "ACCEPTED") {
+        contacts[offer.id] = await fetchOfferContact(offer.id).catch(() => null);
+      }
+    }
+  }
 
   return (
     <section className="flex flex-col gap-4">
@@ -36,32 +46,50 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
         <p className="text-text-muted">Zatiaľ žiadna ponuka.</p>
       ) : (
         <div className="flex flex-col gap-2">
-          {offers.map((offer) => (
-            <div
-              key={offer.id}
-              className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-3"
-            >
-              <span className="text-text-secondary">{offer.bidder?.nickname ?? "Záujemca"}</span>
-              <div className="flex items-center gap-2">
-                <span className="font-money font-bold text-text-primary">
-                  {formatAmount(t, offer.amount, property.transaction_type)}
-                </span>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLOR[offer.status] ?? "bg-surface-pressed text-text-secondary"}`}
-                >
-                  {statusLabel[offer.status]}
-                </span>
+          {offers.map((offer) => {
+            const contact = contacts[offer.id];
+            return (
+              <div key={offer.id} className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-3">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-text-secondary">{offer.bidder?.nickname ?? "Záujemca"}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-money font-bold text-text-primary">
+                      {formatAmount(t, offer.amount, property.transaction_type)}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLOR[offer.status] ?? "bg-surface-pressed text-text-secondary"}`}
+                    >
+                      {statusLabel[offer.status]}
+                    </span>
+                  </div>
+                </div>
+
+                {isOwner && offer.message ? <p className="text-sm italic text-text-secondary">„{offer.message}&quot;</p> : null}
+
+                {isOwner && offer.status === "ACCEPTED" ? (
+                  <div className="grid grid-cols-2 gap-2 rounded-lg bg-surface-pressed p-2 sm:grid-cols-3">
+                    <ContactCell label="Meno" value={contact?.full_name} />
+                    <ContactCell label="Telefón" value={contact?.phone} />
+                    <ContactCell label="E-mail" value={contact?.email} />
+                  </div>
+                ) : null}
+
+                {isOwner ? (
+                  <OwnerOfferActions
+                    propertyId={property.id}
+                    offerId={offer.id}
+                    offerStatus={offer.status}
+                    propertyActive={property.status === "ACTIVE"}
+                    transaction={property.transaction_type}
+                  />
+                ) : null}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {isOwner ? (
-        <p className="text-sm text-text-muted">
-          Si vlastník tohto inzerátu — prijatie/odmietnutie ponúk zatiaľ funguje len v appke.
-        </p>
-      ) : userId ? (
+      {isOwner ? null : userId ? (
         <div className="flex flex-col gap-2">
           <OfferForm
             propertyId={property.id}
@@ -78,5 +106,14 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
         </p>
       )}
     </section>
+  );
+}
+
+function ContactCell({ label, value }: { label: string; value: string | null | undefined }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="text-xs text-text-muted">{label}</span>
+      <span className="text-sm font-medium text-text-primary">{value ?? "—"}</span>
+    </div>
   );
 }

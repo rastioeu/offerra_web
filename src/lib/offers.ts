@@ -11,6 +11,15 @@ export type RequestStatus = 'ACTIVE' | 'FULFILLED' | 'EXPIRED' | 'CLOSED';
 
 export type PublicBidder = { nickname: string; avatar_url: string | null };
 
+/** Kontakt odkrytý po prijatí ponuky — nikdy z `profile` priamo (na `full_name`/`phone` tam rola `authenticated` nemá SELECT). */
+export type OfferContact = {
+  party: 'OWNER' | 'BIDDER';
+  nickname: string;
+  full_name: string | null;
+  phone: string | null;
+  email: string | null;
+};
+
 export type Offer = {
   id: string;
   property_id: string;

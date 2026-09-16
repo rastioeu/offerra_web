@@ -93,6 +93,11 @@ export function formatArea(value: number | null): string | null {
   return value == null ? null : `${new Intl.NumberFormat('sk-SK').format(value)} m²`;
 }
 
+/** „Predané" alebo „Prenajaté" — podľa toho, o aký obchod išlo. */
+export function closedLabel(t: TFunc, transaction: TransactionType): string {
+  return transaction === 'RENT' ? t('property.closedRent') : t('property.closedSale');
+}
+
 export function getStatusLabel(t: TFunc): Record<PropertyStatus, string> {
   return {
     DRAFT: t('property.statusDraft'),
