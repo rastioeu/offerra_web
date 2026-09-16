@@ -17,9 +17,14 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" className="text-lg font-bold text-primary">
-          Offerra
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-lg font-bold text-primary">
+            Offerra
+          </Link>
+          <Link href="/dopyty" className="text-sm text-text-secondary hover:text-text-primary">
+            Dopyty
+          </Link>
+        </div>
 
         {user ? (
           <div className="flex items-center gap-3">
