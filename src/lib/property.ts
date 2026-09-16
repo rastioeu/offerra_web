@@ -5,6 +5,7 @@
  * snake_case, presne ako v DB — žiadna mapovacia vrstva.
  */
 import type { TFunc } from '@/i18n';
+import { deadlineUrgency } from './deadline';
 
 export type TransactionType = 'SALE' | 'RENT';
 export type PropertyType = 'APARTMENT' | 'HOUSE' | 'LAND' | 'COMMERCIAL' | 'OTHER';
@@ -189,4 +190,35 @@ export function rentalRows(t: TFunc, language: string, p: Property): { label: st
     });
   }
   return rows;
+}
+
+/** Podľa čoho je katalóg zoradený. */
+export type CatalogSort = 'NEWEST' | 'ENDING_SOON';
+
+/**
+ * Zoradenie katalógu — prenesené 1:1 z appky. `ENDING_SOON` má TRI
+ * skupiny (bežiace, uplynuté, bez termínu), nie dve — inak by `order by
+ * offer_deadline asc` dalo hore inzeráty, ktorým termín dávno vypršal.
+ */
+export function sortProperties<T extends { created_at: string; offer_deadline: string | null }>(
+  items: T[],
+  sort: CatalogSort
+): T[] {
+  const byNewest = (a: T, b: T) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0);
+  if (sort === 'NEWEST') return [...items].sort(byNewest);
+
+  const bucket = (p: T): number => {
+    const u = deadlineUrgency(p.offer_deadline);
+    return u === 'NONE' ? 2 : u === 'PASSED' ? 1 : 0;
+  };
+
+  return [...items].sort((a, b) => {
+    const ba = bucket(a);
+    const bb = bucket(b);
+    if (ba !== bb) return ba - bb;
+    if (ba === 2) return byNewest(a, b);
+    const ta = new Date(a.offer_deadline as string).getTime();
+    const tb = new Date(b.offer_deadline as string).getTime();
+    return ba === 0 ? ta - tb : tb - ta;
+  });
 }

@@ -1,20 +1,63 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
+import { CatalogFilters } from "@/components/catalog-filters";
 import { PropertyCard } from "@/components/property-card";
 import { fetchCatalog } from "@/lib/catalog";
+import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
+import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/lib/search";
 
 /**
  * Katalóg = domovská stránka. SEO je hlavný dôvod projektu (Rastio) —
  * verejný zoznam inzerátov patrí na `/`, nie za prihlásenie.
- * Server Component bez `"use client"` → beží na serveri, Google dostane
- * hotové HTML, nie prázdnu stránku čakajúcu na JS.
+ * Filtre idú cez URL parametre (`?q=&transaction=&type=&sort=`), nie
+ * klientský stav — filtrovaný výsledok má vlastnú indexovateľnú URL a
+ * funguje aj bez JS (obyčajné odkazy/GET formulár).
  */
 export const metadata: Metadata = {
   title: "Nehnuteľnosti",
 };
 
-export default async function CatalogPage() {
-  const properties = await fetchCatalog();
+type SearchParams = Record<string, string | string[] | undefined>;
+
+function one(v: string | string[] | undefined): string | null {
+  return typeof v === "string" && v.length > 0 ? v : null;
+}
+
+/**
+ * Text v `?q=` sa parsuje ROVNAKO ako appka (`parseQuery`) — „3 izbový
+ * byt Bratislava do 150000" sa rozloží na štruktúrovaný filter.
+ * Explicitné `?transaction=`/`?type=` z klikacích filtrov MAJÚ PREDNOSŤ
+ * pred tým, čo vyplynulo z textu — používateľ klikol zámerne.
+ */
+function buildFilter(params: SearchParams): { filter: CatalogFilter; understood: string[] } {
+  const q = one(params.q);
+  const parsed = q ? parseQuery(q) : { filter: EMPTY_FILTER, understood: [] };
+
+  const transaction = (one(params.transaction) as TransactionType | null) ?? parsed.filter.transaction;
+  const propertyType = (one(params.type) as PropertyType | null) ?? parsed.filter.propertyType;
+
+  return {
+    filter: { ...parsed.filter, transaction, propertyType },
+    understood: parsed.understood,
+  };
+}
+
+export default async function CatalogPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const { filter, understood } = buildFilter(params);
+  const sort: CatalogSort = one(params.sort) === "ENDING_SOON" ? "ENDING_SOON" : "NEWEST";
+
+  const properties = await fetchCatalog(filter, sort);
+  const currentSearchParams = new URLSearchParams(
+    Object.entries(params).flatMap(([k, v]) =>
+      v == null ? [] : Array.isArray(v) ? v.map((x) => [k, x] as [string, string]) : [[k, v] as [string, string]]
+    )
+  );
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
@@ -26,8 +69,27 @@ export default async function CatalogPage() {
         </p>
       </header>
 
+      <CatalogFilters
+        searchParams={currentSearchParams}
+        activeTransaction={filter.transaction}
+        activePropertyType={filter.propertyType}
+        activeSort={sort}
+      />
+
+      {understood.length > 0 ? (
+        <p className="text-sm text-text-muted">
+          Rozumiem: {understood.join(", ")}
+        </p>
+      ) : null}
+
+      {!isFilterEmpty(filter) ? (
+        <Link href="/" className="w-fit text-sm text-link hover:underline">
+          Vymazať filter
+        </Link>
+      ) : null}
+
       {properties.length === 0 ? (
-        <p className="text-text-muted">Momentálne nie sú žiadne inzeráty.</p>
+        <p className="text-text-muted">Žiadne inzeráty nezodpovedajú filtru.</p>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {properties.map((property) => (

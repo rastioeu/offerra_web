@@ -4,25 +4,39 @@
  * 'ACTIVE'` riadky rovnako, ako appke — explicitný `.eq('status',
  * 'ACTIVE')` tu je pre čitateľnosť dotazu, nie obchádzanie RLS.
  *
- * ZATIAĽ bez filtrov/vyhľadávania (appka ich má v `src/lib/search.ts` +
- * `use-properties.ts` — Fáza 1.1, pozri report). Len zoznam + fotky,
- * najnovšie prvé, limit 60 — pre prvú SSR obrazovku stačí, stránkovanie
- * pribudne s filtrami.
+ * Filtrovanie je rovnaká logika ako appka (`use-properties.ts` →
+ * `useProperties`) — bez `onlyFavorites` (vyžaduje prihlásenie, ktoré
+ * web zatiaľ nemá).
  */
+import { sortProperties, type CatalogSort, type Media, type Property, type PropertyWithMedia } from '@/lib/property';
+import { stemQuery, type CatalogFilter } from '@/lib/search';
 import { createClient } from '@/lib/supabase/server';
-import type { Media, Property, PropertyWithMedia } from '@/lib/property';
 
-export async function fetchCatalog(): Promise<PropertyWithMedia[]> {
+export async function fetchCatalog(
+  filter?: Partial<CatalogFilter> | null,
+  sort: CatalogSort = 'NEWEST'
+): Promise<PropertyWithMedia[]> {
   const supabase = await createClient();
   const db = supabase.schema('offerra');
 
-  const { data: properties, error } = await db
-    .from('property')
-    .select('*')
-    .eq('status', 'ACTIVE')
-    .order('created_at', { ascending: false })
-    .limit(60);
+  let q = db.from('property').select('*').eq('status', 'ACTIVE');
 
+  if (filter?.transaction) q = q.eq('transaction_type', filter.transaction);
+  if (filter?.propertyType) q = q.eq('property_type', filter.propertyType);
+  if (filter?.city) q = q.eq('city', filter.city);
+  if (filter?.roomsMin != null) q = q.gte('rooms', filter.roomsMin);
+  if (filter?.areaMin != null) q = q.gte('area_m2', filter.areaMin);
+  // Inzerát BEZ ceny sa cenovým filtrom nesmie stratiť — cena je v Offerre
+  // nepovinná, presne ako v appke.
+  if (filter?.priceMax != null) q = q.or(`asking_price_hint.lte.${filter.priceMax},asking_price_hint.is.null`);
+  if (filter?.priceMin != null) q = q.or(`asking_price_hint.gte.${filter.priceMin},asking_price_hint.is.null`);
+  if (filter?.text) {
+    for (const w of stemQuery(filter.text.replace(/[%,()]/g, ' ')).split(' ')) {
+      if (w) q = q.like('search_norm', `%${w}%`);
+    }
+  }
+
+  const { data: properties, error } = await q.order('created_at', { ascending: false }).limit(200);
   if (error) throw error;
   const rows = (properties ?? []) as Property[];
   if (rows.length === 0) return [];
@@ -44,5 +58,6 @@ export async function fetchCatalog(): Promise<PropertyWithMedia[]> {
     else byProperty.set(m.property_id, [m]);
   }
 
-  return rows.map((r) => ({ ...r, media: byProperty.get(r.id) ?? [] }));
+  const withMedia = rows.map((r) => ({ ...r, media: byProperty.get(r.id) ?? [] }));
+  return sortProperties(withMedia, sort);
 }

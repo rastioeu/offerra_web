@@ -9,6 +9,10 @@ export function getTransactionLabel(t: TFunc): Record<TransactionType, string> {
   return { SALE: t('labels.transactionSale'), RENT: t('labels.transactionRent') };
 }
 
+export function getDemandLabel(t: TFunc): Record<TransactionType, string> {
+  return { SALE: t('labels.demandSale'), RENT: t('labels.demandRent') };
+}
+
 export function getPropertyLabel(t: TFunc): Record<PropertyType, string> {
   return {
     APARTMENT: t('labels.propertyApartment'),
