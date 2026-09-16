@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
+import { OffersSection } from "@/components/offers-section";
 import { PhotoGallery } from "@/components/photo-gallery";
 import { fetchProperty } from "@/lib/detail";
 import { deadlineLabel, deadlineUrgency } from "@/lib/deadline";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { buildingRows, formatArea, formatPrice, formatRooms, rentalRows } from "@/lib/property";
+import { createClient } from "@/lib/supabase/server";
 import { t, language } from "@/i18n";
 
 /**
@@ -50,6 +52,11 @@ export default async function PropertyDetailPage({
   const { id } = await params;
   const property = await fetchProperty(id);
   if (!property) notFound();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const transactionLabel = getTransactionLabel(t)[property.transaction_type];
   const typeLabel = getPropertyLabel(t)[property.property_type];
@@ -142,6 +149,8 @@ export default async function PropertyDetailPage({
       {property.owner?.nickname ? (
         <p className="text-sm text-text-muted">Inzerent: {property.owner.nickname}</p>
       ) : null}
+
+      <OffersSection property={property} userId={user?.id ?? null} />
     </main>
   );
 }
