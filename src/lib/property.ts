@@ -87,6 +87,16 @@ export function formatArea(value: number | null): string | null {
   return value == null ? null : `${new Intl.NumberFormat('sk-SK').format(value)} m²`;
 }
 
+export function getStatusLabel(t: TFunc): Record<PropertyStatus, string> {
+  return {
+    DRAFT: t('property.statusDraft'),
+    ACTIVE: t('property.statusActive'),
+    REJECTED: t('property.statusRejected'),
+    ARCHIVED: t('property.statusArchived'),
+    CLOSED: t('property.statusClosed'),
+  };
+}
+
 function localeTag(language: string): string {
   return language === 'sk' ? 'sk-SK' : language === 'de' ? 'de-DE' : 'en-GB';
 }
