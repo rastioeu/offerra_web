@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# offerra_web
 
-## Getting Started
+Tento repozitár má DVA nezávislé obsahy:
 
-First, run the development server:
+## 1. Verejné právne stránky (GitHub Pages, koreň repozitára)
+
+`index.html`, `privacy.html`, `terms.html`, `support.html` — ochrana
+osobných údajov, podmienky používania a podpora pre appku Offerra.
+Slúžia aj ako odkazy v App Store Connect. Servírované cez GitHub Pages
+z `main` branchu.
+
+**Nesmú sa upravovať ručne** — `privacy.html`, `terms.html`,
+`index.html` a `support.html` sa **generujú** zo súboru
+[`src/lib/legal.ts`](https://github.com/rastioeu/offerra/blob/main/src/lib/legal.ts)
+v repozitári mobilnej appky. Ten istý text zobrazuje aj appka offline.
+
+Dva ručne udržiavané dokumenty by si o mesiac odporovali — a dokument
+o súkromí, ktorý klame, je horší než žiadny.
+
+Prepísať web po zmene textu:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# v repozitári rastioeu/offerra
+node scripts/build-legal-html.mjs ../offerra_web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 2. Webová appka Offerra (Next.js, `src/`)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Plnohodnotná webová verzia mobilnej appky (SSR, App Router) — bežiaca
+na Hetzneri, nie na GitHub Pages (Pages nevie spustiť Next.js server).
+Pozri `CLAUDE.md` v tomto repozitári a `reports/OFFERRA_WEB_PLAN.md` /
+`reports/OFFERRA_WEB_DOMENA.md` v repozitári `rastioeu/offerra` pre
+plán, rozsah a DNS/hosting.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Tieto dva obsahy sa navzájom neovplyvňujú — generovací skript vyššie sa
+dotýka len svojich piatich menovaných súborov, nič iné v repozitári
+nemaže ani neprepisuje.
