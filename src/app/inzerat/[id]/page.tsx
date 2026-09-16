@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
+import { MessagesSection } from "@/components/messages-section";
 import { OffersSection } from "@/components/offers-section";
 import { PhotoGallery } from "@/components/photo-gallery";
 import { fetchProperty } from "@/lib/detail";
@@ -151,6 +152,7 @@ export default async function PropertyDetailPage({
       ) : null}
 
       <OffersSection property={property} userId={user?.id ?? null} />
+      <MessagesSection property={property} userId={user?.id ?? null} />
     </main>
   );
 }
