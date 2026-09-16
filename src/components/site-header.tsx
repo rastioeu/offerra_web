@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { signOut } from "@/app/auth/actions";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -33,12 +32,9 @@ export async function SiteHeader() {
             <Link href="/moje-dopyty" className="text-sm text-text-secondary hover:text-text-primary">
               Moje dopyty
             </Link>
-            <span className="text-sm text-text-muted">{user.email}</span>
-            <form action={signOut}>
-              <button type="submit" className="text-sm text-link hover:underline">
-                Odhlásiť sa
-              </button>
-            </form>
+            <Link href="/nastavenia" className="text-sm text-text-secondary hover:text-text-primary">
+              Nastavenia
+            </Link>
           </div>
         ) : (
           <Link
