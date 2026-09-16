@@ -27,6 +27,12 @@ export async function SiteHeader() {
             <Link href="/moje-inzeraty" className="text-sm text-text-secondary hover:text-text-primary">
               Moje inzeráty
             </Link>
+            <Link href="/moje-ponuky" className="text-sm text-text-secondary hover:text-text-primary">
+              Moje ponuky
+            </Link>
+            <Link href="/moje-dopyty" className="text-sm text-text-secondary hover:text-text-primary">
+              Moje dopyty
+            </Link>
             <span className="text-sm text-text-muted">{user.email}</span>
             <form action={signOut}>
               <button type="submit" className="text-sm text-link hover:underline">
