@@ -5,6 +5,7 @@ import Link from "next/link";
 import { MessagesSection } from "@/components/messages-section";
 import { OffersSection } from "@/components/offers-section";
 import { PhotoGallery } from "@/components/photo-gallery";
+import { ViewingSection } from "@/components/viewing-section";
 import { fetchProperty } from "@/lib/detail";
 import { deadlineLabel, deadlineUrgency } from "@/lib/deadline";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
@@ -152,6 +153,7 @@ export default async function PropertyDetailPage({
       ) : null}
 
       <OffersSection property={property} userId={user?.id ?? null} />
+      <ViewingSection property={property} userId={user?.id ?? null} />
       <MessagesSection property={property} userId={user?.id ?? null} />
     </main>
   );
