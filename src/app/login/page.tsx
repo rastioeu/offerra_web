@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AppleSignInButton } from "@/components/apple-sign-in-button";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
 
 export const metadata: Metadata = {
@@ -28,7 +29,10 @@ export default async function LoginPage({
         </p>
       ) : null}
 
-      <GoogleSignInButton next={next ?? "/"} />
+      <div className="flex w-full flex-col gap-3">
+        <GoogleSignInButton next={next ?? "/"} />
+        <AppleSignInButton next={next ?? "/"} />
+      </div>
     </main>
   );
 }

@@ -3,20 +3,18 @@
 import { createClient } from "@/lib/supabase/client";
 
 /**
- * Prihlásenie cez Google — appka aj web overujú totožnosť rovnakým
- * spôsobom (Rastio, 7.8.2026, appkový `auth.ts`: „aby za inzerátom
- * stál skutočný, overený človek"). Apple Sign In pozri
- * `apple-sign-in-button.tsx` — funguje odkedy appka má trvalú doménu
- * (`app.offerra.sk`).
- *
- * `redirectTo` MUSÍ byť v zozname povolených redirect URL v Supabase
- * Auth nastaveniach.
+ * Prihlásenie cez Apple — appka aj web overujú totožnosť rovnakým
+ * spôsobom (Rastio, 7.8.2026: „aby za inzerátom stál skutočný, overený
+ * človek"). Appka používa natívne Sign in with Apple (Bundle ID
+ * `com.offerra.app`), web ide cez prehliadač na appleid.apple.com a
+ * späť (Services ID, náhodou rovnaký identifier ako appkové Bundle ID
+ * — Supabase Client ID pole je preto pre oba prípady spoločné).
  */
-export function GoogleSignInButton({ next = "/" }: { next?: string }) {
+export function AppleSignInButton({ next = "/" }: { next?: string }) {
   async function handleClick() {
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
-      provider: "google",
+      provider: "apple",
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
@@ -29,7 +27,7 @@ export function GoogleSignInButton({ next = "/" }: { next?: string }) {
       onClick={handleClick}
       className="flex items-center justify-center gap-2 rounded-xl border border-border-strong bg-surface px-5 py-3 font-semibold text-text-primary transition-colors hover:bg-surface-pressed"
     >
-      Prihlásiť sa cez Google
+      Prihlásiť sa cez Apple
     </button>
   );
 }
