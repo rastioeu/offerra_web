@@ -28,7 +28,7 @@ export async function MessagesSection({ property, userId }: { property: Property
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-text-primary">{t("messages.messagesTitle")}</h2>
         <MessageThread
-          propertyId={property.id}
+          subject={{ propertyId: property.id }}
           otherId={property.owner_id}
           myId={userId}
           otherName={property.owner?.nickname ?? t("messages.withSellerName")}

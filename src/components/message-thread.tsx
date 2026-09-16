@@ -1,29 +1,30 @@
-import { sendMessageAction } from "@/app/inzerat/[id]/messages-actions";
+import { sendMessageAction } from "@/app/actions/messages";
 import { MessageSendForm } from "@/components/message-send-form";
 import { fetchThread, markRead } from "@/lib/message-data";
+import type { MessageSubject } from "@/lib/messages";
 import { t } from "@/i18n";
 
 /**
- * Konverzácia s JEDNÝM človekom pri jednom inzeráte. Server Component —
- * `fetchThread`/`markRead` bežia priamo tu (nie sú „use server" akcie,
- * len čítanie/označenie, appka to robí rovnako pri otvorení vlákna).
- * Posielanie ide cez `sendMessageAction` (skutočná mutácia → Server
- * Action), naviazaná na konkrétne `propertyId`/`otherId`.
+ * Konverzácia s JEDNÝM človekom pri jednom predmete (inzerát ALEBO
+ * dopyt). Server Component — `fetchThread`/`markRead` bežia priamo tu
+ * (nie sú „use server" akcie, len čítanie/označenie, appka to robí
+ * rovnako pri otvorení vlákna). Posielanie ide cez `sendMessageAction`
+ * (skutočná mutácia → Server Action).
  */
 export async function MessageThread({
-  propertyId,
+  subject,
   otherId,
   myId,
   otherName,
 }: {
-  propertyId: string;
+  subject: MessageSubject;
   otherId: string;
   myId: string;
   otherName: string;
 }) {
-  const messages = await fetchThread({ propertyId }, otherId);
+  const messages = await fetchThread(subject, otherId);
   if (messages.some((m) => m.recipient_id === myId && !m.read_at)) {
-    await markRead({ propertyId }, otherId).catch(() => undefined);
+    await markRead(subject, otherId).catch(() => undefined);
   }
 
   return (
@@ -58,7 +59,7 @@ export async function MessageThread({
         </div>
       )}
 
-      <MessageSendForm onSend={sendMessageAction.bind(null, propertyId, otherId)} />
+      <MessageSendForm onSend={sendMessageAction.bind(null, subject, otherId)} />
       <p className="text-xs text-text-muted">Píšeš s {otherName}.</p>
     </div>
   );

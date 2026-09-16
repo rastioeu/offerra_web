@@ -46,7 +46,7 @@ export default async function OwnerThreadPage({
       <h1 className="text-xl font-bold text-text-primary">
         {t("messages.conversationWith", { name: otherName })}
       </h1>
-      <MessageThread propertyId={id} otherId={otherId} myId={user.id} otherName={otherName} />
+      <MessageThread subject={{ propertyId: id }} otherId={otherId} myId={user.id} otherName={otherName} />
     </main>
   );
 }

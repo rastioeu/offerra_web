@@ -44,6 +44,39 @@ export type BuyerRequest = {
   author?: PublicBidder | null;
 };
 
+/** Oslovenie dopytu vlastným inzerátom. */
+export type Outreach = {
+  id: string;
+  request_id: string;
+  property_id: string;
+  from_id: string;
+  message: string | null;
+  created_at: string;
+};
+
+/**
+ * Oslovenie MÔJHO dopytu aj s inzerátom, ktorý mi ponúkajú — appka:
+ * `offerra.my_request_outreach()` (SECURITY DEFINER, obmedzí výber na
+ * dopyty volajúceho priamo v `where`).
+ */
+export type MyOutreach = {
+  id: string;
+  request_id: string;
+  property_id: string;
+  from_id: string;
+  from_nickname: string | null;
+  message: string | null;
+  created_at: string;
+  property_title: string | null;
+  property_city: string | null;
+  property_price: number | null;
+  property_top_offer: number | null;
+  property_rooms: number | null;
+  property_area: number | null;
+  property_status: string | null;
+  request_description: string | null;
+};
+
 /**
  * Stĺpce ponuky, ktoré smie čítať ktokoľvek — ZÁMERNE bez `message`
  * (nemá naň grant ani `anon`, ani `authenticated`) a ZÁMERNE nie `*`,
