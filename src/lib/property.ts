@@ -9,6 +9,8 @@ import type { TFunc } from '@/i18n';
 export type TransactionType = 'SALE' | 'RENT';
 export type PropertyType = 'APARTMENT' | 'HOUSE' | 'LAND' | 'COMMERCIAL' | 'OTHER';
 export type PropertyStatus = 'DRAFT' | 'ACTIVE' | 'REJECTED' | 'ARCHIVED' | 'CLOSED';
+export type Furnishing = 'FURNISHED' | 'PARTIAL' | 'UNFURNISHED';
+export type Utilities = 'YES' | 'NO' | 'PARTIAL';
 
 export type Property = {
   id: string;
@@ -37,6 +39,10 @@ export type Property = {
   deposit_months: number | null;
   available_from: string | null;
   min_lease_months: number | null;
+  furnishing: Furnishing | null;
+  utilities_included: Utilities | null;
+  internet_included: boolean | null;
+  pets_allowed: boolean | null;
   view_count: number;
   is_seed: boolean;
   created_at: string;
@@ -78,4 +84,109 @@ export function formatRooms(t: TFunc, language: string, value: number | null): s
 
 export function formatArea(value: number | null): string | null {
   return value == null ? null : `${new Intl.NumberFormat('sk-SK').format(value)} m²`;
+}
+
+function localeTag(language: string): string {
+  return language === 'sk' ? 'sk-SK' : language === 'de' ? 'de-DE' : 'en-GB';
+}
+
+/** Deň bez času (`YYYY-MM-DD`) naformátovaný podľa jazyka. */
+export function formatDay(language: string, day: string | null): string | null {
+  if (!day) return null;
+  const [y, m, d] = day.split('-').map(Number);
+  if (!y || !m || !d) return null;
+  return new Intl.DateTimeFormat(localeTag(language), {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(y, m - 1, d));
+}
+
+export function getFurnishingLabel(t: TFunc): Record<Furnishing, string> {
+  return {
+    FURNISHED: t('property.furnishingFurnished'),
+    PARTIAL: t('property.furnishingPartial'),
+    UNFURNISHED: t('property.furnishingUnfurnished'),
+  };
+}
+
+export function getUtilitiesLabel(t: TFunc): Record<Utilities, string> {
+  return { YES: t('property.utilitiesYes'), NO: t('property.utilitiesNo'), PARTIAL: t('property.utilitiesPartial') };
+}
+
+/**
+ * Vlastnosti BUDOVY — len pre BYT (poschodie, výťah, mesačné náklady).
+ * Prenesené 1:1 z appky.
+ */
+export function buildingRows(t: TFunc, language: string, p: Property): { label: string; value: string }[] {
+  if (p.property_type !== 'APARTMENT') return [];
+  const rows: { label: string; value: string }[] = [];
+
+  if (p.floor != null) {
+    const where =
+      p.floor < 0
+        ? t('property.basement')
+        : p.floor === 0
+          ? t('property.groundFloor')
+          : t('property.floorN', { n: p.floor });
+    rows.push({
+      label: t('property.floorLabel'),
+      value: p.floors_total != null ? t('property.floorOfTotal', { where, total: p.floors_total }) : where,
+    });
+  } else if (p.floors_total != null) {
+    rows.push({ label: t('property.floorsTotalLabel'), value: String(p.floors_total) });
+  }
+
+  if (p.has_elevator != null) {
+    rows.push({ label: t('property.elevatorLabel'), value: p.has_elevator ? t('common.yes') : t('common.no') });
+  }
+  if (p.monthly_costs != null) {
+    rows.push({
+      label: t('property.monthlyCostsLabel'),
+      value: formatPrice(t, p.monthly_costs, 'SALE') ?? '—',
+    });
+  }
+  return rows;
+}
+
+/** Vlastnosti PRENÁJMU — zábezpeka, dostupnosť, zariadenie... Prenesené 1:1 z appky. */
+export function rentalRows(t: TFunc, language: string, p: Property): { label: string; value: string }[] {
+  if (p.transaction_type !== 'RENT') return [];
+  const rows: { label: string; value: string }[] = [];
+
+  if (p.deposit_amount != null) {
+    const eur = formatPrice(t, p.deposit_amount, 'SALE');
+    rows.push({
+      label: t('property.depositLabel'),
+      value:
+        p.deposit_months != null
+          ? t('property.depositWithMonths', { amount: eur as string, months: p.deposit_months })
+          : (eur as string),
+    });
+  } else if (p.deposit_months != null) {
+    rows.push({ label: t('property.depositLabel'), value: t('property.depositMonthsOnly', { months: p.deposit_months }) });
+  }
+
+  const from = formatDay(language, p.available_from);
+  if (from) rows.push({ label: t('property.availableFromLabel'), value: from });
+  if (p.min_lease_months != null) {
+    rows.push({ label: t('property.minLeaseLabel'), value: t('property.monthsCount', { count: p.min_lease_months }) });
+  }
+  if (p.furnishing) rows.push({ label: t('property.furnishingLabel'), value: getFurnishingLabel(t)[p.furnishing] });
+  if (p.utilities_included) {
+    rows.push({ label: t('property.utilitiesLabel'), value: getUtilitiesLabel(t)[p.utilities_included] });
+  }
+  if (p.internet_included != null) {
+    rows.push({
+      label: t('property.internetLabel'),
+      value: p.internet_included ? t('common.yes') : t('common.no'),
+    });
+  }
+  if (p.pets_allowed != null) {
+    rows.push({
+      label: t('property.petsLabel'),
+      value: p.pets_allowed ? t('property.petsAllowed') : t('property.petsNotAllowed'),
+    });
+  }
+  return rows;
 }
