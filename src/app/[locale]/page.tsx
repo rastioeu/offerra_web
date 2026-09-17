@@ -127,30 +127,32 @@ export default async function CatalogPage({
         <SearchBox initialValue={one(params.q) ?? ""} />
       </div>
 
-      <CatalogFilters
-        searchParams={currentSearchParams}
-        activeTransaction={filter.transaction}
-        activePropertyType={filter.propertyType}
-        activeSort={sort}
-      />
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+        <CatalogFilters
+          searchParams={currentSearchParams}
+          activeTransaction={filter.transaction}
+          activePropertyType={filter.propertyType}
+          activeSort={sort}
+        />
 
-      <div className="flex flex-col gap-4">
-        {understood.length > 0 ? (
-          <p className="text-sm text-text-muted">
-            {t("catalog.understoodPrefix")}
-            {understood.join(", ")}
-          </p>
-        ) : null}
+        <div className="flex flex-1 flex-col gap-4">
+          {understood.length > 0 ? (
+            <p className="text-sm text-text-muted">
+              {t("catalog.understoodPrefix")}
+              {understood.join(", ")}
+            </p>
+          ) : null}
 
-        {properties.length === 0 ? (
-          <p className="text-text-muted">{t("catalog.noMatchTitle")}</p>
-        ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} property={property} />
-            ))}
-          </div>
-        )}
+          {properties.length === 0 ? (
+            <p className="text-text-muted">{t("catalog.noMatchTitle")}</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {properties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </main>
   );

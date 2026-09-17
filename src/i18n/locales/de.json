@@ -1025,6 +1025,7 @@
     "clearFilter": "Filter löschen",
     "filterAll": "Alle",
     "filterAllTypes": "Alle Typen",
+    "filtersTitle": "Filter",
     "sortSectionTitle": "Sortierung",
     "searchButton": "Suchen"
   },

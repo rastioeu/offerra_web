@@ -21,22 +21,24 @@ function hrefWith(locale: Locale, current: URLSearchParams, key: string, value: 
 }
 
 /**
- * Filter nad katalógom — PIATY POKUS (Rastio, 17.9.2026): bočný stĺpec
- * voľne plávajúcich čipov („pôsobí divne") → horná lišta s rozbaľovacími
- * menu („klikateľný filter je lepší") → tri stlačené riadky čipov („moc
- * veľké") → jeden zhustený riadok bez viditeľného odstupu medzi skupinami
- * („lepšie ale medzi tými troma filtrami daj medzeru alebo niečo na
- * dizajn").
+ * Filter nad katalógom — ŠIESTY POKUS (Rastio, 17.9.2026). Postupnosť:
+ * bočný stĺpec voľne plávajúcich čipov („pôsobí divne") → horná lišta
+ * s rozbaľovacími menu („klikateľný filter je lepší") → tri stlačené
+ * riadky hore („moc veľké") → jeden zhustený riadok hore („daj medzeru")
+ * → viditeľnejší odstup medzi skupinami → „nie je to dobré, daj to na
+ * bok, ale lepšie rozlož, aby som to vedel filtrovať naraz aj na
+ * notebooku."
  *
- * Tri skupiny (typ obchodu / typ nehnuteľnosti / triedenie) sú teraz
- * VLASTNÉ `<div>` bloky vo vnútri jedného panela — každá ďalšia (od
- * druhej) má na `sm:` a vyššie `border-l` + `pl-5`, čo dáva skutočný
- * vizuálny odstup A deliacu čiaru naraz, nie len 1px čiarku na dotyk.
- * Na mobile sa `border-l`/`pl` vypína (`sm:` variant) — čiara nalepená
- * na ľavý okraj zalomeného riadku by vyzerala ako chyba, nie dizajn.
- *
- * Čipy sú obyčajné odkazy (funguje bez JS, vlastná indexovateľná URL na
- * filter), nie `<select>`.
+ * Späť na BOK, ale nie pôvodná voľne plávajúca verzia z prvého pokusu —
+ * KAŽDÁ skupina (typ obchodu / typ nehnuteľnosti / triedenie) je teraz
+ * VLASTNÁ SEKCIA s nadpisom, v ukotvenej karte s tenkými deliacimi
+ * čiarami medzi sekciami. Tri sekcie POD SEBOU (nie v jednom riadku) —
+ * na boku je výška zadarmo (karta rastie vedľa mriežky, nezaberá miesto
+ * NAD ňou ako predošlé pokusy), takže tu už „príliš veľké" nehrozí, a
+ * všetky tri kategórie sú vidieť a klikateľné NARAZ, bez skrolovania či
+ * rozbaľovania — presne to, čo Rastio žiadal aj pre notebook šírky
+ * (panel má pevnú, kompaktnú `lg:w-64`, nie plávajúcu šírku, ktorá by sa
+ * pri užšom okne notebooku nafúkla).
  */
 export async function CatalogFilters({
   searchParams,
@@ -69,55 +71,71 @@ export async function CatalogFilters({
   };
 
   const chip = (active: boolean) =>
-    `rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+    `rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
       active
         ? "border-accent-deep bg-accent-soft text-accent-deep"
         : "border-border bg-surface text-text-secondary hover:border-border-strong"
     }`;
-  const groupCls = "flex flex-wrap items-center gap-1.5";
-  const separatedGroupCls = `${groupCls} sm:border-l sm:border-border sm:pl-5`;
+  const sectionTitleCls = "text-xs font-semibold uppercase tracking-wide text-text-muted";
+  const divider = <div className="h-px bg-border" />;
 
   return (
-    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-border bg-surface px-4 py-2.5 shadow-[var(--shadow-card)]">
-      <div className={groupCls}>
-        <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
-          {t("catalog.filterAll")}
-        </Link>
-        {TRANSACTIONS.map((tr) => (
-          <Link key={tr} href={hrefWith(locale, searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
-            {transactionLabel[tr]}
+    <aside className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4 shadow-[var(--shadow-card)] lg:w-64 lg:shrink-0">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-text-primary">{t("catalog.filtersTitle")}</h2>
+        {!isFilterEmpty(filter) ? (
+          <Link href={localizeHref(locale, "/")} className="text-xs font-medium text-link hover:underline">
+            {t("catalog.clearFilter")}
           </Link>
-        ))}
+        ) : null}
       </div>
 
-      <div className={separatedGroupCls}>
-        <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
-          {t("catalog.filterAllTypes")}
-        </Link>
-        {PROPERTY_TYPES.map((pt) => (
-          <Link key={pt} href={hrefWith(locale, searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
-            {propertyLabel[pt]}
+      <div className="flex flex-col gap-2">
+        <p className={sectionTitleCls}>{t("filterRows.transactionTitle")}</p>
+        <div className="flex flex-wrap gap-2">
+          <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
+            {t("catalog.filterAll")}
           </Link>
-        ))}
+          {TRANSACTIONS.map((tr) => (
+            <Link key={tr} href={hrefWith(locale, searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
+              {transactionLabel[tr]}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      <div className={separatedGroupCls}>
-        {SORT_VALUES.map((sortValue) => (
-          <Link
-            key={sortValue}
-            href={hrefWith(locale, searchParams, "sort", sortValue === "NEWEST" ? null : sortValue)}
-            className={chip(activeSort === sortValue)}
-          >
-            {sortLabel[sortValue]}
+      {divider}
+
+      <div className="flex flex-col gap-2">
+        <p className={sectionTitleCls}>{t("filterRows.propertyTypeTitle")}</p>
+        <div className="flex flex-wrap gap-2">
+          <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
+            {t("catalog.filterAllTypes")}
           </Link>
-        ))}
+          {PROPERTY_TYPES.map((pt) => (
+            <Link key={pt} href={hrefWith(locale, searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
+              {propertyLabel[pt]}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      {!isFilterEmpty(filter) ? (
-        <Link href={localizeHref(locale, "/")} className="ml-auto text-xs font-medium text-link hover:underline">
-          {t("catalog.clearFilter")}
-        </Link>
-      ) : null}
-    </div>
+      {divider}
+
+      <div className="flex flex-col gap-2">
+        <p className={sectionTitleCls}>{t("catalog.sortSectionTitle")}</p>
+        <div className="flex flex-wrap gap-2">
+          {SORT_VALUES.map((sortValue) => (
+            <Link
+              key={sortValue}
+              href={hrefWith(locale, searchParams, "sort", sortValue === "NEWEST" ? null : sortValue)}
+              className={chip(activeSort === sortValue)}
+            >
+              {sortLabel[sortValue]}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </aside>
   );
 }
