@@ -148,14 +148,24 @@ export default async function CatalogPage({
               v strede riadku (Rastio, 17.9.2026: „pridať inzerát daj
               do stredu medzi vyhľadávanie a počet inzerátov"), nie
               len hneď vedľa poľa. S `justify-between`/`flex` by sa
-              stred posúval podľa šírky poľa aj CTA; `grid-cols-3`
+              stred posúval podľa šírky poľa aj CTA; `grid-cols`
               s `justify-self` drží tri veci PRESNE vľavo/stred/vpravo
               bez ohľadu na šírku susedných buniek. DRUHÉ KOLO (Rastio,
               17.9.2026: „daj ho ešte doprava kúsok") — `translate-x`
               posúva CTA z geometrického stredu o kúsok bližšie k počtu
-              inzerátov, `justify-self-center` ostáva ako základ. */}
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
-            <div className="w-full sm:max-w-[380px] sm:justify-self-start">
+              inzerátov, `justify-self-center` ostáva ako základ.
+              TRETIE KOLO (Rastio, 17.9.2026: „pole je príliš krátke,
+              placeholder sa oreže, predĺž ho — CTA a počet nech
+              zostanú na mieste") — stĺpce boli TRI ROVNAKÉ (`1fr`
+              každý), pole malo navyše vlastný strop `max-w-[380px]`,
+              takže aj keby stĺpec bol širší, pole samo sa nenatiahlo.
+              Teraz `[minmax(0,1fr)_auto_auto]`: pole dostane VŠETOK
+              voľný priestor (žiaden vlastný strop), CTA aj počet sú
+              `auto` — veľké presne na svoj obsah, teda vizuálne na tom
+              istom mieste pri pravom okraji ako predtým, len bez
+              súperenia o rovnaký diel šírky s poľom. */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
+            <div className="w-full sm:justify-self-start">
               <SearchBox initialValue={one(params.q) ?? ""} />
             </div>
             {user ? (
