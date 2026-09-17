@@ -13,10 +13,13 @@ import { createClient } from "@/lib/supabase/server";
  * takúto navigáciu nemá, je to webová vec) — malá lokálna mapa, rovnaký
  * vzor ako appkové `t()`, len mimo veľkého slovníka.
  */
-const LABELS: Record<Locale, { demands: string; myListings: string; myOffers: string; myDemands: string; settings: string; login: string }> = {
-  sk: { demands: "Dopyty", myListings: "Moje inzeráty", myOffers: "Moje ponuky", myDemands: "Moje dopyty", settings: "Nastavenia", login: "Prihlásiť sa" },
-  en: { demands: "Demands", myListings: "My listings", myOffers: "My offers", myDemands: "My demands", settings: "Settings", login: "Log in" },
-  de: { demands: "Gesuche", myListings: "Meine Inserate", myOffers: "Meine Angebote", myDemands: "Meine Gesuche", settings: "Einstellungen", login: "Anmelden" },
+const LABELS: Record<
+  Locale,
+  { demands: string; myListings: string; myOffers: string; myDemands: string; settings: string; login: string; howItWorks: string }
+> = {
+  sk: { demands: "Dopyty", myListings: "Moje inzeráty", myOffers: "Moje ponuky", myDemands: "Moje dopyty", settings: "Nastavenia", login: "Prihlásiť sa", howItWorks: "Ako funguje" },
+  en: { demands: "Demands", myListings: "My listings", myOffers: "My offers", myDemands: "My demands", settings: "Settings", login: "Log in", howItWorks: "How it works" },
+  de: { demands: "Gesuche", myListings: "Meine Inserate", myOffers: "Meine Angebote", myDemands: "Meine Gesuche", settings: "Einstellungen", login: "Anmelden", howItWorks: "So funktioniert's" },
 };
 
 /**
@@ -43,9 +46,13 @@ export async function SiteHeader() {
     { href: href("/moje-inzeraty"), label: l.myListings },
     { href: href("/moje-ponuky"), label: l.myOffers },
     { href: href("/moje-dopyty"), label: l.myDemands },
+    { href: href("/ako-to-funguje"), label: l.howItWorks },
     { href: href("/nastavenia"), label: l.settings },
   ];
-  const loggedOutLinks = [{ href: href("/dopyty"), label: l.demands }];
+  const loggedOutLinks = [
+    { href: href("/dopyty"), label: l.demands },
+    { href: href("/ako-to-funguje"), label: l.howItWorks },
+  ];
 
   return (
     <header className="border-b border-border bg-surface">
@@ -72,15 +79,23 @@ export async function SiteHeader() {
               <Link href={href("/nastavenia")} className="text-sm text-text-secondary hover:text-text-primary">
                 {l.settings}
               </Link>
+              <Link href={href("/ako-to-funguje")} className="text-sm text-text-secondary hover:text-text-primary">
+                {l.howItWorks}
+              </Link>
               <NotificationBell locale={locale} />
             </>
           ) : (
-            <Link
-              href={href("/login")}
-              className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90"
-            >
-              {l.login}
-            </Link>
+            <>
+              <Link href={href("/ako-to-funguje")} className="text-sm text-text-secondary hover:text-text-primary">
+                {l.howItWorks}
+              </Link>
+              <Link
+                href={href("/login")}
+                className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90"
+              >
+                {l.login}
+              </Link>
+            </>
           )}
         </nav>
 
