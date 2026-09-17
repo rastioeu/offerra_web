@@ -35,10 +35,10 @@ export default async function MyOffersPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-text-primary">Moje ponuky</h1>
+      <h1 className="text-2xl font-bold text-text-primary">{t("pridat.myOffersTitle")}</h1>
 
       {offers.length === 0 ? (
-        <p className="text-text-muted">Zatiaľ si nepodal žiadnu ponuku.</p>
+        <p className="text-text-muted">{t("pridat.myOffersEmpty")}</p>
       ) : (
         <div className="flex flex-col gap-3">
           {offers.map((offer) => (
@@ -49,7 +49,7 @@ export default async function MyOffersPage() {
             >
               <div className="flex flex-col gap-0.5">
                 <span className="font-semibold text-text-primary">
-                  {offer.property?.title || "Inzerát"}
+                  {offer.property?.title || t("profil.listingFallback")}
                 </span>
                 <span className="text-sm text-text-muted">
                   {offer.property ? transactionLabel[offer.property.transaction_type] : null}

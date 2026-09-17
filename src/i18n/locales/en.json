@@ -542,7 +542,12 @@
     "noListingsYet": "You don't have a listing yet. Create your first one with the button above.",
     "photoCount": "{{count}} photos",
     "updatedOn": "Updated {{date}}",
-    "hiddenByAdmin": "Hidden by admin"
+    "hiddenByAdmin": "Hidden by admin",
+    "myListingsTitle": "My listings",
+    "myOffersTitle": "My offers",
+    "myOffersEmpty": "You haven't submitted an offer yet.",
+    "myDemandsTitle": "My demands",
+    "myDemandsEmptyWeb": "You don't have a demand yet."
   },
   "profil": {
     "avatarChangedToast": "Profile picture changed",
@@ -712,7 +717,8 @@
     "rejectedNote": ". Only they can publish it again — fix what's needed and reach out.",
     "unpublishButton": "Remove from catalog",
     "publishButton": "Publish",
-    "deleteButton": "Delete listing"
+    "deleteButton": "Delete listing",
+    "saveButton": "Save"
   },
   "propertyDetail": {
     "screenTitle": "Detail",
@@ -1001,7 +1007,11 @@
     "priceOnRequest": "Price on request",
     "lead": "A reverse real estate market — sellers don't have to name a price, buyers submit their own offers.",
     "understoodPrefix": "Understood: ",
-    "clearFilter": "Clear filter"
+    "clearFilter": "Clear filter",
+    "filterAll": "All",
+    "filterAllTypes": "All types",
+    "sortSectionTitle": "Sort",
+    "searchButton": "Search"
   },
   "login": {
     "subtitle": "Properties for sale and rent",

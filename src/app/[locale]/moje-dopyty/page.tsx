@@ -27,16 +27,16 @@ export default async function MyRequestsPage() {
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-text-primary">Moje dopyty</h1>
+      <h1 className="text-2xl font-bold text-text-primary">{t("pridat.myDemandsTitle")}</h1>
 
       {requests.length === 0 ? (
-        <p className="text-text-muted">Zatiaľ nemáš žiadny dopyt.</p>
+        <p className="text-text-muted">{t("pridat.myDemandsEmptyWeb")}</p>
       ) : (
         <div className="flex flex-col gap-3">
           {requests.map((request) => {
             const meta = [
               demandLabel[request.transaction_type],
-              request.property_type ? propertyLabel[request.property_type as keyof typeof propertyLabel] : "Akýkoľvek typ",
+              request.property_type ? propertyLabel[request.property_type as keyof typeof propertyLabel] : t("dopytDetail.typeAny"),
               request.city,
             ]
               .filter(Boolean)

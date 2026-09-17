@@ -1,7 +1,9 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { createT, isLocale } from "@/i18n";
 import { createClient } from "@/lib/supabase/client";
 import { normalizeText, stemSk } from "@/lib/search";
 
@@ -15,7 +17,7 @@ export function StreetPicker({
   district,
   value,
   onChange,
-  placeholder = "bez čísla domu",
+  placeholder,
 }: {
   city: string | null;
   district: string | null;
@@ -23,6 +25,10 @@ export function StreetPicker({
   onChange: (street: string) => void;
   placeholder?: string;
 }) {
+  const pathname = usePathname();
+  const maybeLocale = pathname.split("/")[1];
+  const locale = isLocale(maybeLocale) && maybeLocale !== "sk" ? maybeLocale : "sk";
+  const t = createT(locale);
   const [cityId, setCityId] = useState<number | null>(null);
   const [results, setResults] = useState<{ id: number; name: string }[]>([]);
   const [open, setOpen] = useState(false);
@@ -84,7 +90,7 @@ export function StreetPicker({
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("streetPicker.placeholder")}
         className="w-full rounded-xl border border-border-strong bg-surface px-4 py-2.5 text-text-primary placeholder:text-text-placeholder focus:border-accent-deep focus:outline-none"
       />
       {open && results.length > 0 ? (

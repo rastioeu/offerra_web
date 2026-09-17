@@ -68,7 +68,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
   }
 
   function archive() {
-    if (!window.confirm("Stiahnuť inzerát z ponuky?")) return;
+    if (!window.confirm(t("inzeratEdit.unpublishButton") + "?")) return;
     startSaving(async () => {
       try {
         await archiveListingAction(property.id);
@@ -82,7 +82,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-text-primary">Typ obchodu</span>
+        <span className="text-sm font-medium text-text-primary">{t("inzeratEdit.transactionTypeLabel")}</span>
         <div className="flex gap-2">
           {TRANSACTIONS.map((tr) => (
             <button
@@ -102,7 +102,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-text-primary">Typ nehnuteľnosti</label>
+        <label className="text-sm font-medium text-text-primary">{t("inzeratEdit.propertyTypeLabel")}</label>
         <select
           value={form.property_type}
           onChange={(e) => set("property_type", e.target.value as PropertyType)}
@@ -116,21 +116,27 @@ export function ListingEditorForm({ property, language }: { property: Property; 
         </select>
       </div>
 
-      <Field label="Názov inzerátu" value={form.title} onChange={(v) => set("title", v)} placeholder="napr. 3-izbový byt, Ružinov" />
+      <Field
+        label={t("inzeratEdit.titleLabel")}
+        value={form.title}
+        onChange={(v) => set("title", v)}
+        placeholder={t("inzeratEdit.titlePlaceholder")}
+      />
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium text-text-primary">Popis</label>
+        <label className="text-sm font-medium text-text-primary">{t("inzeratEdit.descriptionLabel")}</label>
         <textarea
           value={form.description}
           onChange={(e) => set("description", e.target.value)}
           rows={5}
+          placeholder={t("inzeratEdit.descriptionPlaceholder")}
           className={inputCls()}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-text-primary">Mesto</label>
+          <label className="text-sm font-medium text-text-primary">{t("cityPicker.labelRequired")}</label>
           <CityPicker
             value={form.city}
             onPick={(picked) => {
@@ -146,7 +152,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-text-primary">Ulica (nepovinné)</label>
+          <label className="text-sm font-medium text-text-primary">{t("streetPicker.label")}</label>
           <StreetPicker
             city={form.city}
             district={form.district}
@@ -158,39 +164,46 @@ export function ListingEditorForm({ property, language }: { property: Property; 
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {form.property_type !== "LAND" ? (
-          <Field label="Počet izieb" value={form.rooms} onChange={(v) => set("rooms", v)} inputMode="numeric" />
+          <Field label={t("inzeratEdit.roomsLabel")} value={form.rooms} onChange={(v) => set("rooms", v)} inputMode="numeric" />
         ) : null}
-        <Field label="Výmera (m²)" value={form.area} onChange={(v) => set("area", v)} inputMode="numeric" />
+        <Field label={t("inzeratEdit.areaLabel")} value={form.area} onChange={(v) => set("area", v)} inputMode="numeric" />
         <Field
-          label={isRent ? "Nájom (€/mesiac, nepovinné)" : "Orientačná cena (€, nepovinné)"}
+          label={t("inzeratEdit.priceLabel")}
           value={form.price}
           onChange={(v) => set("price", v)}
+          placeholder={isRent ? t("inzeratEdit.pricePlaceholderRent") : t("inzeratEdit.pricePlaceholderSale")}
           inputMode="decimal"
         />
       </div>
 
       {isFlat ? (
         <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Byt — podrobnosti</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{t("inzeratEdit.buildingSection")}</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Field label="Poschodie" value={form.floor} onChange={(v) => set("floor", v)} inputMode="numeric" />
-            <Field label="Poschodí spolu" value={form.floorsTotal} onChange={(v) => set("floorsTotal", v)} inputMode="numeric" />
-            <Field label="Mesačné náklady (€)" value={form.monthlyCosts} onChange={(v) => set("monthlyCosts", v)} inputMode="numeric" />
+            <Field label={t("inzeratEdit.floorLabel")} value={form.floor} onChange={(v) => set("floor", v)} inputMode="numeric" />
+            <Field label={t("inzeratEdit.floorsTotalLabel")} value={form.floorsTotal} onChange={(v) => set("floorsTotal", v)} inputMode="numeric" />
+            <Field label={t("inzeratEdit.monthlyCostsLabel")} value={form.monthlyCosts} onChange={(v) => set("monthlyCosts", v)} inputMode="numeric" />
           </div>
-          <BoolChoice label="Výťah" value={form.hasElevator} onChange={(v) => set("hasElevator", v)} />
+          <BoolChoice
+            label={t("inzeratEdit.elevatorLabel")}
+            value={form.hasElevator}
+            onChange={(v) => set("hasElevator", v)}
+            yesLabel={t("inzeratEdit.elevatorYes")}
+            noLabel={t("inzeratEdit.elevatorNo")}
+          />
         </div>
       ) : null}
 
       {isRent ? (
         <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Prenájom — podmienky</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{t("inzeratEdit.rentSection")}</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Zábezpeka (€)" value={form.deposit} onChange={(v) => set("deposit", v)} inputMode="numeric" />
-            <Field label="Zábezpeka (počet nájmov)" value={form.depositMonths} onChange={(v) => set("depositMonths", v)} inputMode="numeric" />
+            <Field label={t("inzeratEdit.depositLabel")} value={form.deposit} onChange={(v) => set("deposit", v)} inputMode="numeric" />
+            <Field label={t("inzeratEdit.depositMonthsLabel")} value={form.depositMonths} onChange={(v) => set("depositMonths", v)} inputMode="numeric" />
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
-              <label className="text-sm font-medium text-text-primary">Dostupné od</label>
+              <label className="text-sm font-medium text-text-primary">{t("availableFrom.label")}</label>
               <input
                 type="date"
                 value={form.availableFrom ?? ""}
@@ -198,10 +211,10 @@ export function ListingEditorForm({ property, language }: { property: Property; 
                 className={inputCls()}
               />
             </div>
-            <Field label="Min. dĺžka nájmu (mesiacov)" value={form.minLease} onChange={(v) => set("minLease", v)} inputMode="numeric" />
+            <Field label={t("inzeratEdit.minLeaseLabel")} value={form.minLease} onChange={(v) => set("minLease", v)} inputMode="numeric" />
           </div>
           <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-text-primary">Zariadenie</span>
+            <span className="text-sm font-medium text-text-primary">{t("inzeratEdit.furnishingLabel")}</span>
             <div className="flex flex-wrap gap-2">
               {(Object.keys(furnishingLabel) as (keyof typeof furnishingLabel)[]).map((k) => (
                 <button
@@ -218,7 +231,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium text-text-primary">Energie v cene</span>
+            <span className="text-sm font-medium text-text-primary">{t("inzeratEdit.utilitiesLabel")}</span>
             <div className="flex flex-wrap gap-2">
               {(Object.keys(utilitiesLabel) as (keyof typeof utilitiesLabel)[]).map((k) => (
                 <button
@@ -234,8 +247,20 @@ export function ListingEditorForm({ property, language }: { property: Property; 
               ))}
             </div>
           </div>
-          <BoolChoice label="Internet v cene" value={form.internet} onChange={(v) => set("internet", v)} />
-          <BoolChoice label="Zvieratá povolené" value={form.pets} onChange={(v) => set("pets", v)} />
+          <BoolChoice
+            label={t("inzeratEdit.internetLabel")}
+            value={form.internet}
+            onChange={(v) => set("internet", v)}
+            yesLabel={t("inzeratEdit.internetYes")}
+            noLabel={t("inzeratEdit.internetNo")}
+          />
+          <BoolChoice
+            label={t("inzeratEdit.petsLabel")}
+            value={form.pets}
+            onChange={(v) => set("pets", v)}
+            yesLabel={t("inzeratEdit.petsYes")}
+            noLabel={t("inzeratEdit.petsNo")}
+          />
         </div>
       ) : null}
 
@@ -245,18 +270,18 @@ export function ListingEditorForm({ property, language }: { property: Property; 
 
       <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
         <Button type="button" variant="secondary" onClick={save} disabled={saving} className="px-5 py-2.5 text-sm">
-          {saving ? "Ukladám…" : "Uložiť"}
+          {saving ? t("inzeratEdit.savingButton") : t("inzeratEdit.saveButton")}
         </Button>
         {property.status === "DRAFT" ? (
           <Button type="button" onClick={publish} disabled={publishing} className="px-5 py-2.5 text-sm">
-            {publishing ? "Zverejňujem…" : "Zverejniť"}
+            {publishing ? t("inzeratEdit.savingButton") : t("inzeratEdit.publishButton")}
           </Button>
         ) : property.status === "ACTIVE" ? (
           <Button type="button" variant="danger" onClick={archive} className="px-5 py-2.5 text-sm">
-            Stiahnuť z ponuky
+            {t("inzeratEdit.unpublishButton")}
           </Button>
         ) : null}
-        {savedAt ? <span className="text-sm text-text-muted">Uložené.</span> : null}
+        {savedAt ? <span className="text-sm text-text-muted">{t("inzeratEdit.savedToast")}.</span> : null}
       </div>
     </div>
   );
@@ -290,14 +315,26 @@ function Field({
   );
 }
 
-function BoolChoice({ label, value, onChange }: { label: string; value: boolean | null; onChange: (v: boolean | null) => void }) {
+function BoolChoice({
+  label,
+  value,
+  onChange,
+  yesLabel,
+  noLabel,
+}: {
+  label: string;
+  value: boolean | null;
+  onChange: (v: boolean | null) => void;
+  yesLabel: string;
+  noLabel: string;
+}) {
   return (
     <div className="flex items-center gap-3">
       <span className="text-sm font-medium text-text-primary">{label}</span>
       <div className="flex gap-2">
         {[
-          { v: true as const, label: "Áno" },
-          { v: false as const, label: "Nie" },
+          { v: true as const, label: yesLabel },
+          { v: false as const, label: noLabel },
         ].map((o) => (
           <button
             key={String(o.v)}

@@ -51,19 +51,19 @@ export async function DemandFilters({
           type="text"
           name="q"
           defaultValue={searchParams.get("q") ?? ""}
-          placeholder="napr. 2 izbový byt Bratislava do 800"
+          placeholder={t("searchBar.placeholderDemand")}
           className="w-full rounded-xl border border-border-strong bg-surface px-4 py-2.5 text-text-primary placeholder:text-text-placeholder focus:border-accent-deep focus:outline-none"
         />
         {activeTransaction ? <input type="hidden" name="transaction" value={activeTransaction} /> : null}
         {activePropertyType ? <input type="hidden" name="type" value={activePropertyType} /> : null}
         <Button type="submit" className="px-5 py-2.5">
-          Hľadať
+          {t("catalog.searchButton")}
         </Button>
       </form>
 
       <div className="flex flex-wrap gap-2">
         <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
-          Všetko
+          {t("catalog.filterAll")}
         </Link>
         {TRANSACTIONS.map((tr) => (
           <Link key={tr} href={hrefWith(locale, searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
@@ -74,7 +74,7 @@ export async function DemandFilters({
 
       <div className="flex flex-wrap gap-2">
         <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
-          Všetky typy
+          {t("catalog.filterAllTypes")}
         </Link>
         {PROPERTY_TYPES.map((pt) => (
           <Link key={pt} href={hrefWith(locale, searchParams, "type", pt)} className={chip(activePropertyType === pt)}>

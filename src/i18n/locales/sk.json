@@ -548,7 +548,12 @@
     "noListingsYet": "Zatiaľ nemáš žiadny inzerát. Založ prvý tlačidlom vyššie.",
     "photoCount": "{{count}} fotiek",
     "updatedOn": "Upravené {{date}}",
-    "hiddenByAdmin": "Skryté správcom"
+    "hiddenByAdmin": "Skryté správcom",
+    "myListingsTitle": "Moje inzeráty",
+    "myOffersTitle": "Moje ponuky",
+    "myOffersEmpty": "Zatiaľ si nepodal žiadnu ponuku.",
+    "myDemandsTitle": "Moje dopyty",
+    "myDemandsEmptyWeb": "Zatiaľ nemáš žiadny dopyt."
   },
   "profil": {
     "avatarChangedToast": "Profilovka zmenená",
@@ -718,7 +723,8 @@
     "rejectedNote": ". Zverejniť ho môže znovu len on — uprav, čo je potrebné, a ozvi sa.",
     "unpublishButton": "Stiahnuť z katalógu",
     "publishButton": "Zverejniť",
-    "deleteButton": "Zmazať inzerát"
+    "deleteButton": "Zmazať inzerát",
+    "saveButton": "Uložiť"
   },
   "propertyDetail": {
     "screenTitle": "Detail",
@@ -1007,7 +1013,11 @@
     "priceOnRequest": "Cena na dohodu",
     "lead": "Obrátený trh s nehnuteľnosťami — predávajúci nemusí povedať cenu, záujemcovia predkladajú vlastné ponuky.",
     "understoodPrefix": "Rozumiem: ",
-    "clearFilter": "Vymazať filter"
+    "clearFilter": "Vymazať filter",
+    "filterAll": "Všetko",
+    "filterAllTypes": "Všetky typy",
+    "sortSectionTitle": "Triedenie",
+    "searchButton": "Hľadať"
   },
   "login": {
     "subtitle": "Nehnuteľnosti na predaj aj prenájom",

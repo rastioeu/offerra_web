@@ -33,16 +33,16 @@ export default async function MyPropertiesPage() {
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-text-primary">Moje inzeráty</h1>
+        <h1 className="text-2xl font-bold text-text-primary">{t("pridat.myListingsTitle")}</h1>
         <form action={createDraftAction}>
           <Button type="submit" className="px-5 py-2.5 text-sm">
-            Pridať inzerát
+            {t("pridat.addProperty")}
           </Button>
         </form>
       </div>
 
       {properties.length === 0 ? (
-        <p className="text-text-muted">Zatiaľ nemáš žiadny inzerát.</p>
+        <p className="text-text-muted">{t("pridat.noListingsYet")}</p>
       ) : (
         <div className="flex flex-col gap-3">
           {properties.map((property) => {
@@ -61,7 +61,7 @@ export default async function MyPropertiesPage() {
                   {photo ? <Image src={photo} alt="" fill sizes="80px" className="object-cover" /> : null}
                 </Link>
                 <Link href={localizeHref(language, `/inzerat/${property.id}`)} className="flex flex-1 flex-col gap-0.5">
-                  <span className="font-semibold text-text-primary">{property.title || "Bez názvu"}</span>
+                  <span className="font-semibold text-text-primary">{property.title || t("pridat.noTitle")}</span>
                   {meta ? <span className="text-sm text-text-muted">{meta}</span> : null}
                 </Link>
                 <div className="flex flex-col items-end gap-1">
@@ -70,7 +70,7 @@ export default async function MyPropertiesPage() {
                     {statusLabel[property.status]}
                   </span>
                   <Link href={localizeHref(language, `/moje-inzeraty/${property.id}/upravit`)} className="text-xs font-semibold text-link hover:underline">
-                    Upraviť
+                    {t("manageOffers.editAction")}
                   </Link>
                 </div>
               </div>

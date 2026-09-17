@@ -542,7 +542,12 @@
     "noListingsYet": "Du hast noch kein Inserat. Leg dein erstes mit dem Button oben an.",
     "photoCount": "{{count}} Fotos",
     "updatedOn": "Aktualisiert {{date}}",
-    "hiddenByAdmin": "Vom Admin ausgeblendet"
+    "hiddenByAdmin": "Vom Admin ausgeblendet",
+    "myListingsTitle": "Meine Inserate",
+    "myOffersTitle": "Meine Angebote",
+    "myOffersEmpty": "Du hast noch kein Angebot abgegeben.",
+    "myDemandsTitle": "Meine Gesuche",
+    "myDemandsEmptyWeb": "Du hast noch kein Gesuch."
   },
   "profil": {
     "avatarChangedToast": "Profilbild geändert",
@@ -712,7 +717,8 @@
     "rejectedNote": ". Nur er kann es wieder veröffentlichen — korrigiere, was nötig ist, und melde dich.",
     "unpublishButton": "Aus dem Katalog nehmen",
     "publishButton": "Veröffentlichen",
-    "deleteButton": "Inserat löschen"
+    "deleteButton": "Inserat löschen",
+    "saveButton": "Speichern"
   },
   "propertyDetail": {
     "screenTitle": "Detail",
@@ -1001,7 +1007,11 @@
     "priceOnRequest": "Preis auf Anfrage",
     "lead": "Ein umgekehrter Immobilienmarkt — Verkäufer müssen keinen Preis nennen, Interessenten machen eigene Angebote.",
     "understoodPrefix": "Verstanden: ",
-    "clearFilter": "Filter löschen"
+    "clearFilter": "Filter löschen",
+    "filterAll": "Alle",
+    "filterAllTypes": "Alle Typen",
+    "sortSectionTitle": "Sortierung",
+    "searchButton": "Suchen"
   },
   "login": {
     "subtitle": "Immobilien zum Kauf und zur Miete",

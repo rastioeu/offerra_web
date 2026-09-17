@@ -41,11 +41,13 @@ export function OfferForm({
 
   return (
     <form action={handleSubmit} className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-4">
-      <h3 className="font-semibold text-text-primary">{existing ? "Upraviť moju ponuku" : "Podať ponuku"}</h3>
+      <h3 className="font-semibold text-text-primary">
+        {existing ? t("ponukaForm.editScreenTitle") : t("ponukaForm.newScreenTitle")}
+      </h3>
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="amount" className="text-sm font-medium text-text-primary">
-          Suma (€)
+          {t("ponukaForm.amountLabel")}
         </label>
         <input
           id="amount"
@@ -60,7 +62,7 @@ export function OfferForm({
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="message" className="text-sm font-medium text-text-primary">
-          Odkaz predávajúcemu (nepovinné)
+          {isRent ? t("ponukaForm.messageLabelRent") : t("ponukaForm.messageLabelSale")}
         </label>
         <textarea
           id="message"
@@ -205,7 +207,7 @@ export function OfferForm({
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
       <Button type="submit" disabled={pending} className="w-fit px-5 py-2.5">
-        {pending ? "Odosielam…" : existing ? "Uložiť zmenu" : "Podať ponuku"}
+        {pending ? t("ponukaForm.sendingButton") : existing ? t("ponukaForm.saveChangesButton") : t("ponukaForm.submitButton")}
       </Button>
     </form>
   );

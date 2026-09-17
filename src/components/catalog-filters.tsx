@@ -9,10 +9,7 @@ import type { Locale } from "@/i18n";
 
 const TRANSACTIONS: TransactionType[] = ["SALE", "RENT"];
 const PROPERTY_TYPES: PropertyType[] = ["APARTMENT", "HOUSE", "LAND", "COMMERCIAL", "OTHER"];
-const SORTS: { value: CatalogSort; label: string }[] = [
-  { value: "NEWEST", label: "Najnovšie" },
-  { value: "ENDING_SOON", label: "Končí čoskoro" },
-];
+const SORT_VALUES: CatalogSort[] = ["NEWEST", "ENDING_SOON"];
 
 /** Aktuálne URL parametre s JEDNÝM poľom zmeneným (alebo zmazaným, ak `value` je `null`). */
 function hrefWith(locale: Locale, current: URLSearchParams, key: string, value: string | null): string {
@@ -44,6 +41,10 @@ export async function CatalogFilters({
   const [t, locale] = await Promise.all([getT(), getLocale()]);
   const transactionLabel = getTransactionLabel(t);
   const propertyLabel = getPropertyLabel(t);
+  const sortLabel: Record<CatalogSort, string> = {
+    NEWEST: t("filterRows.sortNewest"),
+    ENDING_SOON: t("filterRows.sortEndingSoon"),
+  };
 
   const chip = (active: boolean) =>
     `rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -58,11 +59,11 @@ export async function CatalogFilters({
 
       <div className="flex flex-col gap-2">
         <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
-          Typ ponuky
+          {t("filterRows.transactionTitle")}
         </p>
         <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
           <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
-            Všetko
+            {t("catalog.filterAll")}
           </Link>
           {TRANSACTIONS.map((tr) => (
             <Link key={tr} href={hrefWith(locale, searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
@@ -74,11 +75,11 @@ export async function CatalogFilters({
 
       <div className="flex flex-col gap-2">
         <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
-          Typ nehnuteľnosti
+          {t("filterRows.propertyTypeTitle")}
         </p>
         <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
           <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
-            Všetky typy
+            {t("catalog.filterAllTypes")}
           </Link>
           {PROPERTY_TYPES.map((pt) => (
             <Link key={pt} href={hrefWith(locale, searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
@@ -90,16 +91,16 @@ export async function CatalogFilters({
 
       <div className="flex flex-col gap-2">
         <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
-          Triedenie
+          {t("catalog.sortSectionTitle")}
         </p>
         <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
-          {SORTS.map((s) => (
+          {SORT_VALUES.map((sortValue) => (
             <Link
-              key={s.value}
-              href={hrefWith(locale, searchParams, "sort", s.value === "NEWEST" ? null : s.value)}
-              className={chip(activeSort === s.value)}
+              key={sortValue}
+              href={hrefWith(locale, searchParams, "sort", sortValue === "NEWEST" ? null : sortValue)}
+              className={chip(activeSort === sortValue)}
             >
-              {s.label}
+              {sortLabel[sortValue]}
             </Link>
           ))}
         </div>
