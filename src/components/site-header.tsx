@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { HeaderContact, MobileNavContact } from "@/components/contact-links";
+import { IconNavLink } from "@/components/icon-nav-link";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
@@ -77,6 +78,19 @@ const LABELS: Record<
  * (`text-sm font-medium`/`font-semibold` pri aktívnom) naprieč
  * odkazmi AJ prepínačom jazyka (`LanguageSwitcher`), ktorý mal predtým
  * inú konvenciu (vždy `font-semibold`, líšila sa len farba).
+ *
+ * ŠTVRTÉ KOLO (Rastio, 17.9.2026: „Ako funguje daj pred nastavenia,
+ * daj tam iba nejakú ikonu, daj to ku zvončeku" + „aj Obľúbené daj
+ * ikonu aj Nastavenia, veď to každý pozná") — Obľúbené/Nastavenia/Ako
+ * funguje sú preč z TEXTOVÉHO riadku, sú to teraz IKONY
+ * (`IconNavLink`, rovnaký vzhľad ako `NotificationBell`) v ikonovom
+ * klastri vpravo, hneď VEDĽA zvončeka — srdiečko/ozubené koliesko/
+ * otáznik sú univerzálne rozpoznateľné bez textu. Textový riadok
+ * v strede teraz nesie len obsahovú navigáciu (Dopyty/Moje inzeráty/
+ * Moje ponuky/Moje dopyty). Toto sa týka LEN desktopovej lišty —
+ * mobilný hamburger (`MobileNav`) necháva plné textové odkazy, tam
+ * priestor nie je taký stiesnený problém ako v jednom riadku vedľa
+ * seba (a cieľová obrazovka tejto úpravy je „primárne NB/desktop").
  */
 export async function SiteHeader() {
   const [supabase, locale, t] = await Promise.all([createClient(), getLocale(), getT()]);
@@ -118,16 +132,33 @@ export async function SiteHeader() {
               <NavLink href={href("/moje-inzeraty")}>{l.myListings}</NavLink>
               <NavLink href={href("/moje-ponuky")}>{l.myOffers}</NavLink>
               <NavLink href={href("/moje-dopyty")}>{l.myDemands}</NavLink>
-              <NavLink href={href("/oblubene")}>{l.favorites}</NavLink>
-              <NavLink href={href("/nastavenia")}>{l.settings}</NavLink>
-              <NavLink href={href("/ako-to-funguje")}>{l.howItWorks}</NavLink>
             </>
-          ) : (
-            <NavLink href={href("/ako-to-funguje")}>{l.howItWorks}</NavLink>
-          )}
+          ) : null}
         </nav>
 
-        <div className="hidden shrink-0 items-center gap-3 border-l border-border pl-5 md:flex">
+        <div className="hidden shrink-0 items-center gap-1.5 border-l border-border pl-4 md:flex">
+          {user ? (
+            <IconNavLink href={href("/oblubene")} label={l.favorites}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+                <path d="M12 20.5s-7.5-4.6-10-9.2C.5 8 2 4.5 5.5 3.8 8 3.3 10.3 4.6 12 7c1.7-2.4 4-3.7 6.5-3.2C22 4.5 23.5 8 22 11.3c-2.5 4.6-10 9.2-10 9.2z" />
+              </svg>
+            </IconNavLink>
+          ) : null}
+          {user ? (
+            <IconNavLink href={href("/nastavenia")} label={l.settings}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path d="m19.4 13.5-.9-.5a7.1 7.1 0 0 0 0-2l.9-.5a1 1 0 0 0 .4-1.3l-1-1.7a1 1 0 0 0-1.3-.4l-.9.5a7.2 7.2 0 0 0-1.7-1l-.1-1a1 1 0 0 0-1-.9h-2a1 1 0 0 0-1 .9l-.1 1a7.2 7.2 0 0 0-1.7 1l-.9-.5a1 1 0 0 0-1.3.4l-1 1.7a1 1 0 0 0 .4 1.3l.9.5a7.1 7.1 0 0 0 0 2l-.9.5a1 1 0 0 0-.4 1.3l1 1.7a1 1 0 0 0 1.3.4l.9-.5a7.2 7.2 0 0 0 1.7 1l.1 1a1 1 0 0 0 1 .9h2a1 1 0 0 0 1-.9l.1-1a7.2 7.2 0 0 0 1.7-1l.9.5a1 1 0 0 0 1.3-.4l1-1.7a1 1 0 0 0-.4-1.3Z" />
+              </svg>
+            </IconNavLink>
+          ) : null}
+          <IconNavLink href={href("/ako-to-funguje")} label={l.howItWorks}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+              <circle cx="12" cy="12" r="9" />
+              <path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.7.3-1.4.9-1.4 1.7v.5" />
+              <path d="M12 17h.01" />
+            </svg>
+          </IconNavLink>
           {user ? <NotificationBell locale={locale} /> : null}
           <LanguageSwitcher />
           <HeaderContact t={t} />
