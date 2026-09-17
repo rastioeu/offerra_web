@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SearchBox } from "@/components/search-box";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
 import { t } from "@/i18n";
@@ -21,10 +22,11 @@ function hrefWith(current: URLSearchParams, key: string, value: string | null): 
 }
 
 /**
- * Tri riadky filtra (Predaj/Prenájom · typ nehnuteľnosti · triedenie) +
- * voľné vyhľadávanie. Bez klientského JS — obyčajné odkazy/GET formulár,
- * takže filtrovaný katalóg je stále SSR a má vlastnú indexovateľnú URL
- * (napr. `/?transaction=SALE&type=APARTMENT`).
+ * Tri riadky filtra (Predaj/Prenájom · typ nehnuteľnosti · triedenie) sú
+ * obyčajné odkazy (bez JS), takže filtrovaný katalóg je stále SSR a má
+ * vlastnú indexovateľnú URL (napr. `/?transaction=SALE&type=APARTMENT`).
+ * Voľné vyhľadávanie (`SearchBox`) JE klientské — appka vyhľadáva živo
+ * (debounce 350ms), nie až po kliknutí na tlačidlo.
  */
 export function CatalogFilters({
   searchParams,
@@ -49,25 +51,7 @@ export function CatalogFilters({
 
   return (
     <div className="flex flex-col gap-5 lg:w-64 lg:shrink-0">
-      <form method="get" className="flex gap-2 lg:flex-col">
-        <input
-          type="text"
-          name="q"
-          defaultValue={searchParams.get("q") ?? ""}
-          placeholder="napr. 3 izbový byt Bratislava do 150000"
-          className="w-full rounded-xl border border-border-strong bg-surface px-4 py-2.5 text-text-primary placeholder:text-text-placeholder focus:border-accent-deep focus:outline-none"
-        />
-        {/* zachovať ostatné aktívne filtre pri odoslaní vyhľadávania */}
-        {activeTransaction ? <input type="hidden" name="transaction" value={activeTransaction} /> : null}
-        {activePropertyType ? <input type="hidden" name="type" value={activePropertyType} /> : null}
-        {activeSort !== "NEWEST" ? <input type="hidden" name="sort" value={activeSort} /> : null}
-        <button
-          type="submit"
-          className="rounded-xl bg-primary px-5 py-2.5 font-semibold text-on-primary hover:opacity-90"
-        >
-          Hľadať
-        </button>
-      </form>
+      <SearchBox initialValue={searchParams.get("q") ?? ""} />
 
       <div className="flex flex-col gap-2">
         <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
