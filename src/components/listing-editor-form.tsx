@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { archiveListingAction, publishListingAction, saveListingAction } from "@/app/moje-inzeraty/[id]/upravit/actions";
+import { CityPicker } from "@/components/city-picker";
 import { DeadlinePicker } from "@/components/deadline-picker";
+import { StreetPicker } from "@/components/street-picker";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { formFromProperty, type ListingForm } from "@/lib/listing-form";
 import { getFurnishingLabel, getUtilitiesLabel, type Property, type PropertyType, type TransactionType } from "@/lib/property";
@@ -124,8 +126,31 @@ export function ListingEditorForm({ property }: { property: Property }) {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Field label="Mesto" value={form.city ?? ""} onChange={(v) => set("city", v || null)} placeholder="napr. Bratislava" />
-        <Field label="Ulica (nepovinné)" value={form.street} onChange={(v) => set("street", v)} placeholder="bez čísla domu" />
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-text-primary">Mesto</label>
+          <CityPicker
+            value={form.city}
+            onPick={(picked) => {
+              setForm((f) => ({
+                ...f,
+                city: picked.city,
+                district: picked.district,
+                region: picked.region,
+                latitude: picked.latitude,
+                longitude: picked.longitude,
+              }));
+            }}
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium text-text-primary">Ulica (nepovinné)</label>
+          <StreetPicker
+            city={form.city}
+            district={form.district}
+            value={form.street}
+            onChange={(v) => set("street", v)}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

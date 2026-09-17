@@ -18,9 +18,9 @@ export const metadata: Metadata = {
  * vytvorenie AJ úpravu — DRAFT je len inzerát, ktorý ešte nie je
  * zverejnený). ZJEDNODUŠENÉ oproti appke — appka ukladá KAŽDÉ pole
  * priebežne (autosave, `useFormDraft`), web má jedno tlačidlo „Uložiť"
- * pre celý formulár naraz. appka tiež má `CityPicker`/`StreetPicker`
- * (2 925 obcí s geokódovaním) — web berie mesto/ulicu ako voľný text.
- * Priznané zjednodušenia, nie tiché medzery — pozri report.
+ * pre celý formulár naraz. `CityPicker`/`StreetPicker` (2 925 obcí,
+ * rovnaký dopyt do `offerra.city`/`offerra.street`) sú od 17.9.2026
+ * prenesené 1:1 — priznané zjednodušenie zostáva len pri autosave.
  */
 export default async function ListingEditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -13,7 +13,11 @@ export type ListingForm = {
   title: string;
   description: string;
   city: string | null;
+  district: string | null;
+  region: string | null;
   street: string;
+  latitude: number | null;
+  longitude: number | null;
   offer_deadline: string | null;
 
   rooms: string;
@@ -53,7 +57,11 @@ export function formFromProperty(p: Property): ListingForm {
     title: p.title ?? "",
     description: p.description ?? "",
     city: p.city,
+    district: p.district,
+    region: p.region,
     street: p.street ?? "",
+    latitude: p.latitude,
+    longitude: p.longitude,
     offer_deadline: p.offer_deadline,
 
     rooms: text(p.rooms),
@@ -87,7 +95,11 @@ export function formToPatch(f: ListingForm): Partial<Property> {
     title: f.title,
     description: f.description.trim() || null,
     city: f.city,
+    district: f.district,
+    region: f.region,
     street: f.street.trim() || null,
+    latitude: f.latitude,
+    longitude: f.longitude,
     offer_deadline: f.offer_deadline,
     rooms: num(f.rooms),
     area_m2: num(f.area),

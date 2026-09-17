@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { createDemandAction } from "@/app/dopyty/novy/actions";
+import { CityPicker } from "@/components/city-picker";
 import { getDemandLabel, getPropertyLabel } from "@/lib/labels";
 import type { PropertyType, TransactionType } from "@/lib/property";
 import { t } from "@/i18n";
@@ -12,6 +13,7 @@ const PROPERTY_TYPES: (PropertyType | "ANY")[] = ["ANY", "APARTMENT", "HOUSE", "
 
 export function NewDemandForm() {
   const [transaction, setTransaction] = useState<TransactionType>("SALE");
+  const [city, setCity] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const demandLabel = getDemandLabel(t);
@@ -84,16 +86,11 @@ export function NewDemandForm() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="city" className="text-sm font-medium text-text-primary">
-          {t("dopytDetail.locationLabel")}
-        </label>
-        <input
-          id="city"
-          name="city"
-          type="text"
-          placeholder="napr. Bratislava"
-          className="w-full max-w-xs rounded-xl border border-border-strong bg-surface px-4 py-2.5 text-text-primary focus:border-accent-deep focus:outline-none"
-        />
+        <label className="text-sm font-medium text-text-primary">{t("dopytDetail.locationLabel")}</label>
+        <div className="w-full max-w-xs">
+          <CityPicker value={city || null} onPick={(picked) => setCity(picked.city)} />
+        </div>
+        <input type="hidden" name="city" value={city} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
