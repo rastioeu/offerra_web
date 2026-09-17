@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/avatar";
+import { OfferCountdownPill } from "@/components/offer-countdown-pill";
 import { OfferForm } from "@/components/offer-form";
 import { OwnerOfferActions } from "@/components/owner-offer-actions";
 import { WithdrawOfferButton } from "@/components/withdraw-offer-button";
@@ -67,6 +68,10 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
                     </span>
                   </div>
                 </div>
+
+                {offer.status === "PENDING" && offer.valid_until ? (
+                  <OfferCountdownPill status={offer.status} validUntil={offer.valid_until} />
+                ) : null}
 
                 {isOwner && offer.message ? <p className="text-sm italic text-text-secondary">„{offer.message}&quot;</p> : null}
 
