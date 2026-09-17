@@ -12,12 +12,15 @@
 import type {
   AdminStats,
   AdminUser,
+  Alert,
   ConfigRow,
   DuplicateContact,
+  RepeatOffender,
   ReportRow,
   SuspiciousFlood,
   SuspiciousLowball,
   SuspiciousShill,
+  TopLister,
 } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -77,6 +80,33 @@ export async function fetchSuspiciousPatterns(): Promise<{
     lowballs: (lb.data ?? []) as SuspiciousLowball[],
     shills: (sh.data ?? []) as SuspiciousShill[],
     duplicates: (dc.data ?? []) as DuplicateContact[],
+  };
+}
+
+/**
+ * Upozornenia, opakované porušenia, top vystavovatelia — appka:
+ * `admin_alerts`, `admin_repeat_offenders`, `admin_top_listers`.
+ * Čisté signály na ručnú kontrolu, žiadna automatická akcia.
+ */
+export async function fetchAdminAttention(): Promise<{
+  alerts: Alert[];
+  repeatOffenders: RepeatOffender[];
+  topListers: TopLister[];
+}> {
+  const client = await createClient();
+  const supabase = client.schema("offerra");
+  const [a, ro, t] = await Promise.all([
+    supabase.rpc("admin_alerts"),
+    supabase.rpc("admin_repeat_offenders"),
+    supabase.rpc("admin_top_listers"),
+  ]);
+  if (a.error) throw a.error;
+  if (ro.error) throw ro.error;
+  if (t.error) throw t.error;
+  return {
+    alerts: (a.data ?? []) as Alert[],
+    repeatOffenders: (ro.data ?? []) as RepeatOffender[],
+    topListers: (t.data ?? []) as TopLister[],
   };
 }
 

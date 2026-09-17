@@ -4,7 +4,14 @@ import { redirect } from "next/navigation";
 import { resolveReport, setUserBlocked } from "@/app/admin/actions";
 import { AdminConfigRow } from "@/components/admin-config-row";
 import { AdminUserActions } from "@/components/admin-user-actions";
-import { fetchAdminStats, fetchAdminUsers, fetchAppConfig, fetchReports, fetchSuspiciousPatterns } from "@/lib/admin-data";
+import {
+  fetchAdminAttention,
+  fetchAdminStats,
+  fetchAdminUsers,
+  fetchAppConfig,
+  fetchReports,
+  fetchSuspiciousPatterns,
+} from "@/lib/admin-data";
 import { getReportReasonLabel, getReportStatusLabel } from "@/lib/report";
 import { createClient } from "@/lib/supabase/server";
 import { t } from "@/i18n";
@@ -43,13 +50,15 @@ export default async function AdminPage() {
   let users;
   let suspicious;
   let config;
+  let attention;
   try {
-    [stats, reports, users, suspicious, config] = await Promise.all([
+    [stats, reports, users, suspicious, config, attention] = await Promise.all([
       fetchAdminStats(),
       fetchReports(),
       fetchAdminUsers(),
       fetchSuspiciousPatterns(),
       fetchAppConfig(),
+      fetchAdminAttention(),
     ]);
   } catch {
     return (
@@ -75,6 +84,68 @@ export default async function AdminPage() {
           </div>
         ))}
       </section>
+
+      {attention.alerts.length > 0 ? (
+        <section className="flex flex-col gap-3 rounded-2xl border border-danger bg-danger/5 p-4">
+          <h2 className="text-lg font-semibold text-danger">
+            {t("admin.needsAttention", { count: attention.alerts.length })}
+          </h2>
+          <p className="text-xs text-text-muted">{t("admin.needsAttentionHint")}</p>
+          <div className="flex flex-col gap-2">
+            {attention.alerts.map((a) => (
+              <div key={`${a.target_type}-${a.target_id}`} className="flex flex-col gap-1 rounded-xl border border-border bg-surface p-3 text-sm">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium text-text-primary">
+                    {a.target_type === "PROPERTY" ? t("admin.targetProperty") : a.target_type === "USER" ? t("admin.targetUser") : t("admin.targetOffer")}
+                  </span>
+                  {a.naliehave ? (
+                    <span className="rounded-full bg-danger px-2 py-0.5 text-xs font-bold text-on-primary">{t("admin.fraudBadge")}</span>
+                  ) : null}
+                </div>
+                <span className="text-text-muted">{a.nahlaseni}× · {a.dovody}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {attention.repeatOffenders.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-lg font-semibold text-text-primary">
+            {t("admin.repeatOffenders", { count: attention.repeatOffenders.length })}
+          </h2>
+          <p className="text-xs text-text-muted">{t("admin.repeatOffendersHint")}</p>
+          <div className="flex flex-col gap-2">
+            {attention.repeatOffenders.map((r) => (
+              <div key={r.user_id} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface p-3 text-sm">
+                <span className="font-medium text-text-primary">
+                  {r.nickname} {r.blokovany ? <span className="text-danger">({t("admin.blockedBadge")})</span> : null}
+                </span>
+                <span className="text-text-muted">{r.potvrdene}× · {r.dovody}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {attention.topListers.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <h2 className="text-lg font-semibold text-text-primary">{t("admin.topListersSection")}</h2>
+          <p className="text-xs text-text-muted">{t("admin.topListersHint")}</p>
+          <div className="flex flex-col gap-2">
+            {attention.topListers.map((l) => (
+              <div key={l.user_id} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface p-3 text-sm">
+                <span className="font-medium text-text-primary">
+                  {l.nickname} {l.is_blocked ? <span className="text-danger">({t("admin.blockedBadge")})</span> : null}
+                </span>
+                <span className="text-text-muted">
+                  {l.active_count} aktívnych · {l.total_count} spolu · {l.email}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-text-primary">Nahlásenia</h2>

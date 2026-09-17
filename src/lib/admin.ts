@@ -55,6 +55,23 @@ export type DuplicateContact = { kind: string; value: string; accounts: number; 
 /** Nastaviteľný prah — appka: `ConfigRow` (`app_config` tabuľka). */
 export type ConfigRow = { key: string; value: string; label: string; hint: string | null };
 
+/** Upozornenie — TRAJA rôzni nahlasovatelia na to isté (PODVOD už pri prvom). */
+export type Alert = { target_type: string; target_id: string; nahlaseni: number; dovody: string; naliehave: boolean };
+
+/** Tri a viac POTVRDENÝCH nahlásení na tú istú osobu, cez všetky jej inzeráty/ponuky. */
+export type RepeatOffender = { user_id: string; nickname: string; potvrdene: number; dovody: string; blokovany: boolean };
+
+/** Kto má najviac inzerátov — podnet na pozretie, nie obvinenie. */
+export type TopLister = {
+  user_id: string;
+  nickname: string;
+  email: string;
+  active_count: number;
+  total_count: number;
+  agent_declared_at: string | null;
+  is_blocked: boolean;
+};
+
 export type AdminUser = {
   id: string;
   nickname: string;
