@@ -22,46 +22,36 @@ export async function SiteFooter() {
 
   return (
     <footer className="border-t border-border bg-surface">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="flex flex-col gap-1.5">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
-              {t("footer.contactSection")}
-            </h2>
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-1.5 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary">
             <a
               href={`tel:${CONTACT_PHONE_TEL}`}
               aria-label={t("footer.callAriaLabel", { phone: CONTACT_PHONE_DISPLAY })}
-              className="text-lg font-semibold text-text-primary hover:text-link"
+              className="hover:text-text-primary"
             >
               {CONTACT_PHONE_DISPLAY}
             </a>
+            <span aria-hidden className="text-border-strong">
+              ·
+            </span>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               aria-label={t("footer.emailAriaLabel", { email: CONTACT_EMAIL })}
-              className="text-lg font-semibold text-text-primary hover:text-link"
+              className="hover:text-text-primary"
             >
               {CONTACT_EMAIL}
             </a>
           </div>
 
-          <nav className="flex flex-col gap-1.5 sm:items-end">
-            <Link href={href("/ako-to-funguje")} className="text-sm text-text-secondary hover:text-text-primary">
+          <nav className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary">
+            <Link href={href("/ako-to-funguje")} className="hover:text-text-primary">
               {t("nastavenia.howItWorks")}
             </Link>
-            <a
-              href={`${LEGAL_BASE}/privacy.html`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-text-secondary hover:text-text-primary"
-            >
+            <a href={`${LEGAL_BASE}/privacy.html`} target="_blank" rel="noopener noreferrer" className="hover:text-text-primary">
               {t("footer.privacyPolicy")}
             </a>
-            <a
-              href={`${LEGAL_BASE}/terms.html`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-text-secondary hover:text-text-primary"
-            >
+            <a href={`${LEGAL_BASE}/terms.html`} target="_blank" rel="noopener noreferrer" className="hover:text-text-primary">
               {t("footer.termsOfUse")}
             </a>
           </nav>
