@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { CatalogFilters } from "@/components/catalog-filters";
+import { DismissibleCard } from "@/components/dismissible-card";
 import { HowItWorksCard } from "@/components/how-it-works-card";
 import { PropertyCard } from "@/components/property-card";
 import { fetchCatalog } from "@/lib/catalog";
@@ -110,16 +111,18 @@ export default async function CatalogPage({
       {properties.length > 0 ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       ) : null}
-      <header className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+      <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+        <div className="flex flex-col gap-2 lg:max-w-2xl">
           <h1 className="text-2xl font-bold text-text-primary">Nehnuteľnosti</h1>
           <p className="text-text-secondary">
             Obrátený trh s nehnuteľnosťami — predávajúci nemusí povedať cenu,
             záujemcovia predkladajú vlastné ponuky.
           </p>
         </div>
-        <div className="max-w-md">
-          <HowItWorksCard locale={language} />
+        <div className="w-full lg:w-80 lg:shrink-0">
+          <DismissibleCard storageKey="offerra-hiw-home-dismissed">
+            <HowItWorksCard locale={language} />
+          </DismissibleCard>
         </div>
       </header>
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
 import { NotificationBell } from "@/components/notification-bell";
@@ -83,12 +84,14 @@ export async function SiteHeader() {
                 {l.howItWorks}
               </Link>
               <NotificationBell locale={locale} />
+              <LanguageSwitcher />
             </>
           ) : (
             <>
               <Link href={href("/ako-to-funguje")} className="text-sm text-text-secondary hover:text-text-primary">
                 {l.howItWorks}
               </Link>
+              <LanguageSwitcher />
               <Link
                 href={href("/login")}
                 className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90"
@@ -100,6 +103,8 @@ export async function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2 md:hidden">
+          {user ? <NotificationBell locale={locale} /> : null}
+          <LanguageSwitcher />
           {!user ? (
             <Link
               href={href("/login")}
@@ -107,9 +112,7 @@ export async function SiteHeader() {
             >
               {l.login}
             </Link>
-          ) : (
-            <NotificationBell locale={locale} />
-          )}
+          ) : null}
           <MobileNav links={user ? loggedInLinks : loggedOutLinks} />
         </div>
       </div>

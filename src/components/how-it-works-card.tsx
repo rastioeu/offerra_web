@@ -19,7 +19,7 @@ export async function HowItWorksCard({ locale }: { locale: Locale }) {
   return (
     <Link
       href={localizeHref(locale, "/ako-to-funguje")}
-      className="flex flex-col gap-1.5 rounded-2xl border border-accent bg-surface p-4 shadow-[var(--shadow-card)] transition-opacity hover:opacity-90"
+      className="flex flex-col gap-1.5 rounded-2xl border border-accent bg-surface p-4 pr-9 shadow-[var(--shadow-card)] transition-opacity hover:opacity-90"
     >
       <span className="font-bold text-text-primary">{t("nastavenia.howItWorks")}</span>
       <p className="text-text-secondary">{lead}</p>
