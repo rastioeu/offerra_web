@@ -18,12 +18,12 @@ export async function RatingsSection({ property, userId }: { property: PropertyD
   if (!userId) {
     return (
       <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-text-primary">Hodnotenia</h2>
+        <h2 className="text-lg font-semibold text-text-primary">{t("propertyTabs.ratings")}</h2>
         <p className="text-sm text-text-muted">
           <a href={localizeHref(language, "/login")} className="text-link hover:underline">
-            Prihlás sa
+            {t("login.signIn")}
           </a>{" "}
-          na zobrazenie hodnotení.
+          {t("propertyTabs.loginForRatingsSuffix")}
         </p>
       </section>
     );
@@ -43,7 +43,7 @@ export async function RatingsSection({ property, userId }: { property: PropertyD
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold text-text-primary">Hodnotenia</h2>
+      <h2 className="text-lg font-semibold text-text-primary">{t("propertyTabs.ratings")}</h2>
 
       {property.status === "CLOSED" && rateeId ? (
         <RatingCardLoader

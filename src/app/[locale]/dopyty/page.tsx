@@ -68,7 +68,12 @@ export default async function DemandsPage({ searchParams }: { searchParams: Prom
         activePropertyType={filter.propertyType}
       />
 
-      {understood.length > 0 ? <p className="text-sm text-text-muted">Rozumiem: {understood.join(", ")}</p> : null}
+      {understood.length > 0 ? (
+        <p className="text-sm text-text-muted">
+          {t("catalog.understoodPrefix")}
+          {understood.join(", ")}
+        </p>
+      ) : null}
       {!isFilterEmpty(filter) ? (
         <Link href={localizeHref(language, "/dopyty")} className="w-fit text-sm text-link hover:underline">
           {t("dopyty.clearFilters")}

@@ -14,9 +14,9 @@ export async function ViewingSection({ property, userId }: { property: PropertyD
         <h2 className="text-lg font-semibold text-text-primary">{t("viewing.eyebrow")}</h2>
         <p className="text-sm text-text-muted">
           <a href={localizeHref(language, "/login")} className="text-link hover:underline">
-            Prihlás sa
+            {t("login.signIn")}
           </a>{" "}
-          a požiadaj o obhliadku.
+          {t("viewing.loginToRequestSuffix")}
         </p>
       </section>
     );

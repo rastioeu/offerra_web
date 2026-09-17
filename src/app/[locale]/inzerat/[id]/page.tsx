@@ -185,7 +185,7 @@ export default async function PropertyDetailPage({
             {price ? (
               <p className="font-money text-[27px] font-bold leading-[30px] text-accent">{price}</p>
             ) : (
-              <p className="text-text-muted">Cena na dohodu</p>
+              <p className="text-text-muted">{t("catalog.priceOnRequest")}</p>
             )}
             <DeadlineBadge iso={property.offer_deadline} language={language} />
           </div>

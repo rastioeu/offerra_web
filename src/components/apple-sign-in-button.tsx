@@ -1,5 +1,6 @@
 "use client";
 
+import { createT, type Locale } from "@/i18n";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -10,7 +11,8 @@ import { createClient } from "@/lib/supabase/client";
  * späť (Services ID, náhodou rovnaký identifier ako appkové Bundle ID
  * — Supabase Client ID pole je preto pre oba prípady spoločné).
  */
-export function AppleSignInButton({ next = "/" }: { next?: string }) {
+export function AppleSignInButton({ next = "/", language }: { next?: string; language: Locale }) {
+  const t = createT(language);
   async function handleClick() {
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
@@ -27,7 +29,7 @@ export function AppleSignInButton({ next = "/" }: { next?: string }) {
       onClick={handleClick}
       className="flex items-center justify-center gap-2 rounded-xl border border-border-strong bg-surface px-5 py-3 font-semibold text-text-primary transition-colors hover:bg-surface-pressed"
     >
-      Prihlásiť sa cez Apple
+      {t("login.continueApple")}
     </button>
   );
 }

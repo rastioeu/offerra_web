@@ -147,7 +147,7 @@ export default async function CatalogPage({
           ) : null}
 
           {properties.length === 0 ? (
-            <p className="text-text-muted">Žiadne inzeráty nezodpovedajú filtru.</p>
+            <p className="text-text-muted">{t("catalog.noMatchTitle")}</p>
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {properties.map((property) => (

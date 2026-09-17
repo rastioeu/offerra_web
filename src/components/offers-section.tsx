@@ -61,10 +61,10 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold text-text-primary">Ponuky ({offers.length})</h2>
+      <h2 className="text-lg font-semibold text-text-primary">{t("propertyTabs.offersCount", { count: offers.length })}</h2>
 
       {offers.length === 0 ? (
-        <p className="text-text-muted">Zatiaľ žiadna ponuka.</p>
+        <p className="text-text-muted">{t("offerList.empty")}</p>
       ) : (
         <div className="flex flex-col gap-2">
           {offers.map((offer) => {
@@ -151,9 +151,9 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
       ) : (
         <p className="text-sm text-text-muted">
           <a href={localizeHref(language, "/login")} className="text-link hover:underline">
-            Prihlás sa
+            {t("login.signIn")}
           </a>{" "}
-          a podaj vlastnú ponuku.
+          {t("offers.loginToOfferSuffix")}
         </p>
       )}
     </section>

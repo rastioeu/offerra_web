@@ -81,9 +81,9 @@ export function ProfileEditForm({ profile, language }: { profile: MyProfile; lan
 
       <div className="flex items-center gap-3">
         <Button type="submit" variant="secondary" disabled={pending} className="w-fit px-5 py-2 text-sm">
-          {pending ? t("nickname.savingButton") : "Uložiť"}
+          {pending ? t("nickname.savingButton") : t("inzeratEdit.saveButton")}
         </Button>
-        {savedAt ? <span className="text-sm text-text-muted">Uložené.</span> : null}
+        {savedAt ? <span className="text-sm text-text-muted">{t("inzeratEdit.savedToast")}.</span> : null}
       </div>
     </form>
   );

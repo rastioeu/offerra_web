@@ -281,7 +281,8 @@
     "attendedButton": "Bol som na obhliadke",
     "cancelConfirmTitle": "Zrušiť obhliadku?",
     "cancelConfirmBody": "Kontakt, ktorý druhá strana už videla, sa tým nezmaže — len sa dohoda označí za neplatnú.",
-    "cancelConfirmYes": "Zrušiť obhliadku"
+    "cancelConfirmYes": "Zrušiť obhliadku",
+    "loginToRequestSuffix": "a požiadaj o obhliadku."
   },
   "deadline": {
     "deadlineOfferAccOne": "{{count}} ponuku",
@@ -320,7 +321,8 @@
     "budgetUpTo": "do {{amount}}",
     "budgetFrom": "od {{amount}}",
     "budgetNotGiven": "Rozpočet neuvedený",
-    "statusExpired": "Platnosť uplynula"
+    "statusExpired": "Platnosť uplynula",
+    "loginToOfferSuffix": "a podaj vlastnú ponuku."
   },
   "priceDisplay": {
     "noPriceNoOffers": "Cena neuvedená — čaká na prvú ponuku",
@@ -514,7 +516,8 @@
     "ratingsOwnerNote": "Toto je tvoja povesť naprieč všetkými obchodmi, nie len týmto inzerátom — presne tak ju vidia aj záujemcovia.",
     "ratingsBidderNote": "Sú to hodnotenia {{nickname}} zo VŠETKÝCH jeho obchodov, nie len z tohto inzerátu. Inzerát sa predá raz, povesť sa buduje dlhšie.",
     "ratingsNotYetNote": "Hodnotiť sa dá až po uzavretí obchodu, a len tí dvaja, ktorí ho spolu uzavreli.",
-    "offerExpiredNote": "Platnosť tvojej ponuky uplynula. Ak máš stále záujem, podaj novú."
+    "offerExpiredNote": "Platnosť tvojej ponuky uplynula. Ak máš stále záujem, podaj novú.",
+    "loginForRatingsSuffix": "na zobrazenie hodnotení."
   },
   "dopyty": {
     "title": "Dopyty",
@@ -1035,7 +1038,9 @@
     "termsOfUse": "Podmienkami používania",
     "legalAnd": "a berieš na vedomie",
     "privacyPolicy": "Ochranu osobných údajov",
-    "legalSuffix": ""
+    "legalSuffix": "",
+    "pageSubtitle": "Aby za každým inzerátom a ponukou stál overený človek.",
+    "errorBody": "Prihlásenie sa nepodarilo. Skús to prosím znova."
   },
   "nickname": {
     "nicknameTooShort": "Prezývka musí mať aspoň 3 znaky.",
@@ -1270,7 +1275,13 @@
     "tooLarge": "Fotka má {{mb}} MB, limit je 8 MB. Skús menšiu.",
     "stepSuffix": "{{message}}\n\n(krok {{step}})",
     "addFailedTitle": "Fotku sa nepodarilo pridať",
-    "removeFailedTitle": "Fotku sa nepodarilo zmazať"
+    "removeFailedTitle": "Fotku sa nepodarilo zmazať",
+    "deleteButton": "Zmazať",
+    "emptyState": "Zatiaľ žiadna fotka.",
+    "uploading": "Nahrávam…",
+    "confirmDelete": "Zmazať túto fotku?",
+    "uploadFailed": "Nahratie zlyhalo",
+    "deleteFailed": "Zmazanie zlyhalo"
   },
   "pushPrompt": {
     "title": "Chceš o tom vedieť?",
@@ -1313,5 +1324,10 @@
     "profileLoadFailedTitle": "Nepodarilo sa načítať profil",
     "retryButton": "Skúsiť znova"
   },
-  "_": {}
+  "_": {},
+  "notFoundPage": {
+    "title": "Túto stránku sa nepodarilo nájsť",
+    "body": "Inzerát alebo stránka mohli medzičasom zmiznúť — napríklad ak sa nehnuteľnosť už predala.",
+    "backToCatalog": "Späť do katalógu"
+  }
 }

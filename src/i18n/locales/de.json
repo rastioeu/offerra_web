@@ -280,7 +280,8 @@
     "attendedButton": "War bei der Besichtigung",
     "cancelConfirmTitle": "Besichtigung stornieren?",
     "cancelConfirmBody": "Der Kontakt, den die andere Seite bereits gesehen hat, wird dadurch nicht gelöscht — die Vereinbarung wird nur als ungültig markiert.",
-    "cancelConfirmYes": "Besichtigung stornieren"
+    "cancelConfirmYes": "Besichtigung stornieren",
+    "loginToRequestSuffix": "und eine Besichtigung anzufragen."
   },
   "deadline": {
     "deadlineOfferAccOne": "{{count}} Angebot",
@@ -318,7 +319,8 @@
     "budgetUpTo": "bis {{amount}}",
     "budgetFrom": "ab {{amount}}",
     "budgetNotGiven": "Budget nicht angegeben",
-    "statusExpired": "Abgelaufen"
+    "statusExpired": "Abgelaufen",
+    "loginToOfferSuffix": "und ein eigenes Angebot abzugeben."
   },
   "priceDisplay": {
     "noPriceNoOffers": "Kein Preis angegeben — wartet auf das erste Angebot",
@@ -509,7 +511,8 @@
     "ratingsOwnerNote": "Das ist dein Ruf über alle Geschäfte hinweg, nicht nur bei diesem Inserat — genau so sehen ihn auch Interessenten.",
     "ratingsBidderNote": "Das sind die Bewertungen von {{nickname}} aus ALLEN seinen Geschäften, nicht nur aus diesem Inserat. Ein Inserat wird einmal verkauft, ein Ruf baut sich über längere Zeit auf.",
     "ratingsNotYetNote": "Bewerten geht erst nach Abschluss des Geschäfts, und nur durch die beiden, die es gemeinsam abgeschlossen haben.",
-    "offerExpiredNote": "Die Gültigkeit deines Angebots ist abgelaufen. Wenn du noch interessiert bist, gib ein neues ab."
+    "offerExpiredNote": "Die Gültigkeit deines Angebots ist abgelaufen. Wenn du noch interessiert bist, gib ein neues ab.",
+    "loginForRatingsSuffix": "um Bewertungen zu sehen."
   },
   "dopyty": {
     "title": "Anfragen",
@@ -1029,7 +1032,9 @@
     "termsOfUse": "Nutzungsbedingungen",
     "legalAnd": "zu und nimmst den",
     "privacyPolicy": "Datenschutz",
-    "legalSuffix": " zur Kenntnis"
+    "legalSuffix": " zur Kenntnis",
+    "pageSubtitle": "Damit hinter jedem Inserat und Angebot eine verifizierte Person steht.",
+    "errorBody": "Anmeldung fehlgeschlagen. Bitte versuche es erneut."
   },
   "nickname": {
     "nicknameTooShort": "Der Spitzname muss mindestens 3 Zeichen haben.",
@@ -1264,7 +1269,13 @@
     "tooLarge": "Das Foto ist {{mb}} MB groß, das Limit liegt bei 8 MB. Versuch ein kleineres.",
     "stepSuffix": "{{message}}\n\n(Schritt {{step}})",
     "addFailedTitle": "Foto konnte nicht hinzugefügt werden",
-    "removeFailedTitle": "Foto konnte nicht gelöscht werden"
+    "removeFailedTitle": "Foto konnte nicht gelöscht werden",
+    "deleteButton": "Löschen",
+    "emptyState": "Noch kein Foto.",
+    "uploading": "Wird hochgeladen…",
+    "confirmDelete": "Dieses Foto löschen?",
+    "uploadFailed": "Upload fehlgeschlagen",
+    "deleteFailed": "Löschen fehlgeschlagen"
   },
   "pushPrompt": {
     "title": "Möchtest du davon erfahren?",
@@ -1307,5 +1318,10 @@
     "profileLoadFailedTitle": "Profil konnte nicht geladen werden",
     "retryButton": "Erneut versuchen"
   },
-  "_": {}
+  "_": {},
+  "notFoundPage": {
+    "title": "Diese Seite wurde nicht gefunden",
+    "body": "Das Inserat oder die Seite könnte inzwischen verschwunden sein — zum Beispiel wenn die Immobilie bereits verkauft wurde.",
+    "backToCatalog": "Zurück zum Katalog"
+  }
 }

@@ -280,7 +280,8 @@
     "attendedButton": "I attended the viewing",
     "cancelConfirmTitle": "Cancel the viewing?",
     "cancelConfirmBody": "Contact the other side has already seen isn't erased — this just marks the arrangement as no longer valid.",
-    "cancelConfirmYes": "Cancel viewing"
+    "cancelConfirmYes": "Cancel viewing",
+    "loginToRequestSuffix": "and request a viewing."
   },
   "deadline": {
     "deadlineOfferAccOne": "{{count}} offer",
@@ -318,7 +319,8 @@
     "budgetUpTo": "up to {{amount}}",
     "budgetFrom": "from {{amount}}",
     "budgetNotGiven": "Budget not given",
-    "statusExpired": "Expired"
+    "statusExpired": "Expired",
+    "loginToOfferSuffix": "and submit your own offer."
   },
   "priceDisplay": {
     "noPriceNoOffers": "No price given — awaiting the first offer",
@@ -509,7 +511,8 @@
     "ratingsOwnerNote": "This is your reputation across all deals, not just this listing — it's exactly what bidders see too.",
     "ratingsBidderNote": "These are {{nickname}}'s ratings from ALL of their deals, not just this listing. A listing sells once; a reputation is built over longer.",
     "ratingsNotYetNote": "Rating is only possible after a deal closes, and only by the two people who closed it together.",
-    "offerExpiredNote": "Your offer's validity has expired. If you're still interested, submit a new one."
+    "offerExpiredNote": "Your offer's validity has expired. If you're still interested, submit a new one.",
+    "loginForRatingsSuffix": "to see ratings."
   },
   "dopyty": {
     "title": "Inquiries",
@@ -1029,7 +1032,9 @@
     "termsOfUse": "Terms of Use",
     "legalAnd": "and acknowledge the",
     "privacyPolicy": "Privacy Policy",
-    "legalSuffix": ""
+    "legalSuffix": "",
+    "pageSubtitle": "So a verified person stands behind every listing and offer.",
+    "errorBody": "Sign in failed. Please try again."
   },
   "nickname": {
     "nicknameTooShort": "The nickname must be at least 3 characters.",
@@ -1264,7 +1269,13 @@
     "tooLarge": "The photo is {{mb}} MB, the limit is 8 MB. Try a smaller one.",
     "stepSuffix": "{{message}}\n\n(step {{step}})",
     "addFailedTitle": "Couldn't add the photo",
-    "removeFailedTitle": "Couldn't delete the photo"
+    "removeFailedTitle": "Couldn't delete the photo",
+    "deleteButton": "Delete",
+    "emptyState": "No photos yet.",
+    "uploading": "Uploading…",
+    "confirmDelete": "Delete this photo?",
+    "uploadFailed": "Upload failed",
+    "deleteFailed": "Delete failed"
   },
   "pushPrompt": {
     "title": "Want to know about it?",
@@ -1307,5 +1318,10 @@
     "profileLoadFailedTitle": "Couldn't load your profile",
     "retryButton": "Try again"
   },
-  "_": {}
+  "_": {},
+  "notFoundPage": {
+    "title": "This page could not be found",
+    "body": "The listing or page may have disappeared in the meantime — for example if the property already sold.",
+    "backToCatalog": "Back to the catalog"
+  }
 }
