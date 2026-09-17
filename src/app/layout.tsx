@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     locale: "sk_SK",
     title: "Offerra — obrátený trh s nehnuteľnosťami",
     description: DESCRIPTION,
-    images: ["/brand/wordmark.png"],
+    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Offerra — obrátený trh s nehnuteľnosťami",
     description: DESCRIPTION,
-    images: ["/brand/wordmark.png"],
+    images: ["/og-image.png"],
   },
 };
 
