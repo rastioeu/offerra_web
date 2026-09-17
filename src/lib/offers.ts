@@ -62,6 +62,42 @@ export type Offer = {
   bidder?: PublicBidder | null;
 };
 
+/**
+ * Vizuálna história ponuky — port appkového `offerSteps`. ODVODENÉ
+ * priamo z `property_offer` (žiadna samostatná history tabuľka) — tri
+ * pevné kroky: podaná → videl predávajúci → rozhodnutie. `updated_at`
+ * ako čas rozhodnutia sa berie LEN keď je stav terminálny (na PENDING
+ * ponuke `updated_at` znamená len úpravu sumy, nie rozhodnutie).
+ */
+export type OfferStep = { label: string; at: string | null; done: boolean };
+
+export function offerSteps(t: TFunc, o: Offer): OfferStep[] {
+  const decided = o.status === 'ACCEPTED' || o.status === 'REJECTED';
+  const terminal = decided || o.status === 'WITHDRAWN' || o.status === 'EXPIRED';
+  return [
+    { label: t('offers.stepSubmitted'), at: o.created_at, done: true },
+    {
+      label: o.viewed_by_owner_at ? t('offers.stepSeenByOwner') : t('offers.stepAwaitingOwner'),
+      at: o.viewed_by_owner_at,
+      done: Boolean(o.viewed_by_owner_at) || terminal,
+    },
+    {
+      label:
+        o.status === 'ACCEPTED'
+          ? t('offers.statusAccepted')
+          : o.status === 'REJECTED'
+            ? t('offers.statusRejected')
+            : o.status === 'WITHDRAWN'
+              ? t('offers.statusWithdrawn')
+              : o.status === 'EXPIRED'
+                ? t('offers.statusExpired')
+                : t('offers.stepDecision'),
+      at: terminal ? o.updated_at : null,
+      done: terminal,
+    },
+  ];
+}
+
 export type BuyerRequest = {
   id: string;
   user_id: string;

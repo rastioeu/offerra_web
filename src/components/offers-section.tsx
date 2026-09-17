@@ -1,6 +1,7 @@
 import { Avatar } from "@/components/avatar";
 import { OfferCountdownPill } from "@/components/offer-countdown-pill";
 import { OfferForm } from "@/components/offer-form";
+import { OfferTimeline } from "@/components/offer-timeline";
 import { OwnerOfferActions } from "@/components/owner-offer-actions";
 import { WithdrawOfferButton } from "@/components/withdraw-offer-button";
 import { formatAmount, getOfferStatusLabel, type OfferContact, type TenantProfile } from "@/lib/offers";
@@ -22,8 +23,9 @@ const STATUS_COLOR: Record<string, string> = {
  * Vlastník naviac vidí odkaz na ponuke (`offer_messages()`) a má
  * tlačidlá Prijať/Odmietnuť/Uzavrieť obchod (appka: `OwnerOffers`).
  *
- * CHÝBA oproti appke: appkový `OfferTimeline` (vizuálna história
- * stavu). Priznané v reporte. Dotazník nájomcu (17.9.2026) je hotový.
+ * Dotazník nájomcu aj `OfferTimeline` (vizuálna história stavu ponuky,
+ * odvodená čisto z `created_at`/`viewed_by_owner_at`/`updated_at`,
+ * žiadna nová tabuľka) doplnené 17.9.2026.
  */
 export async function OffersSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
   const offers = await fetchOffers(property.id);
@@ -98,6 +100,15 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
                 ) : null}
 
                 {isOwner ? (
+                  <details className="text-sm">
+                    <summary className="cursor-pointer text-text-muted">{t("ownerOffers.progress")}</summary>
+                    <div className="pt-2">
+                      <OfferTimeline offer={offer} />
+                    </div>
+                  </details>
+                ) : null}
+
+                {isOwner ? (
                   <OwnerOfferActions
                     propertyId={property.id}
                     offerId={offer.id}
@@ -114,6 +125,12 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
 
       {isOwner ? null : userId ? (
         <div className="flex flex-col gap-2">
+          {mine ? (
+            <div className="rounded-2xl border border-border bg-surface p-4">
+              <h3 className="mb-2 font-semibold text-text-primary">{t("ponukaForm.myOfferProgress")}</h3>
+              <OfferTimeline offer={mine} />
+            </div>
+          ) : null}
           <OfferForm
             propertyId={property.id}
             transactionType={property.transaction_type}
