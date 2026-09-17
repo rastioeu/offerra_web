@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { isLocale } from "@/i18n";
+import { createT, isLocale } from "@/i18n";
 import { localizeHref } from "@/i18n/href";
 import { createClient } from "@/lib/supabase/client";
 
@@ -15,17 +15,18 @@ import { createClient } from "@/lib/supabase/client";
 export function DeleteAccountButton() {
   const router = useRouter();
   const pathname = usePathname();
+  const maybeLocale = pathname.split("/")[1];
+  const locale = isLocale(maybeLocale) && maybeLocale !== "sk" ? maybeLocale : "sk";
+  const t = createT(locale);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleClick() {
     if (busy) return;
 
-    const firstOk = window.confirm(
-      "Natrvalo sa zmaže tvoj profil, prezývka, všetky inzeráty aj s fotkami, podané ponuky a dopyty. Nedá sa to vrátiť."
-    );
+    const firstOk = window.confirm(`${t("nastavenia.deleteAccountTitle")}\n\n${t("nastavenia.deleteAccountBody")}`);
     if (!firstOk) return;
-    const secondOk = window.confirm("Naozaj zmazať účet? Túto akciu už nepôjde vziať späť.");
+    const secondOk = window.confirm(`${t("nastavenia.confirmAgainTitle")}\n\n${t("nastavenia.confirmAgainBody")}`);
     if (!secondOk) return;
 
     setBusy(true);
@@ -36,13 +37,11 @@ export function DeleteAccountButton() {
       if (rpcError) throw rpcError;
 
       await supabase.auth.signOut().catch(() => undefined);
-      window.alert("Účet zmazaný. Ďakujeme, že si to skúsil.");
-      const maybeLocale = pathname.split("/")[1];
-      const locale = isLocale(maybeLocale) && maybeLocale !== "sk" ? maybeLocale : "sk";
+      window.alert(`${t("nastavenia.accountDeletedTitle")}\n\n${t("nastavenia.accountDeletedBody")}`);
       router.push(localizeHref(locale, "/"));
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Zmazanie účtu zlyhalo");
+      setError(e instanceof Error ? e.message : t("nastavenia.deleteAccountFailedTitle"));
       setBusy(false);
     }
   }
@@ -55,9 +54,9 @@ export function DeleteAccountButton() {
         disabled={busy}
         className="w-fit rounded-xl border border-danger bg-surface px-4 py-2 text-sm font-semibold text-danger hover:bg-danger/10 disabled:opacity-60"
       >
-        Zmazať účet
+        {t("nastavenia.deleteAccount")}
       </button>
-      <p className="text-xs text-text-muted">Zmazanie účtu je nezvratné a pýta si dve potvrdenia.</p>
+      <p className="text-xs text-text-muted">{t("nastavenia.deleteAccountConfirmHint")}</p>
       {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>
   );

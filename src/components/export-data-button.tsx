@@ -1,7 +1,9 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { createT, isLocale } from "@/i18n";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -11,6 +13,10 @@ import { createClient } from "@/lib/supabase/client";
  * len namiesto natívneho `Share` bežné stiahnutie súboru v prehliadači.
  */
 export function ExportDataButton() {
+  const pathname = usePathname();
+  const maybeLocale = pathname.split("/")[1];
+  const locale = isLocale(maybeLocale) && maybeLocale !== "sk" ? maybeLocale : "sk";
+  const t = createT(locale);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +37,7 @@ export function ExportDataButton() {
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Export sa nepodaril");
+      setError(e instanceof Error ? e.message : t("nastavenia.exportFailedTitle"));
     } finally {
       setBusy(false);
     }
@@ -45,7 +51,7 @@ export function ExportDataButton() {
         disabled={busy}
         className="w-fit rounded-xl border border-border-strong bg-surface px-4 py-2 text-sm font-semibold text-text-primary hover:bg-surface-pressed disabled:opacity-60"
       >
-        {busy ? "Pripravujem…" : "Stiahnuť moje dáta"}
+        {busy ? t("nastavenia.exportPreparing") : t("nastavenia.exportButton")}
       </button>
       {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>

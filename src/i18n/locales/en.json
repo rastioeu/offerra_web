@@ -997,7 +997,11 @@
     "noMatchTitle": "Nothing matches this search",
     "noMatchBody": "Try removing a filter or making your search broader.",
     "noMatchAction": "Clear filters",
-    "reportListing": "Report listing"
+    "reportListing": "Report listing",
+    "priceOnRequest": "Price on request",
+    "lead": "A reverse real estate market — sellers don't have to name a price, buyers submit their own offers.",
+    "understoodPrefix": "Understood: ",
+    "clearFilter": "Clear filter"
   },
   "login": {
     "subtitle": "Properties for sale and rent",

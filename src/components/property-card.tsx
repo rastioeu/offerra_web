@@ -38,7 +38,7 @@ export async function PropertyCard({ property }: { property: PropertyWithMedia }
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-text-muted">
-            Bez fotky
+            {t("propertyDetail.noPhoto")}
           </div>
         )}
         <span className="absolute left-3 top-3 rounded-[10px] bg-primary px-2 py-[3px] text-xs font-semibold tracking-wide text-on-primary">
@@ -62,7 +62,7 @@ export async function PropertyCard({ property }: { property: PropertyWithMedia }
         {price ? (
           <p className="mt-1 font-money text-[22px] font-bold leading-[25px] text-accent">{price}</p>
         ) : (
-          <p className="mt-1 text-sm text-text-muted">Cena na dohodu</p>
+          <p className="mt-1 text-sm text-text-muted">{t("catalog.priceOnRequest")}</p>
         )}
       </div>
     </Link>

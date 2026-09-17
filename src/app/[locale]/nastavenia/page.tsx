@@ -7,11 +7,23 @@ import { HowItWorksCard } from "@/components/how-it-works-card";
 import { ProfileEditForm } from "@/components/profile-edit-form";
 import { fetchMyProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
-import { getLocale, redirectLocalized } from "@/i18n/server";
+import { getLocale, getT, redirectLocalized } from "@/i18n/server";
 import { loginRedirectPath } from "@/i18n/href";
+import type { Locale } from "@/i18n";
 
 export const metadata: Metadata = {
   title: "Nastavenia",
+};
+
+/**
+ * Nadpisy, čo appka nemá (profil/nebezpečná zóna sekcie sú webové) —
+ * malá lokálna mapa mimo veľkého slovníka, rovnaký vzor ako
+ * `site-header.tsx` `LABELS`.
+ */
+const LABELS: Record<Locale, { profileSection: string; dangerZone: string }> = {
+  sk: { profileSection: "Prezývka a kontakt", dangerZone: "Nebezpečná zóna" },
+  en: { profileSection: "Nickname and contact", dangerZone: "Danger zone" },
+  de: { profileSection: "Spitzname und Kontakt", dangerZone: "Gefahrenzone" },
 };
 
 /**
@@ -21,7 +33,7 @@ export const metadata: Metadata = {
  * jazyka telefónu).
  */
 export default async function NastaveniaPage() {
-  const [supabase, language] = await Promise.all([createClient(), getLocale()]);
+  const [supabase, language, t] = await Promise.all([createClient(), getLocale(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -32,30 +44,31 @@ export default async function NastaveniaPage() {
   // nedôjde (pošle ho na `/prezyvka`) — `null` tu je len obranná
   // poistka pre prípadný pretek, nie bežný stav.
   const profile = await fetchMyProfile();
+  const l = LABELS[language];
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold text-text-primary">Nastavenia</h1>
+      <h1 className="text-2xl font-bold text-text-primary">{t("nastavenia.title")}</h1>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Účet</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{t("nastavenia.accountSection")}</h2>
         <p className="text-text-secondary">{user.email}</p>
         <form action={signOut}>
           <button type="submit" className="w-fit text-sm text-link hover:underline">
-            Odhlásiť sa
+            {t("nastavenia.signOut")}
           </button>
         </form>
       </section>
 
       {profile ? (
         <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Prezývka a kontakt</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{l.profileSection}</h2>
           <ProfileEditForm profile={profile} language={language} />
         </section>
       ) : null}
 
       <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Moje dáta</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{t("nastavenia.dataSection")}</h2>
         <ExportDataButton />
       </section>
 
@@ -65,7 +78,7 @@ export default async function NastaveniaPage() {
       </section>
 
       <section className="flex flex-col gap-3 border-t border-border pt-6">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Nebezpečná zóna</h2>
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{l.dangerZone}</h2>
         <DeleteAccountButton />
       </section>
     </main>

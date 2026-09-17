@@ -997,7 +997,11 @@
     "noMatchTitle": "Nichts entspricht dieser Suche",
     "noMatchBody": "Versuche, einen Filter zu entfernen oder die Suche allgemeiner zu formulieren.",
     "noMatchAction": "Filter zurücksetzen",
-    "reportListing": "Inserat melden"
+    "reportListing": "Inserat melden",
+    "priceOnRequest": "Preis auf Anfrage",
+    "lead": "Ein umgekehrter Immobilienmarkt — Verkäufer müssen keinen Preis nennen, Interessenten machen eigene Angebote.",
+    "understoodPrefix": "Verstanden: ",
+    "clearFilter": "Filter löschen"
   },
   "login": {
     "subtitle": "Immobilien zum Kauf und zur Miete",

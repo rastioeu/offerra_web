@@ -43,7 +43,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   // — `/dopyty` aj `/login`, obe so statickým `export const metadata`,
   // príponu " | Offerra" dostanú správne, len táto dynamická route
   // nie) — prípona je preto tu explicitne, nie spoliehanie sa na dedenie.
-  const baseTitle = parts.length > 0 ? parts.join(" ") : "Nehnuteľnosti";
+  const baseTitle = parts.length > 0 ? parts.join(" ") : t("catalog.title");
   const title = `${baseTitle} | Offerra`;
 
   const qs = new URLSearchParams(
@@ -114,11 +114,8 @@ export default async function CatalogPage({
       ) : null}
       <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
         <div className="flex flex-col gap-2 lg:max-w-2xl">
-          <h1 className="text-2xl font-bold text-text-primary">Nehnuteľnosti</h1>
-          <p className="text-text-secondary">
-            Obrátený trh s nehnuteľnosťami — predávajúci nemusí povedať cenu,
-            záujemcovia predkladajú vlastné ponuky.
-          </p>
+          <h1 className="text-2xl font-bold text-text-primary">{t("catalog.title")}</h1>
+          <p className="text-text-secondary">{t("catalog.lead")}</p>
         </div>
         <div className="w-full lg:w-80 lg:shrink-0">
           <DismissibleCard storageKey="offerra-hiw-home-dismissed">
@@ -138,13 +135,14 @@ export default async function CatalogPage({
         <div className="flex flex-1 flex-col gap-4">
           {understood.length > 0 ? (
             <p className="text-sm text-text-muted">
-              Rozumiem: {understood.join(", ")}
+              {t("catalog.understoodPrefix")}
+              {understood.join(", ")}
             </p>
           ) : null}
 
           {!isFilterEmpty(filter) ? (
             <Link href={localizeHref(language, "/")} className="w-fit text-sm text-link hover:underline">
-              Vymazať filter
+              {t("catalog.clearFilter")}
             </Link>
           ) : null}
 

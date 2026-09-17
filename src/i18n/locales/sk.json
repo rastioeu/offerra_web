@@ -1003,7 +1003,11 @@
     "noMatchTitle": "Tomuto hľadaniu nič nezodpovedá",
     "noMatchBody": "Skús ubrať niektorý filter alebo napísať hľadanie voľnejšie.",
     "noMatchAction": "Zrušiť filtre",
-    "reportListing": "Nahlásiť inzerát"
+    "reportListing": "Nahlásiť inzerát",
+    "priceOnRequest": "Cena na dohodu",
+    "lead": "Obrátený trh s nehnuteľnosťami — predávajúci nemusí povedať cenu, záujemcovia predkladajú vlastné ponuky.",
+    "understoodPrefix": "Rozumiem: ",
+    "clearFilter": "Vymazať filter"
   },
   "login": {
     "subtitle": "Nehnuteľnosti na predaj aj prenájom",
