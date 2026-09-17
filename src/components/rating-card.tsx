@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { saveRatingAction } from "@/app/inzerat/[id]/rating-actions";
+import { Button } from "@/components/button";
 import type { Rating } from "@/lib/rating";
 import { t } from "@/i18n";
 
@@ -86,14 +87,9 @@ export function RatingCard({
 
           {error ? <p className="text-sm text-danger">{error}</p> : null}
 
-          <button
-            type="button"
-            onClick={submit}
-            disabled={pending}
-            className="w-fit rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-          >
+          <Button type="button" onClick={submit} disabled={pending} className="w-fit px-5 py-2 text-sm">
             {pending ? t("ratingCard.savingButton") : mine ? t("ratingCard.editButton") : t("ratingCard.submitButton")}
-          </button>
+          </Button>
           <p className="text-xs text-text-muted">{t("ratingCard.editAnytime")}</p>
         </>
       ) : null}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { createDraftAction } from "@/app/moje-inzeraty/actions";
+import { Button } from "@/components/button";
 import { formatArea, formatPrice, formatRooms, getStatusLabel } from "@/lib/property";
 import { fetchMyProperties } from "@/lib/my-properties";
 import { createClient } from "@/lib/supabase/server";
@@ -34,12 +35,9 @@ export default async function MyPropertiesPage() {
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-text-primary">Moje inzeráty</h1>
         <form action={createDraftAction}>
-          <button
-            type="submit"
-            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary hover:opacity-90"
-          >
+          <Button type="submit" className="px-5 py-2.5 text-sm">
             Pridať inzerát
-          </button>
+          </Button>
         </form>
       </div>
 

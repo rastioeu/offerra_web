@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 
 import { closeDealAction, decideOfferAction } from "@/app/inzerat/[id]/owner-offer-actions";
+import { Button } from "@/components/button";
 import { closedLabel, type TransactionType } from "@/lib/property";
 import { t } from "@/i18n";
 
@@ -46,22 +47,12 @@ export function OwnerOfferActions({
     <div className="flex flex-wrap gap-2">
       {offerStatus === "PENDING" ? (
         <>
-          <button
-            type="button"
-            onClick={() => decide("ACCEPTED")}
-            disabled={pending}
-            className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-          >
+          <Button type="button" onClick={() => decide("ACCEPTED")} disabled={pending} className="px-4 py-2 text-sm">
             Prijať ponuku
-          </button>
-          <button
-            type="button"
-            onClick={() => decide("REJECTED")}
-            disabled={pending}
-            className="rounded-xl border border-border-strong bg-surface px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface-pressed disabled:opacity-60"
-          >
+          </Button>
+          <Button type="button" variant="secondary" onClick={() => decide("REJECTED")} disabled={pending} className="px-4 py-2 text-sm">
             Odmietnuť
-          </button>
+          </Button>
         </>
       ) : null}
       {propertyActive && (offerStatus === "ACCEPTED" || offerStatus === "PENDING") ? (

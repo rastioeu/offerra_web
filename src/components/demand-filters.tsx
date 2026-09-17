@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Button } from "@/components/button";
 import { getDemandLabel, getPropertyLabel } from "@/lib/labels";
 import type { PropertyType, TransactionType } from "@/lib/property";
 import { t } from "@/i18n";
@@ -52,12 +53,9 @@ export function DemandFilters({
         />
         {activeTransaction ? <input type="hidden" name="transaction" value={activeTransaction} /> : null}
         {activePropertyType ? <input type="hidden" name="type" value={activePropertyType} /> : null}
-        <button
-          type="submit"
-          className="rounded-xl bg-primary px-5 py-2.5 font-semibold text-on-primary hover:opacity-90"
-        >
+        <Button type="submit" className="px-5 py-2.5">
           Hľadať
-        </button>
+        </Button>
       </form>
 
       <div className="flex flex-wrap gap-2">

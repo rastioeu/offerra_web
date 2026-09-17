@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 
 import { setAppConfig } from "@/app/admin/actions";
+import { Button } from "@/components/button";
 
 /** Jeden nastaviteľný prah — appka: riadok v „SETTINGS" tabe. Platí ihneď. */
 export function AdminConfigRow({ configKey, value, label, hint }: { configKey: string; value: string; label: string; hint: string | null }) {
@@ -29,13 +30,9 @@ export function AdminConfigRow({ configKey, value, label, hint }: { configKey: s
           defaultValue={value}
           className="w-28 rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm text-text-primary focus:border-accent-deep focus:outline-none"
         />
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-xl bg-primary px-3 py-1.5 text-sm font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={pending} className="px-3 py-1.5 text-sm">
           Uložiť
-        </button>
+        </Button>
         <span className="text-xs text-text-muted">Teraz platí: {value}</span>
       </div>
     </form>

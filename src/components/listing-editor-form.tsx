@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
 import { archiveListingAction, publishListingAction, saveListingAction } from "@/app/moje-inzeraty/[id]/upravit/actions";
+import { Button } from "@/components/button";
 import { CityPicker } from "@/components/city-picker";
 import { DeadlinePicker } from "@/components/deadline-picker";
 import { StreetPicker } from "@/components/street-picker";
@@ -241,31 +242,17 @@ export function ListingEditorForm({ property }: { property: Property }) {
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
       <div className="flex flex-wrap items-center gap-3 border-t border-border pt-4">
-        <button
-          type="button"
-          onClick={save}
-          disabled={saving}
-          className="rounded-xl border border-border-strong bg-surface px-5 py-2.5 text-sm font-semibold text-text-primary hover:bg-surface-pressed disabled:opacity-60"
-        >
+        <Button type="button" variant="secondary" onClick={save} disabled={saving} className="px-5 py-2.5 text-sm">
           {saving ? "Ukladám…" : "Uložiť"}
-        </button>
+        </Button>
         {property.status === "DRAFT" ? (
-          <button
-            type="button"
-            onClick={publish}
-            disabled={publishing}
-            className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-          >
+          <Button type="button" onClick={publish} disabled={publishing} className="px-5 py-2.5 text-sm">
             {publishing ? "Zverejňujem…" : "Zverejniť"}
-          </button>
+          </Button>
         ) : property.status === "ACTIVE" ? (
-          <button
-            type="button"
-            onClick={archive}
-            className="rounded-xl border border-danger bg-surface px-5 py-2.5 text-sm font-semibold text-danger hover:bg-danger/10"
-          >
+          <Button type="button" variant="danger" onClick={archive} className="px-5 py-2.5 text-sm">
             Stiahnuť z ponuky
-          </button>
+          </Button>
         ) : null}
         {savedAt ? <span className="text-sm text-text-muted">Uložené.</span> : null}
       </div>

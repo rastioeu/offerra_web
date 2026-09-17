@@ -40,6 +40,7 @@
 
   --shadow-card: 0 4px 14px rgba(28, 24, 21, 0.09);
   --shadow-glow: 0 0 24px rgba(201, 112, 59, 0.35);
+  --shadow-button: 0 2px 8px rgba(168, 85, 38, 0.28);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -72,6 +73,7 @@
 
     --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.28);
     --shadow-glow: 0 0 28px rgba(227, 154, 94, 0.45);
+    --shadow-button: 0 2px 8px rgba(0, 0, 0, 0.4);
   }
 }
 

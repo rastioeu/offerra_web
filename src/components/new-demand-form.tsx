@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { createDemandAction } from "@/app/dopyty/novy/actions";
+import { Button } from "@/components/button";
 import { CityPicker } from "@/components/city-picker";
 import { getDemandLabel, getPropertyLabel } from "@/lib/labels";
 import type { PropertyType, TransactionType } from "@/lib/property";
@@ -171,13 +172,9 @@ export function NewDemandForm() {
 
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-fit rounded-xl bg-primary px-6 py-3 font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={pending} className="w-fit px-6 py-3">
         {pending ? t("dopytNovy.savingButton") : t("dopytNovy.publishButton")}
-      </button>
+      </Button>
     </form>
   );
 }

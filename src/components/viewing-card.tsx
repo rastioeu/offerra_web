@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 
 import { confirmViewingAction, requestViewingAction, setViewingStatusAction } from "@/app/inzerat/[id]/viewing-actions";
+import { Button } from "@/components/button";
 import { getViewingConsent, getViewingStatusLabel, REVEALED, type Viewing, type ViewingContact } from "@/lib/viewing";
 import { t } from "@/i18n";
 
@@ -72,14 +73,9 @@ export function ViewingCard({
           {closed ? (
             <p className="text-sm text-text-muted">{t("viewing.closedHint")}</p>
           ) : (
-            <button
-              type="button"
-              onClick={ask}
-              disabled={pending}
-              className="w-fit rounded-xl bg-primary px-5 py-2.5 font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-            >
+            <Button type="button" onClick={ask} disabled={pending} className="w-fit px-5 py-2.5">
               {pending ? t("viewing.sending") : mine ? t("viewing.askAgain") : t("viewing.ask")}
-            </button>
+            </Button>
           )}
         </div>
       ) : null}
@@ -100,14 +96,9 @@ export function ViewingCard({
                 <>
                   <p className="text-sm text-text-secondary">{t("viewing.ownerPendingHint")}</p>
                   <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => confirm(v)}
-                      disabled={pending}
-                      className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-                    >
+                    <Button type="button" onClick={() => confirm(v)} disabled={pending} className="px-4 py-2 text-sm">
                       {t("viewing.confirmButton")}
-                    </button>
+                    </Button>
                     <button
                       type="button"
                       onClick={() => mark(v, "CANCELLED")}

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { submitOffer } from "@/app/inzerat/[id]/actions";
+import { Button } from "@/components/button";
 import { OfferValidityPicker } from "@/components/offer-validity-picker";
 import { getEmploymentOptions, type TenantProfile } from "@/lib/offers";
 import { t } from "@/i18n";
@@ -200,13 +201,9 @@ export function OfferForm({
 
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-fit rounded-xl bg-primary px-5 py-2.5 font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={pending} className="w-fit px-5 py-2.5">
         {pending ? "Odosielam…" : existing ? "Uložiť zmenu" : "Podať ponuku"}
-      </button>
+      </Button>
     </form>
   );
 }

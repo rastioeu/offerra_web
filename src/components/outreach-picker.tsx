@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { createOutreachAction } from "@/app/dopyt/[id]/actions";
+import { Button } from "@/components/button";
 import { formatPrice } from "@/lib/property";
 import type { PropertyWithMedia } from "@/lib/property";
 import { t } from "@/i18n";
@@ -36,25 +37,17 @@ export function OutreachPicker({
 
   if (myProperties.length === 0) {
     return !open ? (
-      <button
-        type="button"
-        onClick={() => setError(t("dopytDetail.nothingToOfferBody"))}
-        className="w-fit rounded-xl bg-primary px-5 py-2.5 font-semibold text-on-primary hover:opacity-90"
-      >
+      <Button type="button" onClick={() => setError(t("dopytDetail.nothingToOfferBody"))} className="w-fit px-5 py-2.5">
         {t("dopytDetail.outreachButton")}
-      </button>
+      </Button>
     ) : null;
   }
 
   if (!open) {
     return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="w-fit rounded-xl bg-primary px-5 py-2.5 font-semibold text-on-primary hover:opacity-90"
-      >
+      <Button type="button" onClick={() => setOpen(true)} className="w-fit px-5 py-2.5">
         {t("dopytDetail.outreachButton")}
-      </button>
+      </Button>
     );
   }
 
@@ -117,21 +110,12 @@ export function OutreachPicker({
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={submit}
-          disabled={pending || !chosen}
-          className="rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-        >
+        <Button type="button" onClick={submit} disabled={pending || !chosen} className="px-5 py-2 text-sm">
           {pending ? t("dopytDetail.sendingButton") : t("dopytDetail.sendButton")}
-        </button>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="rounded-xl border border-border-strong bg-surface px-5 py-2 text-sm font-medium text-text-primary hover:bg-surface-pressed"
-        >
+        </Button>
+        <Button type="button" variant="secondary" onClick={() => setOpen(false)} className="px-5 py-2 text-sm">
           Zrušiť
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 
+import { Button } from "@/components/button";
 import { contactBlockedText, contactInText, MESSAGE_MAX } from "@/lib/messages";
 import { t } from "@/i18n";
 
@@ -52,13 +53,9 @@ export function MessageSendForm({
       />
       {blocked ? <p className="text-xs text-danger">{contactBlockedText(t, blocked)}</p> : null}
       {error && !blocked ? <p className="text-xs text-danger">{error}</p> : null}
-      <button
-        type="submit"
-        disabled={pending || !value.trim() || !!blocked}
-        className="w-fit rounded-xl bg-primary px-5 py-2 text-sm font-semibold text-on-primary hover:opacity-90 disabled:opacity-60"
-      >
+      <Button type="submit" disabled={pending || !value.trim() || !!blocked} className="w-fit px-5 py-2 text-sm">
         {pending ? "Odosielam…" : t("messages.sendButton")}
-      </button>
+      </Button>
     </form>
   );
 }
