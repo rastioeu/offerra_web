@@ -3,9 +3,9 @@ import { OfferCountdownPill } from "@/components/offer-countdown-pill";
 import { OfferForm } from "@/components/offer-form";
 import { OwnerOfferActions } from "@/components/owner-offer-actions";
 import { WithdrawOfferButton } from "@/components/withdraw-offer-button";
-import { formatAmount, getOfferStatusLabel, type OfferContact } from "@/lib/offers";
+import { formatAmount, getOfferStatusLabel, type OfferContact, type TenantProfile } from "@/lib/offers";
 import type { PropertyDetail } from "@/lib/detail";
-import { fetchOffers, fetchOfferContact } from "@/lib/property-offers";
+import { fetchOffers, fetchOfferContact, fetchTenantProfile } from "@/lib/property-offers";
 import { t } from "@/i18n";
 
 const STATUS_COLOR: Record<string, string> = {
@@ -22,23 +22,33 @@ const STATUS_COLOR: Record<string, string> = {
  * Vlastník naviac vidí odkaz na ponuke (`offer_messages()`) a má
  * tlačidlá Prijať/Odmietnuť/Uzavrieť obchod (appka: `OwnerOffers`).
  *
- * CHÝBA oproti appke: dotazník nájomcu pri prenájme, appkový
- * `OfferTimeline` (vizuálna história stavu). Priznané v reporte.
+ * CHÝBA oproti appke: appkový `OfferTimeline` (vizuálna história
+ * stavu). Priznané v reporte. Dotazník nájomcu (17.9.2026) je hotový.
  */
 export async function OffersSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
   const offers = await fetchOffers(property.id);
   const statusLabel = getOfferStatusLabel(t);
   const isOwner = userId === property.owner_id;
+  const isRent = property.transaction_type === "RENT";
   const mine = userId ? offers.find((o) => o.bidder_id === userId && o.status !== "WITHDRAWN") : undefined;
 
   const contacts: Record<string, OfferContact | null> = {};
-  if (isOwner) {
+  const tenants: Record<string, TenantProfile | null> = {};
+  if (isOwner && isRent) {
+    for (const offer of offers) {
+      tenants[offer.id] = await fetchTenantProfile(offer.id).catch(() => null);
+      if (offer.status === "ACCEPTED") {
+        contacts[offer.id] = await fetchOfferContact(offer.id).catch(() => null);
+      }
+    }
+  } else if (isOwner) {
     for (const offer of offers) {
       if (offer.status === "ACCEPTED") {
         contacts[offer.id] = await fetchOfferContact(offer.id).catch(() => null);
       }
     }
   }
+  const myTenant = isRent && mine ? await fetchTenantProfile(mine.id).catch(() => null) : null;
 
   return (
     <section className="flex flex-col gap-4">
@@ -75,6 +85,10 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
 
                 {isOwner && offer.message ? <p className="text-sm italic text-text-secondary">„{offer.message}&quot;</p> : null}
 
+                {isOwner && isRent ? (
+                  <TenantProfileView profile={tenants[offer.id]} />
+                ) : null}
+
                 {isOwner && offer.status === "ACCEPTED" ? (
                   <div className="grid grid-cols-2 gap-2 rounded-lg bg-surface-pressed p-2 sm:grid-cols-3">
                     <ContactCell label="Meno" value={contact?.full_name} />
@@ -102,7 +116,9 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
         <div className="flex flex-col gap-2">
           <OfferForm
             propertyId={property.id}
+            transactionType={property.transaction_type}
             existing={mine ? { id: mine.id, amount: mine.amount, message: mine.message, valid_until: mine.valid_until } : null}
+            existingTenant={myTenant}
           />
           {mine ? <WithdrawOfferButton propertyId={property.id} offerId={mine.id} /> : null}
         </div>
@@ -123,6 +139,37 @@ function ContactCell({ label, value }: { label: string; value: string | null | u
     <div className="flex flex-col gap-0.5">
       <span className="text-xs text-text-muted">{label}</span>
       <span className="text-sm font-medium text-text-primary">{value ?? "—"}</span>
+    </div>
+  );
+}
+
+/**
+ * „O nájomcovi" — appka: `owner-offers.tsx`. Vidí len majiteľ (RLS
+ * `tenant_select_parties`), preto sa toto renderuje LEN pre `isOwner`.
+ */
+function TenantProfileView({ profile }: { profile: TenantProfile | null | undefined }) {
+  if (!profile) {
+    return <p className="text-sm text-text-muted">{t("ownerOffers.noTenantForm")}</p>;
+  }
+  return (
+    <div className="flex flex-col gap-2 rounded-lg bg-surface-pressed p-2">
+      <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">{t("ownerOffers.aboutTenant")}</p>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <ContactCell label={t("ownerOffers.peopleLabel")} value={profile.num_people != null ? String(profile.num_people) : null} />
+        <ContactCell
+          label={t("ownerOffers.petsLabel")}
+          value={profile.has_pets ? profile.pet_details || "áno" : t("ownerOffers.noPets")}
+        />
+        {profile.lease_duration_months != null ? (
+          <ContactCell label="Doba" value={t("ownerOffers.monthsAbbrev", { count: profile.lease_duration_months })} />
+        ) : null}
+        <ContactCell label={t("ownerOffers.employmentLabel")} value={profile.employment_status} />
+        <ContactCell
+          label={t("ownerOffers.incomeLabel")}
+          value={profile.monthly_income_hint != null ? `${profile.monthly_income_hint} €` : null}
+        />
+      </div>
+      {profile.note ? <p className="text-sm italic text-text-secondary">„{profile.note}&quot;</p> : null}
     </div>
   );
 }

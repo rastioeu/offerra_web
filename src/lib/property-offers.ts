@@ -4,7 +4,7 @@
  * neprihlásený (Rastio, 7.8.2026). Meno/telefón sú chránené stĺpcovými
  * grantmi, sem sa vôbec nedostanú.
  */
-import { OFFER_PUBLIC_COLS, type Offer, type OfferContact } from "@/lib/offers";
+import { OFFER_PUBLIC_COLS, type Offer, type OfferContact, type TenantProfile } from "@/lib/offers";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -47,4 +47,21 @@ export async function fetchOfferContact(offerId: string): Promise<OfferContact |
   if (error) throw error;
   const rows = (data ?? []) as OfferContact[];
   return rows[0] ?? null;
+}
+
+/**
+ * Dotazník nájomcu — chránené priamo RLS (`tenant_select_parties`: vidí
+ * len majiteľ inzerátu a záujemca sám), nie RPC. Chýbajúci riadok (žiadny
+ * dotazník) nie je chyba — appka rovnako ukáže „bez dotazníka".
+ */
+export async function fetchTenantProfile(offerId: string): Promise<TenantProfile | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .schema("offerra")
+    .from("tenant_profile")
+    .select("*")
+    .eq("offer_id", offerId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data as TenantProfile | null) ?? null;
 }

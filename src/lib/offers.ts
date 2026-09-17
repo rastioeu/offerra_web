@@ -20,6 +20,34 @@ export type OfferContact = {
   email: string | null;
 };
 
+/**
+ * Dotazník nájomcu — port appkového `TenantProfile`. Vidí LEN majiteľ a
+ * záujemca sám (appka: „O NÁJOMCOVI — VIDÍ LEN MAJITEĽ"), nie verejný
+ * zoznam ponúk. Samostatná tabuľka `tenant_profile` (1 riadok na
+ * ponuku, `offer_id` unique), nie stĺpce na `property_offer`.
+ */
+export type TenantProfile = {
+  offer_id: string;
+  num_people: number | null;
+  has_pets: boolean;
+  pet_details: string | null;
+  lease_duration_months: number | null;
+  employment_status: string | null;
+  monthly_income_hint: number | null;
+  note: string | null;
+};
+
+export function getEmploymentOptions(t: TFunc): string[] {
+  return [
+    t('offers.employmentFullTime'),
+    t('offers.employmentSelfEmployed'),
+    t('offers.employmentContract'),
+    t('offers.employmentStudent'),
+    t('offers.employmentRetired'),
+    t('offers.employmentOther'),
+  ];
+}
+
 export type Offer = {
   id: string;
   property_id: string;
