@@ -8,6 +8,7 @@ import { formatAmount, getOfferStatusLabel, type OfferContact, type TenantProfil
 import type { PropertyDetail } from "@/lib/detail";
 import { fetchOffers, fetchOfferContact, fetchTenantProfile } from "@/lib/property-offers";
 import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 import type { TFunc } from "@/i18n";
 
 const STATUS_COLOR: Record<string, string> = {
@@ -149,7 +150,7 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
         </div>
       ) : (
         <p className="text-sm text-text-muted">
-          <a href="/login" className="text-link hover:underline">
+          <a href={localizeHref(language, "/login")} className="text-link hover:underline">
             Prihlás sa
           </a>{" "}
           a podaj vlastnú ponuku.

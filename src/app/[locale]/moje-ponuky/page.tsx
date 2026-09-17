@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { fetchMyOffers } from "@/lib/my-offers";
 import { formatAmount, getOfferStatusLabel } from "@/lib/offers";
 import { getTransactionLabel } from "@/lib/labels";
 import { createClient } from "@/lib/supabase/server";
-import { getT } from "@/i18n/server";
+import { getLocale, getT, redirectLocalized } from "@/i18n/server";
+import { loginRedirectPath, localizeHref } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Moje ponuky",
@@ -21,13 +21,13 @@ const STATUS_COLOR: Record<string, string> = {
 };
 
 export default async function MyOffersPage() {
-  const t = await getT();
+  const [t, locale] = await Promise.all([getT(), getLocale()]);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login?next=/moje-ponuky");
+  if (!user) return redirectLocalized(loginRedirectPath(locale, "/moje-ponuky"));
 
   const offers = await fetchMyOffers(user.id);
   const statusLabel = getOfferStatusLabel(t);
@@ -44,7 +44,7 @@ export default async function MyOffersPage() {
           {offers.map((offer) => (
             <Link
               key={offer.id}
-              href={`/inzerat/${offer.property_id}`}
+              href={localizeHref(locale, `/inzerat/${offer.property_id}`)}
               className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-surface p-4 hover:border-border-strong"
             >
               <div className="flex flex-col gap-0.5">

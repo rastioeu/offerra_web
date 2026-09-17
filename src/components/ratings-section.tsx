@@ -4,6 +4,7 @@ import type { PropertyDetail } from "@/lib/detail";
 import { fetchOffers } from "@/lib/property-offers";
 import { canRate, fetchMyAndReceivedRating, fetchRatings } from "@/lib/rating-data";
 import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 /**
  * Hodnotenia na detaile inzerátu — prenesené z appky (`RatingsTab`).
@@ -13,13 +14,13 @@ import { getLocale, getT } from "@/i18n/server";
  * stavu inzerátu — je to jeho povesť naprieč všetkými obchodmi.
  */
 export async function RatingsSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
-  const t = await getT();
+  const [t, language] = await Promise.all([getT(), getLocale()]);
   if (!userId) {
     return (
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-text-primary">Hodnotenia</h2>
         <p className="text-sm text-text-muted">
-          <a href="/login" className="text-link hover:underline">
+          <a href={localizeHref(language, "/login")} className="text-link hover:underline">
             Prihlás sa
           </a>{" "}
           na zobrazenie hodnotení.

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { MessageThread } from "@/components/message-thread";
 import type { BuyerRequest } from "@/lib/offers";
 import { fetchNicknames, fetchThreads } from "@/lib/message-data";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 /**
  * Správy pri dopyte — appka: `DemandMessages`, rovnaká mechanika ako pri
@@ -38,7 +39,10 @@ export async function DemandMessages({ demand, userId }: { demand: BuyerRequest;
     );
   }
 
-  const threads = await fetchThreads({ requestId: demand.id }, userId);
+  const [threads, language] = await Promise.all([
+    fetchThreads({ requestId: demand.id }, userId),
+    getLocale(),
+  ]);
   const nicknames = await fetchNicknames(threads.map((th) => th.otherId));
 
   return (
@@ -54,7 +58,7 @@ export async function DemandMessages({ demand, userId }: { demand: BuyerRequest;
             return (
               <Link
                 key={th.otherId}
-                href={`/dopyt/${demand.id}/spravy/${th.otherId}`}
+                href={localizeHref(language, `/dopyt/${demand.id}/spravy/${th.otherId}`)}
                 className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-3 hover:border-border-strong"
               >
                 <div className="flex flex-col gap-0.5">

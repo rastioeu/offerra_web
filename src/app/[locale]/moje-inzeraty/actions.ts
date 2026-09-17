@@ -1,8 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
-
 import { createClient } from "@/lib/supabase/server";
+import { redirectLocalized } from "@/i18n/server";
 
 /**
  * Nový inzerát vzniká hneď ako DRAFT v DB (appka: `pridat.tsx`) — nie až
@@ -32,5 +31,5 @@ export async function createDraftAction() {
     .single();
   if (error) throw error;
 
-  redirect(`/moje-inzeraty/${(data as { id: string }).id}/upravit`);
+  return redirectLocalized(`/moje-inzeraty/${(data as { id: string }).id}/upravit`);
 }

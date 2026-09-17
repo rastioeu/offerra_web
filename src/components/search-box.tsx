@@ -1,7 +1,10 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { isLocale } from "@/i18n";
+import { localizeHref } from "@/i18n/href";
 
 /**
  * Živé vyhľadávanie — appka: `SearchBar`, debounce 350ms, žiadne
@@ -12,6 +15,7 @@ import { useEffect, useState } from "react";
  */
 export function SearchBox({ initialValue }: { initialValue: string }) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [text, setText] = useState(initialValue);
 
@@ -21,10 +25,12 @@ export function SearchBox({ initialValue }: { initialValue: string }) {
       if (text.trim()) next.set("q", text);
       else next.delete("q");
       const qs = next.toString();
+      const maybeLocale = pathname.split("/")[1];
+      const locale = isLocale(maybeLocale) && maybeLocale !== "sk" ? maybeLocale : "sk";
       // `replace`, nie `push` — inak by každé písmeno pridalo záznam
       // do histórie a tlačidlo Späť by museli klikať toľkokrát, koľko
       // znakov niekto napísal.
-      router.replace(qs ? `/?${qs}` : "/");
+      router.replace(localizeHref(locale, qs ? `/?${qs}` : "/"));
     }, 350);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps

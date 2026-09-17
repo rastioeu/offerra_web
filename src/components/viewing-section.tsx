@@ -4,6 +4,7 @@ import { isDeadlinePassed } from "@/lib/deadline";
 import { REVEALED, type ViewingContact } from "@/lib/viewing";
 import { fetchViewingContact, fetchViewings } from "@/lib/viewing-data";
 import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 export async function ViewingSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
   const [t, language] = await Promise.all([getT(), getLocale()]);
@@ -12,7 +13,7 @@ export async function ViewingSection({ property, userId }: { property: PropertyD
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-text-primary">{t("viewing.eyebrow")}</h2>
         <p className="text-sm text-text-muted">
-          <a href="/login" className="text-link hover:underline">
+          <a href={localizeHref(language, "/login")} className="text-link hover:underline">
             Prihlás sa
           </a>{" "}
           a požiadaj o obhliadku.

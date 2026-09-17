@@ -1,8 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
-
 import { createClient } from "@/lib/supabase/server";
+import { redirectLocalized } from "@/i18n/server";
 
 function num(text: string): number | null {
   const c = text.replace(",", ".").trim();
@@ -61,5 +60,5 @@ export async function createDemandAction(formData: FormData) {
     .single();
   if (error) throw error;
 
-  redirect(`/dopyt/${(data as { id: string }).id}`);
+  return redirectLocalized(`/dopyt/${(data as { id: string }).id}`);
 }

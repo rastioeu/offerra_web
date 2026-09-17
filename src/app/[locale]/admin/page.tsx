@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 import { resolveReport, setUserBlocked } from "@/app/[locale]/admin/actions";
 import { AdminConfigRow } from "@/components/admin-config-row";
@@ -15,7 +14,8 @@ import {
 } from "@/lib/admin-data";
 import { getReportReasonLabel, getReportStatusLabel } from "@/lib/report";
 import { createClient } from "@/lib/supabase/server";
-import { getT } from "@/i18n/server";
+import { getLocale, getT, redirectLocalized } from "@/i18n/server";
+import { loginRedirectPath } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Správa",
@@ -39,13 +39,13 @@ const STAT_LABELS: { key: keyof Awaited<ReturnType<typeof fetchAdminStats>>; lab
  * nie ako pád stránky.
  */
 export default async function AdminPage() {
-  const t = await getT();
+  const [t, locale] = await Promise.all([getT(), getLocale()]);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login?next=/admin");
+  if (!user) return redirectLocalized(loginRedirectPath(locale, "/admin"));
 
   let stats;
   let reports;

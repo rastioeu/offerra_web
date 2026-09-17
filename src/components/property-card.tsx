@@ -5,6 +5,7 @@ import { DeadlineBadge } from "@/components/deadline-badge";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { formatArea, formatPrice, formatRooms, type PropertyWithMedia } from "@/lib/property";
 import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 /**
  * Katalógová karta — desktop rozloženie (foto hore, obsah dole v
@@ -23,7 +24,7 @@ export async function PropertyCard({ property }: { property: PropertyWithMedia }
 
   return (
     <Link
-      href={`/inzerat/${property.id}`}
+      href={localizeHref(language, `/inzerat/${property.id}`)}
       className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-0.5"
     >
       <div className="relative aspect-[4/3] w-full bg-surface-pressed">

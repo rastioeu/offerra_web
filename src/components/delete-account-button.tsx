@@ -1,8 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { isLocale } from "@/i18n";
+import { localizeHref } from "@/i18n/href";
 import { createClient } from "@/lib/supabase/client";
 
 /**
@@ -12,6 +14,7 @@ import { createClient } from "@/lib/supabase/client";
  */
 export function DeleteAccountButton() {
   const router = useRouter();
+  const pathname = usePathname();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +37,9 @@ export function DeleteAccountButton() {
 
       await supabase.auth.signOut().catch(() => undefined);
       window.alert("Účet zmazaný. Ďakujeme, že si to skúsil.");
-      router.push("/");
+      const maybeLocale = pathname.split("/")[1];
+      const locale = isLocale(maybeLocale) && maybeLocale !== "sk" ? maybeLocale : "sk";
+      router.push(localizeHref(locale, "/"));
       router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Zmazanie účtu zlyhalo");

@@ -6,7 +6,8 @@ import { DemandFilters } from "@/components/demand-filters";
 import { fetchDemands } from "@/lib/demand-data";
 import type { PropertyType, TransactionType } from "@/lib/property";
 import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/lib/search";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Dopyty",
@@ -35,7 +36,7 @@ function buildFilter(params: SearchParams): { filter: CatalogFilter; understood:
  * text), len druhý smer trhu — ľudia, ktorí niečo HĽADAJÚ.
  */
 export default async function DemandsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const t = await getT();
+  const [t, language] = await Promise.all([getT(), getLocale()]);
   const params = await searchParams;
   const { filter, understood } = buildFilter(params);
   const demands = await fetchDemands(filter);
@@ -54,7 +55,7 @@ export default async function DemandsPage({ searchParams }: { searchParams: Prom
           <p className="text-text-secondary">{t("dopyty.lead")}</p>
         </div>
         <Link
-          href="/dopyty/novy"
+          href={localizeHref(language, "/dopyty/novy")}
           className="w-fit rounded-xl bg-primary px-5 py-2.5 font-semibold text-on-primary hover:opacity-90"
         >
           {t("dopyty.addDemand")}
@@ -69,7 +70,7 @@ export default async function DemandsPage({ searchParams }: { searchParams: Prom
 
       {understood.length > 0 ? <p className="text-sm text-text-muted">Rozumiem: {understood.join(", ")}</p> : null}
       {!isFilterEmpty(filter) ? (
-        <Link href="/dopyty" className="w-fit text-sm text-link hover:underline">
+        <Link href={localizeHref(language, "/dopyty")} className="w-fit text-sm text-link hover:underline">
           {t("dopyty.clearFilters")}
         </Link>
       ) : null}

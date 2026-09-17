@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { AppleSignInButton } from "@/components/apple-sign-in-button";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
+import { getLocale } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Prihlásenie",
@@ -12,7 +14,12 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ next?: string; error?: string }>;
 }) {
-  const { next, error } = await searchParams;
+  const [{ next, error }, locale] = await Promise.all([searchParams, getLocale()]);
+  // Bez `?next=` (napr. klik na všeobecné „Prihlásiť sa" v hlavičke) sa
+  // po prihlásení vracia na domovskú v TOM ISTOM jazyku — bez tohto by
+  // prihlásenie z `/en`/`/de` vždy skončilo na SK (Rastio, 17.9.2026:
+  // „vyberiem jazyk a hneď zmení naspäť").
+  const nextPath = next ?? localizeHref(locale, "/");
 
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-6 px-4 py-16">
@@ -30,8 +37,8 @@ export default async function LoginPage({
       ) : null}
 
       <div className="flex w-full flex-col gap-3">
-        <GoogleSignInButton next={next ?? "/"} />
-        <AppleSignInButton next={next ?? "/"} />
+        <GoogleSignInButton next={nextPath} />
+        <AppleSignInButton next={nextPath} />
       </div>
     </main>
   );

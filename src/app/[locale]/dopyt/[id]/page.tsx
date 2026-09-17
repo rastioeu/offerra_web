@@ -12,6 +12,7 @@ import { fetchMyProperties } from "@/lib/my-properties";
 import { formatArea, formatDate, formatPrice, formatRooms, type PropertyType } from "@/lib/property";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 export async function generateMetadata({
   params,
@@ -168,7 +169,7 @@ async function MyOutreachList({ requestId, transaction }: { requestId: string; t
               </div>
             );
             return openable ? (
-              <Link key={o.id} href={`/inzerat/${o.property_id}`}>
+              <Link key={o.id} href={localizeHref(language, `/inzerat/${o.property_id}`)}>
                 {row}
               </Link>
             ) : (

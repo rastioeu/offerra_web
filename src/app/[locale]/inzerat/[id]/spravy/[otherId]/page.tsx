@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { MessageThread } from "@/components/message-thread";
 import { fetchProperty } from "@/lib/detail";
 import { fetchNicknames } from "@/lib/message-data";
 import { createClient } from "@/lib/supabase/server";
-import { getT } from "@/i18n/server";
+import { getLocale, getT, redirectLocalized } from "@/i18n/server";
+import { loginRedirectPath, localizeHref } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Správy",
@@ -24,24 +25,24 @@ export default async function OwnerThreadPage({
   params: Promise<{ id: string; otherId: string }>;
 }) {
   const { id, otherId } = await params;
-  const t = await getT();
+  const [t, locale] = await Promise.all([getT(), getLocale()]);
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect(`/login?next=/inzerat/${id}/spravy/${otherId}`);
+  if (!user) return redirectLocalized(loginRedirectPath(locale, `/inzerat/${id}/spravy/${otherId}`));
 
   const property = await fetchProperty(id);
   if (!property) notFound();
-  if (property.owner_id !== user.id) redirect(`/inzerat/${id}`);
+  if (property.owner_id !== user.id) return redirectLocalized(`/inzerat/${id}`);
 
   const nicknames = await fetchNicknames([otherId]);
   const otherName = nicknames[otherId] ?? t("messages.bidderFallback");
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <Link href={`/inzerat/${id}`} className="text-sm text-link hover:underline">
+      <Link href={localizeHref(locale, `/inzerat/${id}`)} className="text-sm text-link hover:underline">
         {t("messages.backToList")}
       </Link>
       <h1 className="text-xl font-bold text-text-primary">

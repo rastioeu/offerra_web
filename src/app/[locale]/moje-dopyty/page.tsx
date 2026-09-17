@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 import { getDemandLabel, getPropertyLabel } from "@/lib/labels";
 import { fetchMyRequests } from "@/lib/my-offers";
 import { formatBudget, getRequestStatusLabel } from "@/lib/offers";
 import { createClient } from "@/lib/supabase/server";
-import { getT } from "@/i18n/server";
+import { getLocale, getT, redirectLocalized } from "@/i18n/server";
+import { loginRedirectPath } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Moje dopyty",
 };
 
 export default async function MyRequestsPage() {
-  const t = await getT();
+  const [t, locale] = await Promise.all([getT(), getLocale()]);
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login?next=/moje-dopyty");
+  if (!user) return redirectLocalized(loginRedirectPath(locale, "/moje-dopyty"));
 
   const requests = await fetchMyRequests(user.id);
   const demandLabel = getDemandLabel(t);

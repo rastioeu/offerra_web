@@ -10,3 +10,15 @@ export function localizeHref(locale: Locale, href: string): string {
   if (locale === 'sk') return href;
   return `/${locale}${href}`;
 }
+
+/**
+ * Cesta na `/login?next=...` s LOKALIZOVANÝM `next` — appka/web opravu
+ * (17.9.2026) potrebuje na oboch miestach naraz: aj samotné `/login`
+ * (appka: `redirectLocalized`), aj cieľ, kam sa má vrátiť PO prihlásení
+ * (appka: `auth/callback/route.ts` použije `next` doslovne, bez ďalšej
+ * úpravy — ak by bol bez predpony, prihlásenie z `/de/...` by skončilo
+ * na SK stránke).
+ */
+export function loginRedirectPath(locale: Locale, path: string): string {
+  return `/login?next=${encodeURIComponent(localizeHref(locale, path))}`;
+}

@@ -10,6 +10,7 @@ import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
 import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/lib/search";
 import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 /**
  * Katalóg = domovská stránka. SEO je hlavný dôvod projektu (Rastio) —
@@ -142,7 +143,7 @@ export default async function CatalogPage({
           ) : null}
 
           {!isFilterEmpty(filter) ? (
-            <Link href="/" className="w-fit text-sm text-link hover:underline">
+            <Link href={localizeHref(language, "/")} className="w-fit text-sm text-link hover:underline">
               Vymazať filter
             </Link>
           ) : null}

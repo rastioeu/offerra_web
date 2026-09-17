@@ -3,7 +3,8 @@ import Link from "next/link";
 import { MessageThread } from "@/components/message-thread";
 import type { PropertyDetail } from "@/lib/detail";
 import { fetchNicknames, fetchThreads } from "@/lib/message-data";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 /**
  * Správy k inzerátu — appka: `messages.ts` + obrazovka vlákien. Vlastník
@@ -38,7 +39,10 @@ export async function MessagesSection({ property, userId }: { property: Property
     );
   }
 
-  const threads = await fetchThreads({ propertyId: property.id }, userId);
+  const [threads, language] = await Promise.all([
+    fetchThreads({ propertyId: property.id }, userId),
+    getLocale(),
+  ]);
   const nicknames = await fetchNicknames(threads.map((th) => th.otherId));
 
   return (
@@ -54,7 +58,7 @@ export async function MessagesSection({ property, userId }: { property: Property
             return (
               <Link
                 key={th.otherId}
-                href={`/inzerat/${property.id}/spravy/${th.otherId}`}
+                href={localizeHref(language, `/inzerat/${property.id}/spravy/${th.otherId}`)}
                 className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface p-3 hover:border-border-strong"
               >
                 <div className="flex flex-col gap-0.5">

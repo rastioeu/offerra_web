@@ -81,9 +81,37 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  // Vyvolá refresh tokenu, ak treba — výsledok nepoužívame priamo,
-  // dôležitý je vedľajší efekt (setAll vyššie) v cookies.
-  await supabase.auth.getUser();
+  // Vyvolá refresh tokenu, ak treba — vedľajší efekt (setAll vyššie) v
+  // cookies sa použije bez ohľadu na to, čo vráti nižšie.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // BRÁNA prezývky — appka: `_layout.tsx`, „profile === null" pošle na
+  // `/prezyvka" skôr, než čokoľvek iné. KRITICKÉ pre web (zistené
+  // 17.9.2026): `property`/`property_offer`/`buyer_request`/`message`/...
+  // majú cudzí kľúč na `offerra.profile`, a web doteraz NIKDE ten riadok
+  // nezakladal — nový človek, čo sa prihlási len cez web, by na prvý
+  // pokus o ponuku/inzerát/správu dostal surovú chybu cudzieho kľúča.
+  const bare = locale === DEFAULT_LOCALE ? pathname : pathname.slice(locale.length + 1) || '/';
+  if (user && !exempt && bare !== '/login' && bare !== '/prezyvka') {
+    const { data: profile } = await supabase
+      .schema('offerra')
+      .from('profile')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle();
+    if (!profile) {
+      const target = request.nextUrl.clone();
+      target.pathname = locale === DEFAULT_LOCALE ? '/prezyvka' : `/${locale}/prezyvka`;
+      target.search = '';
+      const redirectResponse = NextResponse.redirect(target);
+      for (const cookie of response.cookies.getAll()) {
+        redirectResponse.cookies.set(cookie);
+      }
+      return redirectResponse;
+    }
+  }
 
   return response;
 }

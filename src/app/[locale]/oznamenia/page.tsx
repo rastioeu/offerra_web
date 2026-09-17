@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 import { OznameniaList } from "@/components/oznamenia-list";
 import { createClient } from "@/lib/supabase/server";
-import { getLocale, getT } from "@/i18n/server";
+import { getLocale, getT, redirectLocalized } from "@/i18n/server";
+import { loginRedirectPath } from "@/i18n/href";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getT();
@@ -20,7 +20,7 @@ export default async function OznameniaPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login?next=/oznamenia");
+  if (!user) return redirectLocalized(loginRedirectPath(language, "/oznamenia"));
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">

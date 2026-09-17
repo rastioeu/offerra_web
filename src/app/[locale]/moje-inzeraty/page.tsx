@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import { createDraftAction } from "@/app/[locale]/moje-inzeraty/actions";
 import { Button } from "@/components/button";
 import { formatArea, formatPrice, formatRooms, getStatusLabel } from "@/lib/property";
 import { fetchMyProperties } from "@/lib/my-properties";
 import { createClient } from "@/lib/supabase/server";
-import { getLocale, getT } from "@/i18n/server";
+import { getLocale, getT, redirectLocalized } from "@/i18n/server";
+import { loginRedirectPath, localizeHref } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Moje inzeráty",
@@ -25,7 +25,7 @@ export default async function MyPropertiesPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login?next=/moje-inzeraty");
+  if (!user) return redirectLocalized(loginRedirectPath(language, "/moje-inzeraty"));
 
   const properties = await fetchMyProperties(user.id);
   const statusLabel = getStatusLabel(t);
@@ -57,10 +57,10 @@ export default async function MyPropertiesPage() {
                 key={property.id}
                 className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-3 hover:border-border-strong"
               >
-                <Link href={`/inzerat/${property.id}`} className="relative h-16 w-20 flex-none overflow-hidden rounded-lg bg-surface-pressed">
+                <Link href={localizeHref(language, `/inzerat/${property.id}`)} className="relative h-16 w-20 flex-none overflow-hidden rounded-lg bg-surface-pressed">
                   {photo ? <Image src={photo} alt="" fill sizes="80px" className="object-cover" /> : null}
                 </Link>
-                <Link href={`/inzerat/${property.id}`} className="flex flex-1 flex-col gap-0.5">
+                <Link href={localizeHref(language, `/inzerat/${property.id}`)} className="flex flex-1 flex-col gap-0.5">
                   <span className="font-semibold text-text-primary">{property.title || "Bez názvu"}</span>
                   {meta ? <span className="text-sm text-text-muted">{meta}</span> : null}
                 </Link>
@@ -69,7 +69,7 @@ export default async function MyPropertiesPage() {
                   <span className="rounded-full bg-surface-pressed px-2 py-0.5 text-xs font-medium text-text-secondary">
                     {statusLabel[property.status]}
                   </span>
-                  <Link href={`/moje-inzeraty/${property.id}/upravit`} className="text-xs font-semibold text-link hover:underline">
+                  <Link href={localizeHref(language, `/moje-inzeraty/${property.id}/upravit`)} className="text-xs font-semibold text-link hover:underline">
                     Upraviť
                   </Link>
                 </div>

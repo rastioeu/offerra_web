@@ -3,7 +3,9 @@ import Link from "next/link";
 import { SearchBox } from "@/components/search-box";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
+import type { Locale } from "@/i18n";
 
 const TRANSACTIONS: TransactionType[] = ["SALE", "RENT"];
 const PROPERTY_TYPES: PropertyType[] = ["APARTMENT", "HOUSE", "LAND", "COMMERCIAL", "OTHER"];
@@ -13,12 +15,12 @@ const SORTS: { value: CatalogSort; label: string }[] = [
 ];
 
 /** Aktuálne URL parametre s JEDNÝM poľom zmeneným (alebo zmazaným, ak `value` je `null`). */
-function hrefWith(current: URLSearchParams, key: string, value: string | null): string {
+function hrefWith(locale: Locale, current: URLSearchParams, key: string, value: string | null): string {
   const next = new URLSearchParams(current);
   if (value == null) next.delete(key);
   else next.set(key, value);
   const qs = next.toString();
-  return qs ? `/?${qs}` : "/";
+  return localizeHref(locale, qs ? `/?${qs}` : "/");
 }
 
 /**
@@ -39,7 +41,7 @@ export async function CatalogFilters({
   activePropertyType: PropertyType | null;
   activeSort: CatalogSort;
 }) {
-  const t = await getT();
+  const [t, locale] = await Promise.all([getT(), getLocale()]);
   const transactionLabel = getTransactionLabel(t);
   const propertyLabel = getPropertyLabel(t);
 
@@ -59,11 +61,11 @@ export async function CatalogFilters({
           Typ ponuky
         </p>
         <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
-          <Link href={hrefWith(searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
+          <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
             Všetko
           </Link>
           {TRANSACTIONS.map((tr) => (
-            <Link key={tr} href={hrefWith(searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
+            <Link key={tr} href={hrefWith(locale, searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
               {transactionLabel[tr]}
             </Link>
           ))}
@@ -75,11 +77,11 @@ export async function CatalogFilters({
           Typ nehnuteľnosti
         </p>
         <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
-          <Link href={hrefWith(searchParams, "type", null)} className={chip(activePropertyType == null)}>
+          <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
             Všetky typy
           </Link>
           {PROPERTY_TYPES.map((pt) => (
-            <Link key={pt} href={hrefWith(searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
+            <Link key={pt} href={hrefWith(locale, searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
               {propertyLabel[pt]}
             </Link>
           ))}
@@ -94,7 +96,7 @@ export async function CatalogFilters({
           {SORTS.map((s) => (
             <Link
               key={s.value}
-              href={hrefWith(searchParams, "sort", s.value === "NEWEST" ? null : s.value)}
+              href={hrefWith(locale, searchParams, "sort", s.value === "NEWEST" ? null : s.value)}
               className={chip(activeSort === s.value)}
             >
               {s.label}

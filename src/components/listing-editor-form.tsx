@@ -12,6 +12,7 @@ import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { formFromProperty, type ListingForm } from "@/lib/listing-form";
 import { getFurnishingLabel, getUtilitiesLabel, type Property, type PropertyType, type TransactionType } from "@/lib/property";
 import { createT, type Locale } from "@/i18n";
+import { localizeHref } from "@/i18n/href";
 
 const TRANSACTIONS: TransactionType[] = ["SALE", "RENT"];
 const PROPERTY_TYPES: PropertyType[] = ["APARTMENT", "HOUSE", "LAND", "COMMERCIAL", "OTHER"];
@@ -59,7 +60,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
       try {
         await saveListingAction(property.id, form);
         await publishListingAction(property.id);
-        router.push(`/inzerat/${property.id}`);
+        router.push(localizeHref(language, `/inzerat/${property.id}`));
       } catch (e) {
         setError(e instanceof Error ? e.message : "Zverejnenie zlyhalo");
       }

@@ -15,6 +15,7 @@ import { buildingRows, formatArea, formatPrice, formatRooms, rentalRows } from "
 import { fetchOffers } from "@/lib/property-offers";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT } from "@/i18n/server";
+import { localizeHref } from "@/i18n/href";
 
 /**
  * SEO je hlavný dôvod projektu — každý inzerát je vlastná, indexovateľná
@@ -132,7 +133,7 @@ export default async function PropertyDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
-      <Link href="/" className="text-sm text-link hover:underline">
+      <Link href={localizeHref(language, "/")} className="text-sm text-link hover:underline">
         ← Späť do katalógu
       </Link>
 
