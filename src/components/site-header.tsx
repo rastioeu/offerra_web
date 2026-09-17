@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { AddListingCta } from "@/components/add-listing-cta";
 import { IconNavLink } from "@/components/icon-nav-link";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
@@ -29,14 +28,11 @@ const LABELS: Record<
     settings: string;
     login: string;
     howItWorks: string;
-    addListing: string;
-    addDemand: string;
-    creating: string;
   }
 > = {
-  sk: { demands: "Dopyty", myListings: "Moje inzeráty", myOffers: "Moje ponuky", myDemands: "Moje dopyty", favorites: "Obľúbené", activity: "Moja aktivita", settings: "Nastavenia", login: "Prihlásiť sa", howItWorks: "Ako funguje", addListing: "Pridať inzerát", addDemand: "Pridať dopyt", creating: "Zakladám…" },
-  en: { demands: "Demands", myListings: "My listings", myOffers: "My offers", myDemands: "My demands", favorites: "Favorites", activity: "My activity", settings: "Settings", login: "Log in", howItWorks: "How it works", addListing: "Add listing", addDemand: "Add demand", creating: "Creating…" },
-  de: { demands: "Gesuche", myListings: "Meine Inserate", myOffers: "Meine Angebote", myDemands: "Meine Gesuche", favorites: "Favoriten", activity: "Meine Aktivität", settings: "Einstellungen", login: "Anmelden", howItWorks: "So funktioniert's", addListing: "Inserat aufgeben", addDemand: "Gesuch aufgeben", creating: "Wird angelegt…" },
+  sk: { demands: "Dopyty", myListings: "Moje inzeráty", myOffers: "Moje ponuky", myDemands: "Moje dopyty", favorites: "Obľúbené", activity: "Moja aktivita", settings: "Nastavenia", login: "Prihlásiť sa", howItWorks: "Ako funguje" },
+  en: { demands: "Demands", myListings: "My listings", myOffers: "My offers", myDemands: "My demands", favorites: "Favorites", activity: "My activity", settings: "Settings", login: "Log in", howItWorks: "How it works" },
+  de: { demands: "Gesuche", myListings: "Meine Inserate", myOffers: "Meine Angebote", myDemands: "Meine Gesuche", favorites: "Favoriten", activity: "Meine Aktivität", settings: "Einstellungen", login: "Anmelden", howItWorks: "So funktioniert's" },
 };
 
 /**
@@ -108,16 +104,13 @@ const LABELS: Record<
  * tu reálne pozrieť. Srdiečko ostáva — je to ten istý overený tvar
  * ako appkové/webové `FavoriteHeart`, nie nový návrh.
  *
- * ŠIESTE KOLO — CTA „+ Pridať inzerát" (Rastio, 17.9.2026): vpravo
- * v lište bolo voľné miesto medzi ikonami a okrajom. `AddListingCta`
- * (`src/components/add-listing-cta.tsx`) je JEDINÝ sýto farebný prvok
- * lišty (`bg-accent-deep`, zvyšok lišty je neutrálny) — split button:
- * klik na text vedie rovno na častejšiu akciu (appka: appkové
- * `pridat.tsx` zakladá DRAFT v DB HNEĎ, `createDraftAction` robí to
- * isté), šípka otvára menu s druhou voľbou (Pridať dopyt, existujúci
- * formulár na `/dopyty/novy`). LEN pre prihláseného — appka aj web
- * vyžadujú účet na založenie inzerátu aj dopytu, neprihlásený má už aj
- * tak svoje CTA („Prihlásiť sa").
+ * ŠIESTE KOLO — CTA „+ Pridať inzerát" bolo TU (v lište, vpravo), potom
+ * PRESUNUTÉ (Rastio, 17.9.2026: „pridať inzerát by som dal niekde
+ * vedľa vyhľadávacieho poľa... aby to nebolo prázdne") — `AddListingCta`
+ * (`src/components/add-listing-cta.tsx`) teraz býva na katalógovej
+ * stránke vedľa `SearchBox` (`src/app/[locale]/page.tsx`), nie v tejto
+ * zdieľanej hlavičke. Komponenta aj `createDraftAction` flow ostávajú
+ * rovnaké, len sa zmenilo, KDE sa vykresľujú.
  */
 export async function SiteHeader() {
   const [supabase, locale, t] = await Promise.all([createClient(), getLocale(), getT()]);
@@ -194,21 +187,14 @@ export async function SiteHeader() {
           </IconNavLink>
           {user ? <NotificationBell locale={locale} /> : null}
           <LanguageSwitcher />
-          {user ? (
-            <AddListingCta
-              locale={locale}
-              addListingLabel={l.addListing}
-              addDemandLabel={l.addDemand}
-              loading={l.creating}
-            />
-          ) : (
+          {!user ? (
             <Link
               href={href("/login")}
               className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90"
             >
               {l.login}
             </Link>
-          )}
+          ) : null}
         </div>
 
         <div className="flex items-center gap-2 md:hidden">

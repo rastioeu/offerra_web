@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 
+import { AddListingCta } from "@/components/add-listing-cta";
 import { CatalogFilters } from "@/components/catalog-filters";
 import { DismissibleCard } from "@/components/dismissible-card";
 import { HowItWorksCard } from "@/components/how-it-works-card";
 import { PropertyCard } from "@/components/property-card";
 import { SearchBox } from "@/components/search-box";
+import { ADD_LISTING_LABELS } from "@/lib/add-listing-labels";
 import { fetchCatalog } from "@/lib/catalog";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { catalogCountLabel, type CatalogSort, type PropertyType, type TransactionType } from "@/lib/property";
 import { EMPTY_FILTER, parseQuery, type CatalogFilter } from "@/lib/search";
+import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT } from "@/i18n/server";
 
 /**
@@ -84,7 +87,10 @@ export default async function CatalogPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const [t, language] = await Promise.all([getT(), getLocale()]);
+  const [t, language, supabase] = await Promise.all([getT(), getLocale(), createClient()]);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const params = await searchParams;
   const { filter, understood } = buildFilter(params);
   const sort: CatalogSort = one(params.sort) === "ENDING_SOON" ? "ENDING_SOON" : "NEWEST";
@@ -117,22 +123,16 @@ export default async function CatalogPage({
           vizuálne skrytý (`sr-only`) — nie je to duplicita obsahu, je to
           JEDINÝ viditeľný výskyt textu na stránke okrem hlavičky. */}
       <h1 className="sr-only">{t("catalog.title")}</h1>
-      {/* Vyhľadávacie pole a karta „Ako funguje" boli KAŽDÉ na vlastnom
-          vycentrovanom riadku („veľa miesta prázdneho vôkol", Rastio
-          17.9.2026) — dva úzke, izolované bloky uprostred širokej
-          stránky, každý obklopený veľkými prázdnymi okrajmi. Teraz sú
-          v JEDNOM riadku vedľa seba, zarovnané k ľavému okraju rovnako
-          ako zvyšok stránky (filtre/mriežka nižšie), nie vycentrované
-          — plnšie využitie šírky, žiadny osamotený ostrov. */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
-        <div className="w-full lg:max-w-[460px]">
-          <SearchBox initialValue={one(params.q) ?? ""} />
-        </div>
-        <div className="w-full lg:max-w-md">
-          <DismissibleCard storageKey="offerra-hiw-home-dismissed">
-            <HowItWorksCard locale={language} />
-          </DismissibleCard>
-        </div>
+      {/* Karta „Ako funguje" — predtým párovaná s vyhľadávacím poľom
+          v jednom riadku, pole sa presunulo nižšie vedľa CTA (Rastio,
+          17.9.2026: „pridať inzerát by som dal niekde vedľa
+          vyhľadávacieho poľa... aby to nebolo prázdne"), karta tu
+          ostáva sama — má vlastný obsah, nepôsobí ako prázdny ostrov
+          tak, ako to vtedy vadilo pri holom vyhľadávacom poli. */}
+      <div className="w-full lg:max-w-md">
+        <DismissibleCard storageKey="offerra-hiw-home-dismissed">
+          <HowItWorksCard locale={language} />
+        </DismissibleCard>
       </div>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
@@ -144,11 +144,37 @@ export default async function CatalogPage({
         />
 
         <div className="flex flex-1 flex-col gap-4">
-          {properties.length > 0 ? (
-            <p className="text-sm font-medium text-text-secondary">
-              {catalogCountLabel(t, language, properties.length)}
-            </p>
-          ) : null}
+          {/* Trojstĺpcová mriežka, nie flex — CTA má byť PRESNE
+              v strede riadku (Rastio, 17.9.2026: „pridať inzerát daj
+              do stredu medzi vyhľadávanie a počet inzerátov"), nie
+              len hneď vedľa poľa. S `justify-between`/`flex` by sa
+              stred posúval podľa šírky poľa aj CTA; `grid-cols-3`
+              s `justify-self` drží tri veci PRESNE vľavo/stred/vpravo
+              bez ohľadu na šírku susedných buniek. */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
+            <div className="w-full sm:max-w-[380px] sm:justify-self-start">
+              <SearchBox initialValue={one(params.q) ?? ""} />
+            </div>
+            {user ? (
+              <div className="sm:justify-self-center">
+                <AddListingCta
+                  locale={language}
+                  addListingLabel={ADD_LISTING_LABELS[language].addListing}
+                  addDemandLabel={ADD_LISTING_LABELS[language].addDemand}
+                  loading={ADD_LISTING_LABELS[language].creating}
+                />
+              </div>
+            ) : (
+              <div />
+            )}
+            {properties.length > 0 ? (
+              <p className="text-sm font-medium text-text-secondary sm:justify-self-end">
+                {catalogCountLabel(t, language, properties.length)}
+              </p>
+            ) : (
+              <div />
+            )}
+          </div>
 
           {understood.length > 0 ? (
             <p className="text-sm text-text-muted">
