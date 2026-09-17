@@ -111,15 +111,15 @@ export default async function CatalogPage({
       {properties.length > 0 ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       ) : null}
-      <header className="mx-auto flex w-full max-w-2xl flex-col items-center gap-4 text-center">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold text-text-primary">{t("catalog.title")}</h1>
-          <p className="text-text-secondary">{t("catalog.lead")}</p>
-        </div>
-        <div className="w-full max-w-[420px]">
-          <SearchBox initialValue={one(params.q) ?? ""} />
-        </div>
-      </header>
+      {/* Nadpis a popis boli veľký blok uprostred stránky („nie je to
+          pekné", Rastio 17.9.2026) — presunuté vedľa loga v `SiteHeader`
+          ako krátke motto. `h1` tu ostáva pre SEO/čítačky obrazovky, len
+          vizuálne skrytý (`sr-only`) — nie je to duplicita obsahu, je to
+          JEDINÝ viditeľný výskyt textu na stránke okrem hlavičky. */}
+      <h1 className="sr-only">{t("catalog.title")}</h1>
+      <div className="mx-auto w-full max-w-[420px]">
+        <SearchBox initialValue={one(params.q) ?? ""} />
+      </div>
 
       <div className="mx-auto w-full max-w-md">
         <DismissibleCard storageKey="offerra-hiw-home-dismissed">

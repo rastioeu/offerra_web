@@ -44,6 +44,13 @@ const LABELS: Record<
  * odkazy v rade sú len `md:flex` (desktop), pod tým je `MobileNav`
  * (hamburger, `md:hidden`) so ROVNAKÝM zoznamom odkazov. Odkazy sú
  * lokalizované (17.9.2026, i18n kolo) — `/dopyty` v SK, `/en/dopyty` v EN.
+ *
+ * MOTTO VEDĽA LOGA (Rastio, 17.9.2026: veľký nadpis „Nehnuteľnosti" +
+ * dlhý popis na katalógovej stránke „nie je to pekné", navrhol presunúť
+ * popis hore vedľa loga ako motto a skrátiť ho) — `catalog.motto` je
+ * len `lg:block`, nie `md:block`: nav má pre prihláseného veľa odkazov
+ * a na `md` (768px) je to už tesné, motto navyše by ho pretláčalo do
+ * ďalšieho riadku. Od `lg` (1024px) je miesto voľné.
  */
 export async function SiteHeader() {
   const [supabase, locale, t] = await Promise.all([createClient(), getLocale(), getT()]);
@@ -71,9 +78,14 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <Link href={href("/")} aria-label="Offerra" className="shrink-0">
-          <Logo />
-        </Link>
+        <div className="flex shrink-0 items-center gap-3">
+          <Link href={href("/")} aria-label="Offerra" className="shrink-0">
+            <Logo />
+          </Link>
+          <span className="hidden border-l border-border pl-3 text-sm text-text-muted lg:block">
+            {t("catalog.motto")}
+          </span>
+        </div>
 
         <nav className="hidden items-center gap-5 md:flex">
           <Link href={href("/dopyty")} className="text-sm text-text-secondary hover:text-text-primary">
