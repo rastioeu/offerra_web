@@ -1109,7 +1109,8 @@
   "novinky": {
     "screenTitle": "Čo je nové",
     "lead": "Zoznam zmien, najnovšie hore. Ak niečo z posledného záznamu v appke nevidíš, ešte ti nedorazila aktualizácia — porovnaj riadok nižšie s tým, čo máš v Profile.",
-    "newest": "najnovšie"
+    "newest": "najnovšie",
+    "leadWeb": "Zoznam zmien na webe, najnovšie hore."
   },
   "manageOffers": {
     "screenTitle": "Ponuky na inzerát",

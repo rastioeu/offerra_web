@@ -23,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: BASE_URL, changeFrequency: "hourly", priority: 1 },
     { url: `${BASE_URL}/dopyty`, changeFrequency: "hourly", priority: 0.8 },
     { url: `${BASE_URL}/ako-to-funguje`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE_URL}/novinky`, changeFrequency: "weekly", priority: 0.3 },
   ];
 
   const propertyRoutes: MetadataRoute.Sitemap = (properties ?? []).map((p) => ({

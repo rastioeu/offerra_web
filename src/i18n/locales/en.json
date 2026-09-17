@@ -1103,7 +1103,8 @@
   "novinky": {
     "screenTitle": "What's new",
     "lead": "A list of changes, newest first. If you don't see something from the latest entry in the app yet, the update hasn't reached you — compare the row below with what you have on the Mine tab.",
-    "newest": "newest"
+    "newest": "newest",
+    "leadWeb": "List of changes on the web, newest first."
   },
   "manageOffers": {
     "screenTitle": "Offers on listing",

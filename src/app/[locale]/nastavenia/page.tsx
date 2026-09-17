@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { signOut } from "@/app/auth/actions";
 import { DeleteAccountButton } from "@/components/delete-account-button";
@@ -8,7 +9,7 @@ import { ProfileEditForm } from "@/components/profile-edit-form";
 import { fetchMyProfile } from "@/lib/profile";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT, redirectLocalized } from "@/i18n/server";
-import { loginRedirectPath } from "@/i18n/href";
+import { loginRedirectPath, localizeHref } from "@/i18n/href";
 import type { Locale } from "@/i18n";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -76,6 +77,9 @@ export default async function NastaveniaPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Offerra</h2>
         <HowItWorksCard locale={language} />
+        <Link href={localizeHref(language, "/novinky")} className="w-fit text-sm text-link hover:underline">
+          {t("nastavenia.whatsNew")}
+        </Link>
       </section>
 
       <section className="flex flex-col gap-3 border-t border-border pt-6">

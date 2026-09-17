@@ -1103,7 +1103,8 @@
   "novinky": {
     "screenTitle": "Was ist neu",
     "lead": "Liste der Änderungen, neueste zuerst. Wenn du etwas aus dem letzten Eintrag in der App noch nicht siehst, ist das Update noch nicht angekommen — vergleiche die Zeile unten mit dem, was du unter Meins hast.",
-    "newest": "neu"
+    "newest": "neu",
+    "leadWeb": "Liste der Änderungen auf der Webseite, neueste zuerst."
   },
   "manageOffers": {
     "screenTitle": "Angebote zum Inserat",
