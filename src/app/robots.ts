@@ -21,6 +21,7 @@ const PRIVATE_PATH_NAMES = [
   "/oblubene",
   "/oznamenia",
   "/prezyvka",
+  "/aktivita",
   "/nastavenia",
   "/admin",
 ];

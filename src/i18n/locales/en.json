@@ -1257,7 +1257,8 @@
     "kindOutreach": "Someone reached out to your inquiry",
     "today": "Today",
     "yesterday": "Yesterday",
-    "empty": "Nothing here yet. Add a listing or make an offer."
+    "empty": "Nothing here yet. Add a listing or make an offer.",
+    "pageTitle": "My activity"
   },
   "ui": {
     "closeKeyboard": "Close keyboard",

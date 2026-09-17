@@ -1263,7 +1263,8 @@
     "kindOutreach": "Niekto oslovil tvoj dopyt",
     "today": "Dnes",
     "yesterday": "Včera",
-    "empty": "Zatiaľ tu nič nie je. Pridaj inzerát alebo podaj ponuku."
+    "empty": "Zatiaľ tu nič nie je. Pridaj inzerát alebo podaj ponuku.",
+    "pageTitle": "Moja aktivita"
   },
   "ui": {
     "closeKeyboard": "Zavrieť klávesnicu",

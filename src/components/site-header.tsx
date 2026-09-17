@@ -22,14 +22,15 @@ const LABELS: Record<
     myOffers: string;
     myDemands: string;
     favorites: string;
+    activity: string;
     settings: string;
     login: string;
     howItWorks: string;
   }
 > = {
-  sk: { demands: "Dopyty", myListings: "Moje inzeráty", myOffers: "Moje ponuky", myDemands: "Moje dopyty", favorites: "Obľúbené", settings: "Nastavenia", login: "Prihlásiť sa", howItWorks: "Ako funguje" },
-  en: { demands: "Demands", myListings: "My listings", myOffers: "My offers", myDemands: "My demands", favorites: "Favorites", settings: "Settings", login: "Log in", howItWorks: "How it works" },
-  de: { demands: "Gesuche", myListings: "Meine Inserate", myOffers: "Meine Angebote", myDemands: "Meine Gesuche", favorites: "Favoriten", settings: "Einstellungen", login: "Anmelden", howItWorks: "So funktioniert's" },
+  sk: { demands: "Dopyty", myListings: "Moje inzeráty", myOffers: "Moje ponuky", myDemands: "Moje dopyty", favorites: "Obľúbené", activity: "Moja aktivita", settings: "Nastavenia", login: "Prihlásiť sa", howItWorks: "Ako funguje" },
+  en: { demands: "Demands", myListings: "My listings", myOffers: "My offers", myDemands: "My demands", favorites: "Favorites", activity: "My activity", settings: "Settings", login: "Log in", howItWorks: "How it works" },
+  de: { demands: "Gesuche", myListings: "Meine Inserate", myOffers: "Meine Angebote", myDemands: "Meine Gesuche", favorites: "Favoriten", activity: "Meine Aktivität", settings: "Einstellungen", login: "Anmelden", howItWorks: "So funktioniert's" },
 };
 
 /**
@@ -57,6 +58,7 @@ export async function SiteHeader() {
     { href: href("/moje-ponuky"), label: l.myOffers },
     { href: href("/moje-dopyty"), label: l.myDemands },
     { href: href("/oblubene"), label: l.favorites },
+    { href: href("/aktivita"), label: l.activity },
     { href: href("/ako-to-funguje"), label: l.howItWorks },
     { href: href("/nastavenia"), label: l.settings },
   ];

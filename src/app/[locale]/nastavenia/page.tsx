@@ -55,6 +55,9 @@ export default async function NastaveniaPage() {
       <section className="flex flex-col gap-2">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{t("nastavenia.accountSection")}</h2>
         <p className="text-text-secondary">{user.email}</p>
+        <Link href={localizeHref(language, "/aktivita")} className="w-fit text-sm text-link hover:underline">
+          {t("activityTimeline.pageTitle")}
+        </Link>
         <form action={signOut}>
           <button type="submit" className="w-fit text-sm text-link hover:underline">
             {t("nastavenia.signOut")}

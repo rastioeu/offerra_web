@@ -1257,7 +1257,8 @@
     "kindOutreach": "Jemand hat deine Anfrage kontaktiert",
     "today": "Heute",
     "yesterday": "Gestern",
-    "empty": "Hier ist noch nichts. Füge ein Inserat hinzu oder gib ein Angebot ab."
+    "empty": "Hier ist noch nichts. Füge ein Inserat hinzu oder gib ein Angebot ab.",
+    "pageTitle": "Meine Aktivität"
   },
   "ui": {
     "closeKeyboard": "Tastatur schließen",
