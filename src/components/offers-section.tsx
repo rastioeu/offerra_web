@@ -1,3 +1,4 @@
+import { Avatar } from "@/components/avatar";
 import { OfferForm } from "@/components/offer-form";
 import { OwnerOfferActions } from "@/components/owner-offer-actions";
 import { WithdrawOfferButton } from "@/components/withdraw-offer-button";
@@ -51,7 +52,10 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
             return (
               <div key={offer.id} className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-3">
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-text-secondary">{offer.bidder?.nickname ?? "Záujemca"}</span>
+                  <span className="flex items-center gap-2 text-text-secondary">
+                    <Avatar name={offer.bidder?.nickname ?? "Záujemca"} uri={offer.bidder?.avatar_url} size={28} />
+                    {offer.bidder?.nickname ?? "Záujemca"}
+                  </span>
                   <div className="flex items-center gap-2">
                     <span className="font-money font-bold text-text-primary">
                       {formatAmount(t, offer.amount, property.transaction_type)}

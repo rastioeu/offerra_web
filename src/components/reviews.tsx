@@ -1,3 +1,4 @@
+import { Avatar } from "@/components/avatar";
 import { fetchReviews } from "@/lib/rating-data";
 import { ratingLabel, type RatingSummary } from "@/lib/rating";
 import { formatDate } from "@/lib/property";
@@ -33,6 +34,7 @@ export async function Reviews({
       {items.map((r) => (
         <div key={r.id} className="flex flex-col gap-1 border-t border-border pt-3">
           <div className="flex items-center gap-2">
+            <Avatar name={r.rater?.nickname ?? t("reviews.unknown")} uri={r.rater?.avatar_url} size={24} />
             <span className="font-semibold text-text-primary">{r.rater?.nickname ?? t("reviews.unknown")}</span>
             <span className="text-accent-deep">{"★".repeat(r.stars)}</span>
           </div>

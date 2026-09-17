@@ -1,4 +1,5 @@
 import { sendMessageAction } from "@/app/actions/messages";
+import { Avatar } from "@/components/avatar";
 import { MessageSendForm } from "@/components/message-send-form";
 import { fetchThread, markRead } from "@/lib/message-data";
 import type { MessageSubject } from "@/lib/messages";
@@ -60,7 +61,10 @@ export async function MessageThread({
       )}
 
       <MessageSendForm onSend={sendMessageAction.bind(null, subject, otherId)} />
-      <p className="text-xs text-text-muted">Píšeš s {otherName}.</p>
+      <p className="flex items-center gap-2 text-xs text-text-muted">
+        <Avatar name={otherName} size={20} />
+        Píšeš s {otherName}.
+      </p>
     </div>
   );
 }

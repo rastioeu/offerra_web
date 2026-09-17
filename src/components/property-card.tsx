@@ -45,6 +45,11 @@ export function PropertyCard({ property }: { property: PropertyWithMedia }) {
         <div className="absolute bottom-3 left-3">
           <DeadlineBadge iso={property.offer_deadline} onPhoto />
         </div>
+        {property.media.length > 1 ? (
+          <span className="absolute bottom-3 right-3 rounded-full bg-on-photo-surface px-2.5 py-[3px] text-xs font-semibold text-text-secondary">
+            1/{property.media.length}
+          </span>
+        ) : null}
       </div>
 
       <div className="flex flex-1 flex-col gap-1.5 p-4">
