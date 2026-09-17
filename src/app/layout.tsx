@@ -11,6 +11,7 @@ import { SiteHeader } from "@/components/site-header";
  * (rovnaká zásada ako CLAUDE.md appky §8 pre "Ako funguje").
  */
 export const metadata: Metadata = {
+  metadataBase: new URL("https://app.offerra.sk"),
   title: {
     default: "Offerra",
     template: "%s | Offerra",
