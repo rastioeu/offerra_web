@@ -69,34 +69,38 @@ export default async function CatalogPage({
         </p>
       </header>
 
-      <CatalogFilters
-        searchParams={currentSearchParams}
-        activeTransaction={filter.transaction}
-        activePropertyType={filter.propertyType}
-        activeSort={sort}
-      />
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">
+        <CatalogFilters
+          searchParams={currentSearchParams}
+          activeTransaction={filter.transaction}
+          activePropertyType={filter.propertyType}
+          activeSort={sort}
+        />
 
-      {understood.length > 0 ? (
-        <p className="text-sm text-text-muted">
-          Rozumiem: {understood.join(", ")}
-        </p>
-      ) : null}
+        <div className="flex flex-1 flex-col gap-4">
+          {understood.length > 0 ? (
+            <p className="text-sm text-text-muted">
+              Rozumiem: {understood.join(", ")}
+            </p>
+          ) : null}
 
-      {!isFilterEmpty(filter) ? (
-        <Link href="/" className="w-fit text-sm text-link hover:underline">
-          Vymazať filter
-        </Link>
-      ) : null}
+          {!isFilterEmpty(filter) ? (
+            <Link href="/" className="w-fit text-sm text-link hover:underline">
+              Vymazať filter
+            </Link>
+          ) : null}
 
-      {properties.length === 0 ? (
-        <p className="text-text-muted">Žiadne inzeráty nezodpovedajú filtru.</p>
-      ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
+          {properties.length === 0 ? (
+            <p className="text-text-muted">Žiadne inzeráty nezodpovedajú filtru.</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+              {properties.map((property) => (
+                <PropertyCard key={property.id} property={property} />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </main>
   );
 }

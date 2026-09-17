@@ -48,8 +48,8 @@ export function CatalogFilters({
     }`;
 
   return (
-    <div className="flex flex-col gap-3">
-      <form method="get" className="flex gap-2">
+    <div className="flex flex-col gap-5 lg:w-64 lg:shrink-0">
+      <form method="get" className="flex gap-2 lg:flex-col">
         <input
           type="text"
           name="q"
@@ -69,38 +69,53 @@ export function CatalogFilters({
         </button>
       </form>
 
-      <div className="flex flex-wrap gap-2">
-        <Link href={hrefWith(searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
-          Všetko
-        </Link>
-        {TRANSACTIONS.map((tr) => (
-          <Link key={tr} href={hrefWith(searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
-            {transactionLabel[tr]}
+      <div className="flex flex-col gap-2">
+        <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
+          Typ ponuky
+        </p>
+        <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
+          <Link href={hrefWith(searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
+            Všetko
           </Link>
-        ))}
+          {TRANSACTIONS.map((tr) => (
+            <Link key={tr} href={hrefWith(searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
+              {transactionLabel[tr]}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Link href={hrefWith(searchParams, "type", null)} className={chip(activePropertyType == null)}>
-          Všetky typy
-        </Link>
-        {PROPERTY_TYPES.map((pt) => (
-          <Link key={pt} href={hrefWith(searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
-            {propertyLabel[pt]}
+      <div className="flex flex-col gap-2">
+        <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
+          Typ nehnuteľnosti
+        </p>
+        <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
+          <Link href={hrefWith(searchParams, "type", null)} className={chip(activePropertyType == null)}>
+            Všetky typy
           </Link>
-        ))}
+          {PROPERTY_TYPES.map((pt) => (
+            <Link key={pt} href={hrefWith(searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
+              {propertyLabel[pt]}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {SORTS.map((s) => (
-          <Link
-            key={s.value}
-            href={hrefWith(searchParams, "sort", s.value === "NEWEST" ? null : s.value)}
-            className={chip(activeSort === s.value)}
-          >
-            {s.label}
-          </Link>
-        ))}
+      <div className="flex flex-col gap-2">
+        <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
+          Triedenie
+        </p>
+        <div className="flex flex-wrap gap-2 lg:flex-col lg:flex-nowrap lg:items-start">
+          {SORTS.map((s) => (
+            <Link
+              key={s.value}
+              href={hrefWith(searchParams, "sort", s.value === "NEWEST" ? null : s.value)}
+              className={chip(activeSort === s.value)}
+            >
+              {s.label}
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

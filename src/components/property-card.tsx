@@ -23,7 +23,7 @@ export function PropertyCard({ property }: { property: PropertyWithMedia }) {
   return (
     <Link
       href={`/inzerat/${property.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-shadow hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-[var(--shadow-card)] transition-transform duration-200 hover:-translate-y-0.5"
     >
       <div className="relative aspect-[4/3] w-full bg-surface-pressed">
         {photo ? (
@@ -39,9 +39,12 @@ export function PropertyCard({ property }: { property: PropertyWithMedia }) {
             Bez fotky
           </div>
         )}
-        <span className="absolute left-3 top-3 rounded-full bg-on-primary/90 px-2.5 py-1 text-xs font-semibold text-text-primary shadow-sm">
+        <span className="absolute left-3 top-3 rounded-[10px] bg-primary px-2 py-[3px] text-xs font-semibold tracking-wide text-on-primary">
           {transactionLabel}
         </span>
+        <div className="absolute bottom-3 left-3">
+          <DeadlineBadge iso={property.offer_deadline} onPhoto />
+        </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-1.5 p-4">
@@ -49,13 +52,8 @@ export function PropertyCard({ property }: { property: PropertyWithMedia }) {
           {property.title || typeLabel}
         </h2>
         {meta ? <p className="text-sm text-text-muted">{meta}</p> : null}
-        <DeadlineBadge iso={property.offer_deadline} className="text-xs" />
         {price ? (
-          <p
-            className="mt-1 font-money text-xl font-bold text-accent"
-          >
-            {price}
-          </p>
+          <p className="mt-1 font-money text-[22px] font-bold leading-[25px] text-accent">{price}</p>
         ) : (
           <p className="mt-1 text-sm text-text-muted">Cena na dohodu</p>
         )}

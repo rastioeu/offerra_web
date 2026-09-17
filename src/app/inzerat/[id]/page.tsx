@@ -92,7 +92,7 @@ export default async function PropertyDetailPage({
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
       {/* `<` únik: titulok/popis idú z DB (používateľský vstup) — bez toho
           by "</script>" v texte inzerátu vedel predčasne ukončiť tag. */}
       <script
@@ -104,61 +104,67 @@ export default async function PropertyDetailPage({
         ← Späť do katalógu
       </Link>
 
-      <PhotoGallery media={property.media} title={property.title} />
+      {/* Desktop: galéria + popis vľavo, cena/ponuky/obhliadka vpravo (sticky) —
+          klasický dvojstĺpcový realitný layout, nie appka natiahnutá na šírku. */}
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-6">
+          <PhotoGallery media={property.media} title={property.title} />
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col gap-2">
-          <span className="w-fit rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent-deep">
-            {transactionLabel} · {typeLabel}
-          </span>
-          <h1 className="text-2xl font-bold text-text-primary">{property.title}</h1>
-          {meta ? <p className="text-text-secondary">{meta}</p> : null}
+          <div className="flex flex-col gap-2">
+            <span className="w-fit rounded-full bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent-deep">
+              {transactionLabel} · {typeLabel}
+            </span>
+            <h1 className="text-2xl font-bold text-text-primary">{property.title}</h1>
+            {meta ? <p className="text-text-secondary">{meta}</p> : null}
+          </div>
+
+          {property.description ? (
+            <section className="flex flex-col gap-2">
+              <h2 className="text-lg font-semibold text-text-primary">Popis</h2>
+              <p className="whitespace-pre-wrap text-text-secondary">{property.description}</p>
+            </section>
+          ) : null}
+
+          {rows.length > 0 ? (
+            <section className="flex flex-col gap-2">
+              <h2 className="text-lg font-semibold text-text-primary">Podrobnosti</h2>
+              <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-2">
+                {rows.map((row) => (
+                  <div key={row.label} className="flex justify-between gap-4 border-b border-border py-1.5 last:border-0 sm:border-0">
+                    <dt className="text-text-muted">{row.label}</dt>
+                    <dd className="font-medium text-text-primary">{row.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
+
+          {property.owner?.nickname ? (
+            <p className="text-sm text-text-muted">Inzerent: {property.owner.nickname}</p>
+          ) : null}
+
+          <RatingsSection property={property} userId={user?.id ?? null} />
+          <MessagesSection property={property} userId={user?.id ?? null} />
         </div>
-        <div className="flex flex-col items-start gap-1 sm:items-end">
-          {price ? (
-            <p className="font-money text-3xl font-bold text-accent">{price}</p>
-          ) : (
-            <p className="text-text-muted">Cena na dohodu</p>
-          )}
+
+        <div className="flex flex-col gap-5 lg:sticky lg:top-6 lg:w-[380px] lg:shrink-0">
+          <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
+            {price ? (
+              <p className="font-money text-[27px] font-bold leading-[30px] text-accent">{price}</p>
+            ) : (
+              <p className="text-text-muted">Cena na dohodu</p>
+            )}
+            <DeadlineBadge iso={property.offer_deadline} />
+          </div>
+
+          <OffersSection property={property} userId={user?.id ?? null} />
+          <ViewingSection property={property} userId={user?.id ?? null} />
+
+          {property.transaction_type === "SALE" ? (
+            <MortgageCalculatorCard price={property.asking_price_hint} topOffer={topOffer} />
+          ) : null}
         </div>
       </div>
-
-      <DeadlineBadge iso={property.offer_deadline} />
-
-      {property.description ? (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-lg font-semibold text-text-primary">Popis</h2>
-          <p className="whitespace-pre-wrap text-text-secondary">{property.description}</p>
-        </section>
-      ) : null}
-
-      {rows.length > 0 ? (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-lg font-semibold text-text-primary">Podrobnosti</h2>
-          <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-2">
-            {rows.map((row) => (
-              <div key={row.label} className="flex justify-between gap-4 border-b border-border py-1.5 last:border-0 sm:border-0">
-                <dt className="text-text-muted">{row.label}</dt>
-                <dd className="font-medium text-text-primary">{row.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      ) : null}
-
-      {property.owner?.nickname ? (
-        <p className="text-sm text-text-muted">Inzerent: {property.owner.nickname}</p>
-      ) : null}
-
-      <OffersSection property={property} userId={user?.id ?? null} />
-      <ViewingSection property={property} userId={user?.id ?? null} />
-
-      {property.transaction_type === "SALE" ? (
-        <MortgageCalculatorCard price={property.asking_price_hint} topOffer={topOffer} />
-      ) : null}
-
-      <RatingsSection property={property} userId={user?.id ?? null} />
-      <MessagesSection property={property} userId={user?.id ?? null} />
     </main>
   );
 }

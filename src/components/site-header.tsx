@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Logo } from "@/components/logo";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -17,9 +18,9 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="text-lg font-bold text-primary">
-            Offerra
+        <div className="flex items-center gap-6">
+          <Link href="/" aria-label="Offerra">
+            <Logo />
           </Link>
           <Link href="/dopyty" className="text-sm text-text-secondary hover:text-text-primary">
             Dopyty
