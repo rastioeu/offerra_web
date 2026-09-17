@@ -38,8 +38,8 @@ function LanguageSwitcherInner() {
             key={locale}
             href={href}
             aria-current={active ? "true" : undefined}
-            className={`rounded-lg px-1.5 py-1 font-semibold ${
-              active ? "text-text-primary" : "text-text-muted hover:text-text-secondary"
+            className={`rounded-lg px-1.5 py-1 ${
+              active ? "font-semibold text-text-primary" : "font-medium text-text-muted hover:text-text-secondary"
             }`}
           >
             {NAMES[locale]}

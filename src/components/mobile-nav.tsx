@@ -65,7 +65,7 @@ export function MobileNav({
                 onClick={() => setOpen(false)}
                 aria-current={active ? "page" : undefined}
                 className={`rounded-xl px-3 py-2 text-sm hover:bg-surface-pressed hover:text-text-primary ${
-                  active ? "font-semibold text-text-primary" : "text-text-secondary"
+                  active ? "font-semibold text-text-primary" : "font-medium text-text-secondary"
                 }`}
               >
                 {link.label}

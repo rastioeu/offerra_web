@@ -72,8 +72,18 @@ export async function PropertyCard({ property }: { property: PropertyWithMedia }
         <div className="absolute right-3 top-3">
           <FavoriteHeart propertyId={property.id} />
         </div>
-        <div className="absolute bottom-3 left-3">
+        {/* Uzávierka inzerátu a platnosť najvyššej ponuky — DVE ROZDIELNE
+            veci (termín na podanie ponúk vs. platnosť KONKRÉTNEJ ponuky),
+            ale JEDEN dizajn systém (Rastio, 17.9.2026: predtým tmavý pruh
+            na fotke vs. oranžová pilulka pod fotkou, „musia vyzerať ako
+            súčasť jedného dizajn systému"). Obe teraz rovnaká pilulka na
+            fotke, stohované v tom istom rohu — líši sa len farba textu
+            (`DeadlineBadge`/`OfferCountdownPill` `onPhoto`). */}
+        <div className="absolute bottom-3 left-3 flex flex-col items-start gap-1">
           <DeadlineBadge iso={property.offer_deadline} language={language} onPhoto />
+          {isOffer && property.top_offer_valid_until ? (
+            <OfferCountdownPill status="PENDING" validUntil={property.top_offer_valid_until} language={language} onPhoto />
+          ) : null}
         </div>
         {property.media.length > 1 ? (
           <span className="absolute bottom-3 right-3 rounded-full bg-on-photo-surface px-2.5 py-[3px] text-xs font-semibold text-text-secondary">
@@ -96,9 +106,6 @@ export async function PropertyCard({ property }: { property: PropertyWithMedia }
                 <p className={`font-money text-[22px] font-bold leading-[25px] ${isOffer ? "text-accent" : "text-primary"}`}>
                   {headlineValue}
                 </p>
-                {isOffer && property.top_offer_valid_until ? (
-                  <OfferCountdownPill status="PENDING" validUntil={property.top_offer_valid_until} language={language} />
-                ) : null}
               </>
             ) : (
               <p className="text-sm text-text-muted">{pd.note}</p>

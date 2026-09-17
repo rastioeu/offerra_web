@@ -61,6 +61,19 @@ const LABELS: Record<
  * (klientská komponenta, `usePathname`) zvýrazní odkaz na stránku, na
  * ktorej používateľ práve je — `text-primary` + tučné namiesto
  * `text-secondary`.
+ *
+ * TRETIE KOLO (Rastio, 17.9.2026, „DIZAJN OPRAVA"): lišta má zostať
+ * VŠETKY položky viditeľné a klikateľné, ŽIADNY dropdown/skrývanie
+ * (cieľová obrazovka je NB/desktop, kde je na to miesto) — namiesto
+ * skrývania sa rieši ROZLOŽENIE. Tri skupiny namiesto dvoch
+ * (`justify-between` medzi logom a navom): logo vľavo (`shrink-0`),
+ * textové odkazy VYCENTROVANÉ v zvyšnom priestore (`flex-1
+ * justify-center`), ikonový klaster (zvonček/jazyk/kontakt/prihlásenie)
+ * úplne vpravo (`shrink-0`), oddelený od odkazov tenkou zvislou čiarou
+ * (`border-l`) — nie jeden neprerušený rad. Typografia zjednotená
+ * (`text-sm font-medium`/`font-semibold` pri aktívnom) naprieč
+ * odkazmi AJ prepínačom jazyka (`LanguageSwitcher`), ktorý mal predtým
+ * inú konvenciu (vždy `font-semibold`, líšila sa len farba).
  */
 export async function SiteHeader() {
   const [supabase, locale, t] = await Promise.all([createClient(), getLocale(), getT()]);
@@ -87,7 +100,7 @@ export async function SiteHeader() {
 
   return (
     <header className="border-b border-border bg-surface">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex shrink-0 flex-col">
           <Link href={href("/")} aria-label="Offerra" className="shrink-0">
             <Logo />
@@ -95,7 +108,7 @@ export async function SiteHeader() {
           <span className="hidden text-xs font-medium text-text-secondary md:block">{t("catalog.motto")}</span>
         </div>
 
-        <nav className="hidden items-center gap-5 md:flex">
+        <nav className="hidden flex-1 items-center justify-center gap-7 md:flex">
           <NavLink href={href("/dopyty")}>{l.demands}</NavLink>
           {user ? (
             <>
@@ -105,24 +118,25 @@ export async function SiteHeader() {
               <NavLink href={href("/oblubene")}>{l.favorites}</NavLink>
               <NavLink href={href("/nastavenia")}>{l.settings}</NavLink>
               <NavLink href={href("/ako-to-funguje")}>{l.howItWorks}</NavLink>
-              <NotificationBell locale={locale} />
-              <LanguageSwitcher />
-              <HeaderContact t={t} />
             </>
           ) : (
-            <>
-              <NavLink href={href("/ako-to-funguje")}>{l.howItWorks}</NavLink>
-              <LanguageSwitcher />
-              <HeaderContact t={t} />
-              <Link
-                href={href("/login")}
-                className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90"
-              >
-                {l.login}
-              </Link>
-            </>
+            <NavLink href={href("/ako-to-funguje")}>{l.howItWorks}</NavLink>
           )}
         </nav>
+
+        <div className="hidden shrink-0 items-center gap-3 border-l border-border pl-5 md:flex">
+          {user ? <NotificationBell locale={locale} /> : null}
+          <LanguageSwitcher />
+          <HeaderContact t={t} />
+          {!user ? (
+            <Link
+              href={href("/login")}
+              className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90"
+            >
+              {l.login}
+            </Link>
+          ) : null}
+        </div>
 
         <div className="flex items-center gap-2 md:hidden">
           {user ? <NotificationBell locale={locale} /> : null}

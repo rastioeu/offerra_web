@@ -23,7 +23,7 @@ export function NavLink({ href, children }: { href: string; children: ReactNode 
       className={
         active
           ? "text-sm font-semibold text-text-primary"
-          : "text-sm text-text-secondary hover:text-text-primary"
+          : "text-sm font-medium text-text-secondary hover:text-text-primary"
       }
     >
       {children}
