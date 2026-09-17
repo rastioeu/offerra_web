@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 
-import { withdrawOffer } from "@/app/inzerat/[id]/actions";
+import { withdrawOffer } from "@/app/[locale]/inzerat/[id]/actions";
 
 export function WithdrawOfferButton({ propertyId, offerId }: { propertyId: string; offerId: string }) {
   const [pending, startTransition] = useTransition();

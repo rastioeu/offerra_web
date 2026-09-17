@@ -2,7 +2,7 @@
 
 import { useOfferCountdownTick } from "@/hooks/use-offer-countdown-tick";
 import { offerCountdown } from "@/lib/offer-validity";
-import { t, language } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 /**
  * Odpočet platnosti KONKRÉTNEJ ponuky (nie uzávierka inzerátu —
@@ -11,7 +11,16 @@ import { t, language } from "@/i18n";
  * hodina = plain červený tučný text bez pilulky (appka: „tam už má
  * poplašná farba zmysel, pill by ju len zoslabil").
  */
-export function OfferCountdownPill({ status, validUntil }: { status: string; validUntil: string | null }) {
+export function OfferCountdownPill({
+  status,
+  validUntil,
+  language,
+}: {
+  status: string;
+  validUntil: string | null;
+  language: Locale;
+}) {
+  const t = createT(language);
   const now = useOfferCountdownTick([validUntil]);
   const cd = offerCountdown(t, language, status, validUntil, now);
   if (!cd) return null;

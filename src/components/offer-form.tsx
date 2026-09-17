@@ -2,23 +2,26 @@
 
 import { useState, useTransition } from "react";
 
-import { submitOffer } from "@/app/inzerat/[id]/actions";
+import { submitOffer } from "@/app/[locale]/inzerat/[id]/actions";
 import { Button } from "@/components/button";
 import { OfferValidityPicker } from "@/components/offer-validity-picker";
 import { getEmploymentOptions, type TenantProfile } from "@/lib/offers";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 export function OfferForm({
   propertyId,
   transactionType,
   existing,
   existingTenant,
+  language,
 }: {
   propertyId: string;
   transactionType: "SALE" | "RENT";
   existing: { id: string; amount: number; message: string | null; valid_until: string | null } | null;
   existingTenant?: TenantProfile | null;
+  language: Locale;
 }) {
+  const t = createT(language);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [hasPets, setHasPets] = useState(existingTenant?.has_pets ?? false);
@@ -68,7 +71,7 @@ export function OfferForm({
         />
       </div>
 
-      <OfferValidityPicker defaultValue={existing?.valid_until} />
+      <OfferValidityPicker defaultValue={existing?.valid_until} t={t} language={language} />
 
       <input type="hidden" name="transactionType" value={transactionType} />
 

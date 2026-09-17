@@ -2,10 +2,10 @@
 
 import { useTransition } from "react";
 
-import { closeDealAction, decideOfferAction } from "@/app/inzerat/[id]/owner-offer-actions";
+import { closeDealAction, decideOfferAction } from "@/app/[locale]/inzerat/[id]/owner-offer-actions";
 import { Button } from "@/components/button";
 import { closedLabel, type TransactionType } from "@/lib/property";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 export function OwnerOfferActions({
   propertyId,
@@ -13,13 +13,16 @@ export function OwnerOfferActions({
   offerStatus,
   propertyActive,
   transaction,
+  language,
 }: {
   propertyId: string;
   offerId: string;
   offerStatus: string;
   propertyActive: boolean;
   transaction: TransactionType;
+  language: Locale;
 }) {
+  const t = createT(language);
   const [pending, startTransition] = useTransition();
 
   function decide(status: "ACCEPTED" | "REJECTED") {

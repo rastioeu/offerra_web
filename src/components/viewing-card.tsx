@@ -2,10 +2,10 @@
 
 import { useTransition } from "react";
 
-import { confirmViewingAction, requestViewingAction, setViewingStatusAction } from "@/app/inzerat/[id]/viewing-actions";
+import { confirmViewingAction, requestViewingAction, setViewingStatusAction } from "@/app/[locale]/inzerat/[id]/viewing-actions";
 import { Button } from "@/components/button";
 import { getViewingConsent, getViewingStatusLabel, REVEALED, type Viewing, type ViewingContact } from "@/lib/viewing";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 /**
  * Prenesené z appky (`viewing-card.tsx`) — rovnaká mechanika, len bez
@@ -20,6 +20,7 @@ export function ViewingCard({
   myId,
   isOwner,
   closed,
+  language,
 }: {
   propertyId: string;
   viewings: Viewing[];
@@ -27,7 +28,9 @@ export function ViewingCard({
   myId: string;
   isOwner: boolean;
   closed: boolean;
+  language: Locale;
 }) {
+  const t = createT(language);
   const [pending, startTransition] = useTransition();
   const statusLabel = getViewingStatusLabel(t);
   const consent = getViewingConsent(t);

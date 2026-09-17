@@ -2,10 +2,10 @@
 
 import { useState, useTransition } from "react";
 
-import { saveRatingAction } from "@/app/inzerat/[id]/rating-actions";
+import { saveRatingAction } from "@/app/[locale]/inzerat/[id]/rating-actions";
 import { Button } from "@/components/button";
 import type { Rating } from "@/lib/rating";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 /**
  * Hodnotenie druhej strany po uzavretom obchode — prenesené z appky.
@@ -20,6 +20,7 @@ export function RatingCard({
   allowed,
   mine,
   received,
+  language,
 }: {
   propertyId: string;
   rateeId: string;
@@ -27,7 +28,9 @@ export function RatingCard({
   allowed: boolean;
   mine: Rating | null;
   received: Rating | null;
+  language: Locale;
 }) {
+  const t = createT(language);
   const [stars, setStars] = useState(mine?.stars ?? 0);
   const [comment, setComment] = useState(mine?.comment ?? "");
   const [error, setError] = useState<string | null>(null);

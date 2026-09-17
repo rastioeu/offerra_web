@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { computeMortgage, eur } from "@/lib/mortgage";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 const DEFAULT_RATE = 4.2;
 
@@ -17,7 +17,16 @@ function num(text: string, fallback: number): number {
  * predvoľby. Zobrazuje sa LEN pri predaji (appka rovnako — pri prenájme
  * nemá čo počítať), o tom rozhoduje volajúca stránka, nie táto komponenta.
  */
-export function MortgageCalculatorCard({ price, topOffer }: { price?: number | null; topOffer?: number | null }) {
+export function MortgageCalculatorCard({
+  price,
+  topOffer,
+  language,
+}: {
+  price?: number | null;
+  topOffer?: number | null;
+  language: Locale;
+}) {
+  const t = createT(language);
   const initial = price ?? topOffer ?? null;
   const [amount, setAmount] = useState(initial == null ? "" : String(initial));
   const [down, setDown] = useState<"10" | "20" | "30">("20");

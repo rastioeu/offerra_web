@@ -3,9 +3,10 @@ import Link from "next/link";
 import { getDemandLabel, getPropertyLabel } from "@/lib/labels";
 import type { BuyerRequest } from "@/lib/offers";
 import { formatBudget } from "@/lib/offers";
-import { t } from "@/i18n";
+import { getT } from "@/i18n/server";
 
-export function DemandCard({ demand }: { demand: BuyerRequest }) {
+export async function DemandCard({ demand }: { demand: BuyerRequest }) {
+  const t = await getT();
   const demandLabel = getDemandLabel(t)[demand.transaction_type];
   const typeLabel = demand.property_type
     ? getPropertyLabel(t)[demand.property_type as keyof ReturnType<typeof getPropertyLabel>]

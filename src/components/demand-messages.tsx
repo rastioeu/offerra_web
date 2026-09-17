@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MessageThread } from "@/components/message-thread";
 import type { BuyerRequest } from "@/lib/offers";
 import { fetchNicknames, fetchThreads } from "@/lib/message-data";
-import { t } from "@/i18n";
+import { getT } from "@/i18n/server";
 
 /**
  * Správy pri dopyte — appka: `DemandMessages`, rovnaká mechanika ako pri
@@ -12,6 +12,7 @@ import { t } from "@/i18n";
  * možné skôr, než niekto ponúkne svoj inzerát".
  */
 export async function DemandMessages({ demand, userId }: { demand: BuyerRequest; userId: string | null }) {
+  const t = await getT();
   if (!userId) {
     return (
       <section className="flex flex-col gap-3">

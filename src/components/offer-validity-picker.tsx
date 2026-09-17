@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { offerValidityDaysLabel } from "@/lib/offer-validity";
-import { t, language } from "@/i18n";
+import type { TFunc } from "@/i18n";
 
 /**
  * Platnosť ponuky pri podaní — prenesené z appky (`OfferValidityPicker`),
@@ -17,7 +17,15 @@ function daysFromNow(days: number): string {
   return d.toISOString();
 }
 
-export function OfferValidityPicker({ defaultValue }: { defaultValue?: string | null }) {
+export function OfferValidityPicker({
+  defaultValue,
+  t,
+  language,
+}: {
+  defaultValue?: string | null;
+  t: TFunc;
+  language: string;
+}) {
   const [value, setValue] = useState<string | null>(defaultValue ?? null);
   const choices: { days: number | null; label: string }[] = [
     { days: null, label: t("offerValidity.pickerNone") },

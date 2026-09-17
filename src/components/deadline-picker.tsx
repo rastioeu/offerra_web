@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { t } from "@/i18n";
+import type { TFunc } from "@/i18n";
 
 /** Uzávierka príjmu ponúk — prenesené z appky (`DeadlinePicker`), rovnaké rýchle voľby. */
 function daysFromNow(days: number): string {
@@ -15,9 +15,11 @@ function daysFromNow(days: number): string {
 export function DeadlinePicker({
   defaultValue,
   onChange,
+  t,
 }: {
   defaultValue: string | null;
   onChange: (iso: string | null) => void;
+  t: TFunc;
 }) {
   const [value, setValue] = useState<string | null>(defaultValue);
   const choices: { days: number | null; label: string }[] = [

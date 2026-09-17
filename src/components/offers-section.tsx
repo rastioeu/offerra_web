@@ -7,7 +7,8 @@ import { WithdrawOfferButton } from "@/components/withdraw-offer-button";
 import { formatAmount, getOfferStatusLabel, type OfferContact, type TenantProfile } from "@/lib/offers";
 import type { PropertyDetail } from "@/lib/detail";
 import { fetchOffers, fetchOfferContact, fetchTenantProfile } from "@/lib/property-offers";
-import { t } from "@/i18n";
+import { getLocale, getT } from "@/i18n/server";
+import type { TFunc } from "@/i18n";
 
 const STATUS_COLOR: Record<string, string> = {
   PENDING: "bg-surface-pressed text-text-secondary",
@@ -28,6 +29,7 @@ const STATUS_COLOR: Record<string, string> = {
  * žiadna nová tabuľka) doplnené 17.9.2026.
  */
 export async function OffersSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
+  const [t, language] = await Promise.all([getT(), getLocale()]);
   const offers = await fetchOffers(property.id);
   const statusLabel = getOfferStatusLabel(t);
   const isOwner = userId === property.owner_id;
@@ -86,13 +88,13 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
                 </div>
 
                 {offer.status === "PENDING" && offer.valid_until ? (
-                  <OfferCountdownPill status={offer.status} validUntil={offer.valid_until} />
+                  <OfferCountdownPill status={offer.status} validUntil={offer.valid_until} language={language} />
                 ) : null}
 
                 {isOwner && offer.message ? <p className="text-sm italic text-text-secondary">„{offer.message}&quot;</p> : null}
 
                 {isOwner && isRent ? (
-                  <TenantProfileView profile={tenants[offer.id]} />
+                  <TenantProfileView profile={tenants[offer.id]} t={t} />
                 ) : null}
 
                 {isOwner && offer.status === "ACCEPTED" ? (
@@ -119,6 +121,7 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
                     offerStatus={offer.status}
                     propertyActive={property.status === "ACTIVE"}
                     transaction={property.transaction_type}
+                    language={language}
                   />
                 ) : null}
               </div>
@@ -140,6 +143,7 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
             transactionType={property.transaction_type}
             existing={mine ? { id: mine.id, amount: mine.amount, message: mine.message, valid_until: mine.valid_until } : null}
             existingTenant={myTenant}
+            language={language}
           />
           {mine ? <WithdrawOfferButton propertyId={property.id} offerId={mine.id} /> : null}
         </div>
@@ -168,7 +172,7 @@ function ContactCell({ label, value }: { label: string; value: string | null | u
  * „O nájomcovi" — appka: `owner-offers.tsx`. Vidí len majiteľ (RLS
  * `tenant_select_parties`), preto sa toto renderuje LEN pre `isOwner`.
  */
-function TenantProfileView({ profile }: { profile: TenantProfile | null | undefined }) {
+function TenantProfileView({ profile, t }: { profile: TenantProfile | null | undefined; t: TFunc }) {
   if (!profile) {
     return <p className="text-sm text-text-muted">{t("ownerOffers.noTenantForm")}</p>;
   }

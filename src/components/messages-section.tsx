@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MessageThread } from "@/components/message-thread";
 import type { PropertyDetail } from "@/lib/detail";
 import { fetchNicknames, fetchThreads } from "@/lib/message-data";
-import { t } from "@/i18n";
+import { getT } from "@/i18n/server";
 
 /**
  * Správy k inzerátu — appka: `messages.ts` + obrazovka vlákien. Vlastník
@@ -12,6 +12,7 @@ import { t } from "@/i18n";
  * namiesto priamej konverzácie.
  */
 export async function MessagesSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
+  const t = await getT();
   if (!userId) {
     return (
       <section className="flex flex-col gap-3">

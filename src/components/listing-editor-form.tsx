@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { archiveListingAction, publishListingAction, saveListingAction } from "@/app/moje-inzeraty/[id]/upravit/actions";
+import { archiveListingAction, publishListingAction, saveListingAction } from "@/app/[locale]/moje-inzeraty/[id]/upravit/actions";
 import { Button } from "@/components/button";
 import { CityPicker } from "@/components/city-picker";
 import { DeadlinePicker } from "@/components/deadline-picker";
@@ -11,7 +11,7 @@ import { StreetPicker } from "@/components/street-picker";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { formFromProperty, type ListingForm } from "@/lib/listing-form";
 import { getFurnishingLabel, getUtilitiesLabel, type Property, type PropertyType, type TransactionType } from "@/lib/property";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 const TRANSACTIONS: TransactionType[] = ["SALE", "RENT"];
 const PROPERTY_TYPES: PropertyType[] = ["APARTMENT", "HOUSE", "LAND", "COMMERCIAL", "OTHER"];
@@ -20,7 +20,8 @@ function inputCls() {
   return "w-full rounded-xl border border-border-strong bg-surface px-4 py-2.5 text-text-primary focus:border-accent-deep focus:outline-none";
 }
 
-export function ListingEditorForm({ property }: { property: Property }) {
+export function ListingEditorForm({ property, language }: { property: Property; language: Locale }) {
+  const t = createT(language);
   const router = useRouter();
   const [form, setForm] = useState<ListingForm>(() => formFromProperty(property));
   const [saving, startSaving] = useTransition();
@@ -237,7 +238,7 @@ export function ListingEditorForm({ property }: { property: Property }) {
         </div>
       ) : null}
 
-      <DeadlinePicker defaultValue={form.offer_deadline} onChange={(v) => set("offer_deadline", v)} />
+      <DeadlinePicker defaultValue={form.offer_deadline} onChange={(v) => set("offer_deadline", v)} t={t} />
 
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 

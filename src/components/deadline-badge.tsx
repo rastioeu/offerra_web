@@ -2,7 +2,7 @@
 
 import { useOfferCountdownTick } from "@/hooks/use-offer-countdown-tick";
 import { deadlineLabel, deadlineUrgency } from "@/lib/deadline";
-import { t, language } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 /**
  * Živý odpočet uzávierky ponúk — appka: `PropertyCard`/`ponuka/[id]`
@@ -15,13 +15,16 @@ import { t, language } from "@/i18n";
  */
 export function DeadlineBadge({
   iso,
+  language,
   className = "",
   onPhoto = false,
 }: {
   iso: string | null;
+  language: Locale;
   className?: string;
   onPhoto?: boolean;
 }) {
+  const t = createT(language);
   const now = useOfferCountdownTick([iso]);
   const label = deadlineLabel(t, language, iso, now);
   if (!label) return null;

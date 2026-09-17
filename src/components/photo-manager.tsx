@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 
-import { removePhotoAction, uploadPhotoAction } from "@/app/moje-inzeraty/[id]/upravit/photo-actions";
+import { removePhotoAction, uploadPhotoAction } from "@/app/[locale]/moje-inzeraty/[id]/upravit/photo-actions";
 import type { Media } from "@/lib/property";
 
 export function PhotoManager({ propertyId, media }: { propertyId: string; media: Media[] }) {

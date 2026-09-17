@@ -1,13 +1,14 @@
 import { offerSteps, type Offer } from "@/lib/offers";
 import { formatDate } from "@/lib/property";
-import { t, language } from "@/i18n";
+import { getLocale, getT } from "@/i18n/server";
 
 /**
  * Zvislá os s bodkami — port appkového `offer-timeline.tsx` (appka:
  * „Tvarom nadväzuje na ActivityTimeline v Profile"). Čistý render,
  * žiadny vlastný stav ani dopyt — kroky prídu hotové z `offerSteps`.
  */
-export function OfferTimeline({ offer }: { offer: Offer }) {
+export async function OfferTimeline({ offer }: { offer: Offer }) {
+  const [t, language] = await Promise.all([getT(), getLocale()]);
   const steps = offerSteps(t, offer);
 
   return (

@@ -7,7 +7,7 @@ import { Avatar } from "@/components/avatar";
 import { MessageSendForm } from "@/components/message-send-form";
 import { useRealtimeChannel } from "@/hooks/use-realtime-channel";
 import { subjectIds, type Message, type MessageSubject } from "@/lib/messages";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 /**
  * Živé vlákno — appka message thread realtime NEMÁ (žiadny appkový vzor
@@ -24,13 +24,16 @@ export function MessageThreadClient({
   myId,
   otherName,
   initialMessages,
+  language,
 }: {
   subject: MessageSubject;
   otherId: string;
   myId: string;
   otherName: string;
   initialMessages: Message[];
+  language: Locale;
 }) {
+  const t = createT(language);
   const [messages, setMessages] = useState(initialMessages);
   const { propertyId, requestId } = subjectIds(subject);
   const topic = propertyId ? `messages-property-${propertyId}` : `messages-request-${requestId}`;
@@ -87,7 +90,7 @@ export function MessageThreadClient({
         </div>
       )}
 
-      <MessageSendForm onSend={handleSend} />
+      <MessageSendForm onSend={handleSend} t={t} />
       <p className="flex items-center gap-2 text-xs text-text-muted">
         <Avatar name={otherName} size={20} />
         Píšeš s {otherName}.

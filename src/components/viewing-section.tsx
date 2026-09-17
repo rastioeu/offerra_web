@@ -3,9 +3,10 @@ import type { PropertyDetail } from "@/lib/detail";
 import { isDeadlinePassed } from "@/lib/deadline";
 import { REVEALED, type ViewingContact } from "@/lib/viewing";
 import { fetchViewingContact, fetchViewings } from "@/lib/viewing-data";
-import { t } from "@/i18n";
+import { getLocale, getT } from "@/i18n/server";
 
 export async function ViewingSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
+  const [t, language] = await Promise.all([getT(), getLocale()]);
   if (!userId) {
     return (
       <section className="flex flex-col gap-3">
@@ -40,6 +41,7 @@ export async function ViewingSection({ property, userId }: { property: PropertyD
       myId={userId}
       isOwner={isOwner}
       closed={closed}
+      language={language}
     />
   );
 }

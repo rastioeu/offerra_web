@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 
-import { setUserRole, setUserVerified } from "@/app/admin/actions";
+import { setUserRole, setUserVerified } from "@/app/[locale]/admin/actions";
 import { Button } from "@/components/button";
 
 /**

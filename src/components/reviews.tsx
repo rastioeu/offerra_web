@@ -2,7 +2,7 @@ import { Avatar } from "@/components/avatar";
 import { fetchReviews } from "@/lib/rating-data";
 import { ratingLabel, type RatingSummary } from "@/lib/rating";
 import { formatDate } from "@/lib/property";
-import { t, language } from "@/i18n";
+import { getLocale, getT } from "@/i18n/server";
 
 /**
  * Verejné hodnotenia človeka — prenesené z appky (`Reviews`). Zobrazuje
@@ -18,7 +18,7 @@ export async function Reviews({
   nickname: string;
   summary: RatingSummary | undefined;
 }) {
-  const items = await fetchReviews(userId);
+  const [items, t, language] = await Promise.all([fetchReviews(userId), getT(), getLocale()]);
   const label = ratingLabel(summary);
 
   if (!label && items.length === 0) return null;

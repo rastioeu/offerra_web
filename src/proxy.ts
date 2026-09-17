@@ -10,8 +10,55 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
+import { DEFAULT_LOCALE, isLocale } from '@/i18n';
+
+/**
+ * Cesty MIMO `[locale]` stromu — root-level metadata routy (appka
+ * nemá, appka nemá web routing vôbec). Tie sa NIKDY neprepisujú na
+ * `/sk/...`, inak by `sitemap.xml` skončilo na neexistujúcej
+ * `/sk/sitemap.xml` route.
+ */
+const LOCALE_EXEMPT = ['/robots.txt', '/sitemap.xml', '/llms.txt', '/icon.png', '/apple-icon.png', '/favicon.ico'];
+/** `/auth/callback` naviac — pevná URL registrovaná v Supabase/Apple, nesmie sa prepísať. */
+function isLocaleExempt(pathname: string): boolean {
+  return LOCALE_EXEMPT.includes(pathname) || pathname.startsWith('/_next') || pathname.startsWith('/auth/');
+}
+
+/**
+ * SK je BEZ prefixu (appka: rozhodnutie Rastia 17.9.2026, najlepšie pre
+ * SEO/hreflang), EN/DE MAJÚ `/en`/`/de` prefix. Next.js App Router
+ * routing (`app/[locale]/...`) potrebuje prefix VŽDY na disku — takže
+ * SK požiadavka na `/dopyty` sa tu PREPÍŠE (nie presmeruje, adresný
+ * riadok sa nemení) na `/sk/dopyty`. `x-locale` hlavička nesie jazyk
+ * ďalej pre `getLocale()`/`getT()` v `src/i18n/index.ts`.
+ */
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  const { pathname } = request.nextUrl;
+  const exempt = isLocaleExempt(pathname);
+
+  let locale: string = DEFAULT_LOCALE;
+  let rewriteUrl: URL | null = null;
+  if (!exempt) {
+    const [, first] = pathname.split('/');
+    if (isLocale(first) && first !== DEFAULT_LOCALE) {
+      locale = first;
+    } else {
+      rewriteUrl = request.nextUrl.clone();
+      rewriteUrl.pathname = `/${DEFAULT_LOCALE}${pathname}`;
+    }
+  }
+
+  // Klon hlavičiek s doplneným `x-locale` — POUŽÍVA sa pre KAŽDÚ
+  // odpoveď nižšie (aj tú, čo Supabase prestaví v `setAll`), nech sa
+  // prepis/jazyk nestratí, keď sa cookies menia.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-locale', locale);
+  const buildResponse = () =>
+    rewriteUrl
+      ? NextResponse.rewrite(rewriteUrl, { request: { headers: requestHeaders } })
+      : NextResponse.next({ request: { headers: requestHeaders } });
+
+  let response = buildResponse();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -25,7 +72,7 @@ export async function proxy(request: NextRequest) {
           for (const { name, value } of cookiesToSet) {
             request.cookies.set(name, value);
           }
-          response = NextResponse.next({ request });
+          response = buildResponse();
           for (const { name, value, options } of cookiesToSet) {
             response.cookies.set(name, value, options);
           }

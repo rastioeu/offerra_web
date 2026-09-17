@@ -3,7 +3,7 @@ import { Reviews } from "@/components/reviews";
 import type { PropertyDetail } from "@/lib/detail";
 import { fetchOffers } from "@/lib/property-offers";
 import { canRate, fetchMyAndReceivedRating, fetchRatings } from "@/lib/rating-data";
-import { t } from "@/i18n";
+import { getLocale, getT } from "@/i18n/server";
 
 /**
  * Hodnotenia na detaile inzerátu — prenesené z appky (`RatingsTab`).
@@ -13,6 +13,7 @@ import { t } from "@/i18n";
  * stavu inzerátu — je to jeho povesť naprieč všetkými obchodmi.
  */
 export async function RatingsSection({ property, userId }: { property: PropertyDetail; userId: string | null }) {
+  const t = await getT();
   if (!userId) {
     return (
       <section className="flex flex-col gap-3">
@@ -75,9 +76,10 @@ async function RatingCardLoader({
   rateeNickname: string;
   userId: string;
 }) {
-  const [allowed, { mine, received }] = await Promise.all([
+  const [allowed, { mine, received }, language] = await Promise.all([
     canRate(propertyId, rateeId),
     fetchMyAndReceivedRating(propertyId, userId),
+    getLocale(),
   ]);
 
   return (
@@ -88,6 +90,7 @@ async function RatingCardLoader({
       allowed={allowed}
       mine={mine}
       received={received}
+      language={language}
     />
   );
 }

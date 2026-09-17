@@ -2,11 +2,11 @@
 
 import { useState, useTransition } from "react";
 
-import { createOutreachAction } from "@/app/dopyt/[id]/actions";
+import { createOutreachAction } from "@/app/[locale]/dopyt/[id]/actions";
 import { Button } from "@/components/button";
 import { formatPrice } from "@/lib/property";
 import type { PropertyWithMedia } from "@/lib/property";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 type PickableProperty = Pick<
   PropertyWithMedia,
@@ -24,11 +24,14 @@ export function OutreachPicker({
   requestId,
   myProperties,
   alreadySent,
+  language,
 }: {
   requestId: string;
   myProperties: PickableProperty[];
   alreadySent: Set<string>;
+  language: Locale;
 }) {
+  const t = createT(language);
   const [open, setOpen] = useState(false);
   const [chosen, setChosen] = useState<string | null>(null);
   const [message, setMessage] = useState("");

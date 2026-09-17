@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SearchBox } from "@/components/search-box";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
-import { t } from "@/i18n";
+import { getT } from "@/i18n/server";
 
 const TRANSACTIONS: TransactionType[] = ["SALE", "RENT"];
 const PROPERTY_TYPES: PropertyType[] = ["APARTMENT", "HOUSE", "LAND", "COMMERCIAL", "OTHER"];
@@ -28,7 +28,7 @@ function hrefWith(current: URLSearchParams, key: string, value: string | null): 
  * Voľné vyhľadávanie (`SearchBox`) JE klientské — appka vyhľadáva živo
  * (debounce 350ms), nie až po kliknutí na tlačidlo.
  */
-export function CatalogFilters({
+export async function CatalogFilters({
   searchParams,
   activeTransaction,
   activePropertyType,
@@ -39,6 +39,7 @@ export function CatalogFilters({
   activePropertyType: PropertyType | null;
   activeSort: CatalogSort;
 }) {
+  const t = await getT();
   const transactionLabel = getTransactionLabel(t);
   const propertyLabel = getPropertyLabel(t);
 

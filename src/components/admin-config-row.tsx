@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 
-import { setAppConfig } from "@/app/admin/actions";
+import { setAppConfig } from "@/app/[locale]/admin/actions";
 import { Button } from "@/components/button";
 
 /** Jeden nastaviteľný prah — appka: riadok v „SETTINGS" tabe. Platí ihneď. */

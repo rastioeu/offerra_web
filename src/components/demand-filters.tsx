@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/button";
 import { getDemandLabel, getPropertyLabel } from "@/lib/labels";
 import type { PropertyType, TransactionType } from "@/lib/property";
-import { t } from "@/i18n";
+import { getT } from "@/i18n/server";
 
 const TRANSACTIONS: TransactionType[] = ["SALE", "RENT"];
 const PROPERTY_TYPES: PropertyType[] = ["APARTMENT", "HOUSE", "LAND", "COMMERCIAL", "OTHER"];
@@ -22,7 +22,7 @@ function hrefWith(current: URLSearchParams, key: string, value: string | null): 
  * „Predaj" pri dopyte znie, akoby človek predával) a bez triedenia —
  * appka dopyty triedi len podľa novosti, `buyer_request` nemá uzávierku.
  */
-export function DemandFilters({
+export async function DemandFilters({
   searchParams,
   activeTransaction,
   activePropertyType,
@@ -31,6 +31,7 @@ export function DemandFilters({
   activeTransaction: TransactionType | null;
   activePropertyType: PropertyType | null;
 }) {
+  const t = await getT();
   const demandLabel = getDemandLabel(t);
   const propertyLabel = getPropertyLabel(t);
 

@@ -2,17 +2,18 @@
 
 import { useState, useTransition } from "react";
 
-import { createDemandAction } from "@/app/dopyty/novy/actions";
+import { createDemandAction } from "@/app/[locale]/dopyty/novy/actions";
 import { Button } from "@/components/button";
 import { CityPicker } from "@/components/city-picker";
 import { getDemandLabel, getPropertyLabel } from "@/lib/labels";
 import type { PropertyType, TransactionType } from "@/lib/property";
-import { t } from "@/i18n";
+import { createT, type Locale } from "@/i18n";
 
 const TRANSACTIONS: TransactionType[] = ["SALE", "RENT"];
 const PROPERTY_TYPES: (PropertyType | "ANY")[] = ["ANY", "APARTMENT", "HOUSE", "LAND", "COMMERCIAL", "OTHER"];
 
-export function NewDemandForm() {
+export function NewDemandForm({ language }: { language: Locale }) {
+  const t = createT(language);
   const [transaction, setTransaction] = useState<TransactionType>("SALE");
   const [city, setCity] = useState("");
   const [error, setError] = useState<string | null>(null);

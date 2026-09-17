@@ -4,14 +4,15 @@ import Link from "next/link";
 import { DeadlineBadge } from "@/components/deadline-badge";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { formatArea, formatPrice, formatRooms, type PropertyWithMedia } from "@/lib/property";
-import { t, language } from "@/i18n";
+import { getLocale, getT } from "@/i18n/server";
 
 /**
  * Katalógová karta — desktop rozloženie (foto hore, obsah dole v
  * paddingu), nie zmenšená mobilná karta. Farby výhradne z paletových
  * tried v `globals.css` (`bg-surface`, `text-text-primary`, ...).
  */
-export function PropertyCard({ property }: { property: PropertyWithMedia }) {
+export async function PropertyCard({ property }: { property: PropertyWithMedia }) {
+  const [t, language] = await Promise.all([getT(), getLocale()]);
   const photo = property.media[0]?.url;
   const transactionLabel = getTransactionLabel(t)[property.transaction_type];
   const typeLabel = getPropertyLabel(t)[property.property_type];
@@ -43,7 +44,7 @@ export function PropertyCard({ property }: { property: PropertyWithMedia }) {
           {transactionLabel}
         </span>
         <div className="absolute bottom-3 left-3">
-          <DeadlineBadge iso={property.offer_deadline} onPhoto />
+          <DeadlineBadge iso={property.offer_deadline} language={language} onPhoto />
         </div>
         {property.media.length > 1 ? (
           <span className="absolute bottom-3 right-3 rounded-full bg-on-photo-surface px-2.5 py-[3px] text-xs font-semibold text-text-secondary">

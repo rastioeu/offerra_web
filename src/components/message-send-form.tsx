@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 
 import { Button } from "@/components/button";
 import { contactBlockedText, contactInText, MESSAGE_MAX } from "@/lib/messages";
-import { t } from "@/i18n";
+import type { TFunc } from "@/i18n";
 
 /**
  * Kontrola kontaktu tu je LEN pohodlie (rovnaká kópia ako appka,
@@ -13,8 +13,10 @@ import { t } from "@/i18n";
  */
 export function MessageSendForm({
   onSend,
+  t,
 }: {
   onSend: (content: string) => Promise<void>;
+  t: TFunc;
 }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
