@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
-import { CatalogFilterBar } from "@/components/catalog-filter-bar";
+import { CatalogFilters } from "@/components/catalog-filters";
 import { DismissibleCard } from "@/components/dismissible-card";
 import { HowItWorksCard } from "@/components/how-it-works-card";
 import { PropertyCard } from "@/components/property-card";
@@ -9,9 +8,8 @@ import { SearchBox } from "@/components/search-box";
 import { fetchCatalog } from "@/lib/catalog";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
-import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/lib/search";
+import { EMPTY_FILTER, parseQuery, type CatalogFilter } from "@/lib/search";
 import { getLocale, getT } from "@/i18n/server";
-import { localizeHref } from "@/i18n/href";
 
 /**
  * Katalóg = domovská stránka. SEO je hlavný dôvod projektu (Rastio) —
@@ -92,6 +90,11 @@ export default async function CatalogPage({
   const sort: CatalogSort = one(params.sort) === "ENDING_SOON" ? "ENDING_SOON" : "NEWEST";
 
   const properties = await fetchCatalog(filter, sort);
+  const currentSearchParams = new URLSearchParams(
+    Object.entries(params).flatMap(([k, v]) =>
+      v == null ? [] : Array.isArray(v) ? v.map((x) => [k, x] as [string, string]) : [[k, v] as [string, string]]
+    )
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -124,7 +127,12 @@ export default async function CatalogPage({
         <SearchBox initialValue={one(params.q) ?? ""} />
       </div>
 
-      <CatalogFilterBar />
+      <CatalogFilters
+        searchParams={currentSearchParams}
+        activeTransaction={filter.transaction}
+        activePropertyType={filter.propertyType}
+        activeSort={sort}
+      />
 
       <div className="flex flex-col gap-4">
         {understood.length > 0 ? (
@@ -132,12 +140,6 @@ export default async function CatalogPage({
             {t("catalog.understoodPrefix")}
             {understood.join(", ")}
           </p>
-        ) : null}
-
-        {!isFilterEmpty(filter) ? (
-          <Link href={localizeHref(language, "/")} className="w-fit text-sm text-link hover:underline">
-            {t("catalog.clearFilter")}
-          </Link>
         ) : null}
 
         {properties.length === 0 ? (
