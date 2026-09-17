@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { resolveReport, setUserBlocked } from "@/app/admin/actions";
 import { AdminUserActions } from "@/components/admin-user-actions";
-import { fetchAdminStats, fetchAdminUsers, fetchReports } from "@/lib/admin-data";
+import { fetchAdminStats, fetchAdminUsers, fetchReports, fetchSuspiciousPatterns } from "@/lib/admin-data";
 import { getReportReasonLabel, getReportStatusLabel } from "@/lib/report";
 import { createClient } from "@/lib/supabase/server";
 import { t } from "@/i18n";
@@ -40,8 +40,14 @@ export default async function AdminPage() {
   let stats;
   let reports;
   let users;
+  let suspicious;
   try {
-    [stats, reports, users] = await Promise.all([fetchAdminStats(), fetchReports(), fetchAdminUsers()]);
+    [stats, reports, users, suspicious] = await Promise.all([
+      fetchAdminStats(),
+      fetchReports(),
+      fetchAdminUsers(),
+      fetchSuspiciousPatterns(),
+    ]);
   } catch {
     return (
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-2 px-4 py-16 text-center">
@@ -162,6 +168,90 @@ export default async function AdminPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-text-primary">Podozrivé vzorce</h2>
+        <p className="text-sm text-text-muted">
+          Len signály na ručnú kontrolu — appka ani web nikoho neblokuje sám.
+        </p>
+
+        {suspicious.floods.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
+              Záplava ponúk ({suspicious.floods.length})
+            </h3>
+            {suspicious.floods.map((f) => (
+              <div key={f.user_id} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface p-3 text-sm">
+                <span className="font-medium text-text-primary">
+                  {f.nickname} {f.is_blocked ? <span className="text-danger">(zablokovaný)</span> : null}
+                </span>
+                <span className="text-text-muted">
+                  {f.pocet_inzeratov} rôznych inzerátov · {f.pocet_ponuk} ponúk
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {suspicious.lowballs.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
+              Opakovane nízke ponuky ({suspicious.lowballs.length})
+            </h3>
+            {suspicious.lowballs.map((l) => (
+              <div key={l.user_id} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface p-3 text-sm">
+                <span className="font-medium text-text-primary">
+                  {l.nickname} {l.is_blocked ? <span className="text-danger">(zablokovaný)</span> : null}
+                </span>
+                <span className="text-text-muted">
+                  {l.pocet_nizkych} nízkych ponúk · priemerne {Math.round(l.priemerny_pomer * 100)} % ceny
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {suspicious.shills.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
+              Opakovane ponúka tomu istému vlastníkovi ({suspicious.shills.length})
+            </h3>
+            {suspicious.shills.map((s) => (
+              <div key={`${s.bidder_id}-${s.owner_id}`} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface p-3 text-sm">
+                <span className="font-medium text-text-primary">{s.bidder_nickname}</span>
+                <span className="text-text-muted">
+                  → vlastníkovi {s.owner_nickname} na {s.pocet_inzeratov} rôznych inzerátoch
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {suspicious.duplicates.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
+              Rovnaký kontakt na viacerých účtoch ({suspicious.duplicates.length})
+            </h3>
+            {suspicious.duplicates.map((d) => (
+              <div key={`${d.kind}-${d.value}`} className="flex items-center justify-between gap-2 rounded-xl border border-border bg-surface p-3 text-sm">
+                <span className="font-medium text-text-primary">
+                  {d.kind === "phone" ? "Telefón" : "E-mail"}: {d.value}
+                </span>
+                <span className="text-text-muted">
+                  {d.accounts} účty · {d.nicknames}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {suspicious.floods.length === 0 &&
+        suspicious.lowballs.length === 0 &&
+        suspicious.shills.length === 0 &&
+        suspicious.duplicates.length === 0 ? (
+          <p className="text-text-muted">Nič také sa nenašlo.</p>
+        ) : null}
       </section>
     </main>
   );

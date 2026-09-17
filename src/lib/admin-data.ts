@@ -9,7 +9,15 @@
  * zavolá RPC a chybu nechá prejsť volajúcemu (stránka ju vyhodnotí ako
  * „nie si admin").
  */
-import type { AdminStats, AdminUser, ReportRow } from "@/lib/admin";
+import type {
+  AdminStats,
+  AdminUser,
+  DuplicateContact,
+  ReportRow,
+  SuspiciousFlood,
+  SuspiciousLowball,
+  SuspiciousShill,
+} from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 
 export async function fetchAdminStats(): Promise<AdminStats> {
@@ -38,4 +46,35 @@ export async function fetchAdminUsers(): Promise<AdminUser[]> {
   const { data, error } = await supabase.schema("offerra").rpc("admin_users");
   if (error) throw error;
   return (data ?? []) as AdminUser[];
+}
+
+/**
+ * Podozrivé vzorce a duplicitné kontakty — appka: `admin_suspicious_*`,
+ * `admin_duplicate_contacts`. Volané naraz, chyba ktorejkoľvek nezhodí
+ * ostatné (appka to isté — každý vzorec je nezávislý signál).
+ */
+export async function fetchSuspiciousPatterns(): Promise<{
+  floods: SuspiciousFlood[];
+  lowballs: SuspiciousLowball[];
+  shills: SuspiciousShill[];
+  duplicates: DuplicateContact[];
+}> {
+  const client = await createClient();
+  const supabase = client.schema("offerra");
+  const [fl, lb, sh, dc] = await Promise.all([
+    supabase.rpc("admin_suspicious_offer_flood"),
+    supabase.rpc("admin_suspicious_lowball"),
+    supabase.rpc("admin_suspicious_shill_bidding"),
+    supabase.rpc("admin_duplicate_contacts"),
+  ]);
+  if (fl.error) throw fl.error;
+  if (lb.error) throw lb.error;
+  if (sh.error) throw sh.error;
+  if (dc.error) throw dc.error;
+  return {
+    floods: (fl.data ?? []) as SuspiciousFlood[],
+    lowballs: (lb.data ?? []) as SuspiciousLowball[],
+    shills: (sh.data ?? []) as SuspiciousShill[],
+    duplicates: (dc.data ?? []) as DuplicateContact[],
+  };
 }

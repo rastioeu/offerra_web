@@ -25,6 +25,33 @@ export type ReportRow = {
   created_at: string;
 };
 
+/**
+ * Podozriví používatelia — TRI vzorce, LEN signály na ručnú kontrolu
+ * (appka nikoho neblokuje sama). Prenesené z appkového `(tabs)/admin.tsx`.
+ */
+export type SuspiciousFlood = {
+  user_id: string;
+  nickname: string;
+  pocet_inzeratov: number;
+  pocet_ponuk: number;
+  is_blocked: boolean;
+};
+export type SuspiciousLowball = {
+  user_id: string;
+  nickname: string;
+  pocet_nizkych: number;
+  priemerny_pomer: number;
+  is_blocked: boolean;
+};
+export type SuspiciousShill = {
+  bidder_id: string;
+  bidder_nickname: string;
+  owner_id: string;
+  owner_nickname: string;
+  pocet_inzeratov: number;
+};
+export type DuplicateContact = { kind: string; value: string; accounts: number; nicknames: string };
+
 export type AdminUser = {
   id: string;
   nickname: string;
