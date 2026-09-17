@@ -48,19 +48,22 @@ const LABELS: Record<
  *
  * MOTTO POD LOGOM (Rastio, 17.9.2026: veľký nadpis „Nehnuteľnosti" +
  * dlhý popis na katalógovej stránke „nie je to pekné", presunuté vedľa
- * loga ako motto). DRUHÉ KOLO (Rastio, 17.9.2026): „motto daj pod logo
- * tmavším písmom" — bolo VEDĽA loga (`border-l` oddeľovač) svetlou
- * `text-muted` farbou, teraz je POD logom (`flex-col`, žiadny
- * oddeľovač) v `text-secondary` (tmavšia). Stohovanie namiesto radenia
- * vedľa seba zároveň neberie nav-u vodorovné miesto, takže sa dá
- * ukázať už od `md:` (768px), nie až `lg:`.
+ * loga ako motto). DRUHÉ KOLO: „motto daj pod logo tmavším písmom" —
+ * bolo VEDĽA loga (`border-l` oddeľovač) svetlou `text-muted` farbou,
+ * presunuté POD logo (`flex-col`, žiadny oddeľovač) v `text-secondary`
+ * (tmavšia). TRETIE KOLO: „ešte trochu zvýrazni to motto" — veľkosť
+ * `text-xs` → `text-sm`, váha `font-medium` → `font-semibold`. Farba
+ * ostáva `text-secondary`, nie `text-primary` — motto je stále vedľajší
+ * text, nesmie súperiť s logom o pozornosť, len je teraz čitateľnejšie.
  *
  * AKTÍVNY ODKAZ TMAVŠÍ (Rastio, 17.9.2026: „keď mám niečo hore
- * stlačené, nech je to tiež tmavšie, žeby som videl") — odkazy predtým
- * mali len `hover:`, žiadny signál PRE AKTUÁLNU stránku. `NavLink`
- * (klientská komponenta, `usePathname`) zvýrazní odkaz na stránku, na
- * ktorej používateľ práve je — `text-primary` + tučné namiesto
- * `text-secondary`.
+ * stlačené, nech je to tiež tmavšie, žeby som videl", zopakované
+ * o kolo neskôr) — odkazy predtým mali len `hover:`, žiadny signál PRE
+ * AKTUÁLNU stránku. `NavLink` (klientská komponenta, `usePathname`)
+ * zvýrazní odkaz na stránku, na ktorej používateľ práve je —
+ * `text-primary` + tučné + jemné pozadie (`bg-surface-pressed`, pridané
+ * v druhom kole — samotná farba textu sa v jednom riadku vedľa seba
+ * dala ľahko prehliadnuť).
  *
  * TRETIE KOLO (Rastio, 17.9.2026, „DIZAJN OPRAVA"): lišta má zostať
  * VŠETKY položky viditeľné a klikateľné, ŽIADNY dropdown/skrývanie
@@ -105,7 +108,7 @@ export async function SiteHeader() {
           <Link href={href("/")} aria-label="Offerra" className="shrink-0">
             <Logo />
           </Link>
-          <span className="hidden text-xs font-medium text-text-secondary md:block">{t("catalog.motto")}</span>
+          <span className="hidden text-sm font-semibold text-text-secondary md:block">{t("catalog.motto")}</span>
         </div>
 
         <nav className="hidden flex-1 items-center justify-center gap-7 md:flex">

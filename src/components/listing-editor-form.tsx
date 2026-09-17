@@ -3,7 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { archiveListingAction, publishListingAction, saveListingAction } from "@/app/[locale]/moje-inzeraty/[id]/upravit/actions";
+import {
+  archiveListingAction,
+  deleteListingAction,
+  publishListingAction,
+  saveListingAction,
+} from "@/app/[locale]/moje-inzeraty/[id]/upravit/actions";
 import { Button } from "@/components/button";
 import { CityPicker } from "@/components/city-picker";
 import { DeadlinePicker } from "@/components/deadline-picker";
@@ -27,6 +32,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
   const [form, setForm] = useState<ListingForm>(() => formFromProperty(property));
   const [saving, startSaving] = useTransition();
   const [publishing, startPublishing] = useTransition();
+  const [deleting, startDeleting] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<number | null>(null);
 
@@ -75,6 +81,26 @@ export function ListingEditorForm({ property, language }: { property: Property; 
         router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : t("common.actionFailed"));
+      }
+    });
+  }
+
+  /**
+   * Web nemá appkové undo okno (`confirmWithUndo` v `inzerat/[id].tsx`)
+   * — jedno `window.confirm` s `deleteTitle` samotným (bez `deleteBody`,
+   * ktorý sľubuje pár sekúnd na vrátenie späť — sľub, ktorý web nevie
+   * splniť, CLAUDE.md §12a: text smie sľubovať len overené správanie).
+   */
+  function remove() {
+    if (!window.confirm(t("inzeratEdit.deleteTitle"))) return;
+    setError(null);
+    startDeleting(async () => {
+      try {
+        await deleteListingAction(property.id);
+        router.push(localizeHref(language, "/moje-inzeraty"));
+        router.refresh();
+      } catch (e) {
+        setError(e instanceof Error ? e.message : t("inzeratEdit.deleteFailedTitle"));
       }
     });
   }
@@ -281,6 +307,12 @@ export function ListingEditorForm({ property, language }: { property: Property; 
             {t("inzeratEdit.unpublishButton")}
           </Button>
         ) : null}
+        {/* Zmazať je dostupné VŽDY, nie len pri DRAFT (appka: rovnako,
+            `inzerat/[id].tsx`) — Rastio, 17.9.2026: „rozpracovaný inzerát
+            sa nedá vymazať", web túto možnosť predtým nemal vôbec. */}
+        <Button type="button" variant="danger" onClick={remove} disabled={deleting} className="px-5 py-2.5 text-sm">
+          {deleting ? t("inzeratEdit.savingButton") : t("inzeratEdit.deleteButton")}
+        </Button>
         {savedAt ? <span className="text-sm text-text-muted">{t("inzeratEdit.savedToast")}.</span> : null}
       </div>
     </div>

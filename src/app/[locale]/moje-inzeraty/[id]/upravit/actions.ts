@@ -59,3 +59,21 @@ export async function archiveListingAction(propertyId: string) {
   revalidatePath(`/moje-inzeraty/${propertyId}/upravit`);
   revalidatePath("/moje-inzeraty");
 }
+
+/**
+ * Zmazanie inzerátu — Rastio (17.9.2026): „rozpracovaný inzerát sa
+ * nedá vymazať." Web mal Uložiť/Zverejniť/Stiahnuť, ale žiadne
+ * Zmazať — appka ho má (`inzerat/[id].tsx`, `confirmDelete`) pre
+ * KAŽDÝ stav (DRAFT/REJECTED/ACTIVE/...), nie len DRAFT. Rovnaký
+ * tvrdý `delete`, kaskáda v DB zmaže aj fotky/ponuky. Web nemá appkové
+ * undo okno (`confirmWithUndo`) — potvrdenie je preto len JEDNO
+ * (`window.confirm` vo formulári), nie sľub vrátenia späť, ktorý web
+ * nevie splniť.
+ */
+export async function deleteListingAction(propertyId: string) {
+  const { db } = await requireOwnedProperty(propertyId);
+  const { error } = await db.from("property").delete().eq("id", propertyId);
+  if (error) throw error;
+  revalidatePath("/moje-inzeraty");
+  revalidatePath("/");
+}

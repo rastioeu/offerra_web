@@ -11,6 +11,13 @@ import type { ReactNode } from "react";
  * to tiež tmavšie, žeby som videl"). Klientská komponenta (`usePathname`),
  * lebo `SiteHeader` je Server Component a Next App Router nedáva
  * aktuálnu cestu do serverovej hlavičky inak než cez segment stránky.
+ *
+ * DRUHÉ KOLO (Rastio, 17.9.2026, rovnaká požiadavka zopakovaná) — len
+ * tmavší TEXT sa dal ľahko prehliadnuť, keď boli všetky odkazy vedľa
+ * seba v jednom riadku. Aktívny odkaz má teraz NAVYŠE jemné pozadie
+ * (`bg-surface-pressed`, rovnaký tón ako `hover:` na ostatných
+ * odkazoch v appke/webe) — dvojitý signál (farba textu + pozadie), nie
+ * len jeden, ľahko prehliadnuteľný.
  */
 export function NavLink({ href, children }: { href: string; children: ReactNode }) {
   const pathname = usePathname();
@@ -22,8 +29,8 @@ export function NavLink({ href, children }: { href: string; children: ReactNode 
       aria-current={active ? "page" : undefined}
       className={
         active
-          ? "text-sm font-semibold text-text-primary"
-          : "text-sm font-medium text-text-secondary hover:text-text-primary"
+          ? "rounded-lg bg-surface-pressed px-2.5 py-1 text-sm font-semibold text-text-primary"
+          : "rounded-lg px-2.5 py-1 text-sm font-medium text-text-secondary hover:text-text-primary"
       }
     >
       {children}
