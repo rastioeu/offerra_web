@@ -111,22 +111,21 @@ export default async function CatalogPage({
       {properties.length > 0 ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       ) : null}
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
-        <div className="flex flex-col gap-4 lg:max-w-2xl">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold text-text-primary">{t("catalog.title")}</h1>
-            <p className="text-text-secondary">{t("catalog.lead")}</p>
-          </div>
-          <div className="w-full lg:max-w-[420px]">
-            <SearchBox initialValue={one(params.q) ?? ""} />
-          </div>
+      <header className="mx-auto flex w-full max-w-2xl flex-col items-center gap-4 text-center">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-bold text-text-primary">{t("catalog.title")}</h1>
+          <p className="text-text-secondary">{t("catalog.lead")}</p>
         </div>
-        <div className="w-full lg:w-80 lg:shrink-0">
-          <DismissibleCard storageKey="offerra-hiw-home-dismissed">
-            <HowItWorksCard locale={language} />
-          </DismissibleCard>
+        <div className="w-full max-w-[420px]">
+          <SearchBox initialValue={one(params.q) ?? ""} />
         </div>
       </header>
+
+      <div className="mx-auto w-full max-w-md">
+        <DismissibleCard storageKey="offerra-hiw-home-dismissed">
+          <HowItWorksCard locale={language} />
+        </DismissibleCard>
+      </div>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
         <CatalogFilters
