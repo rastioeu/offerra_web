@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { resolveReport, setUserBlocked } from "@/app/admin/actions";
 import { AdminConfigRow } from "@/components/admin-config-row";
 import { AdminUserActions } from "@/components/admin-user-actions";
+import { Button } from "@/components/button";
 import {
   fetchAdminAttention,
   fetchAdminStats,
@@ -170,20 +171,14 @@ export default async function AdminPage() {
                 {report.status === "PENDING" ? (
                   <div className="flex gap-2 pt-1">
                     <form action={resolveReport.bind(null, report.id, false)}>
-                      <button
-                        type="submit"
-                        className="rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-pressed"
-                      >
+                      <Button type="submit" variant="secondary" className="px-3 py-1.5 text-sm">
                         Vybaviť
-                      </button>
+                      </Button>
                     </form>
                     <form action={resolveReport.bind(null, report.id, true)}>
-                      <button
-                        type="submit"
-                        className="rounded-xl border border-danger bg-surface px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10"
-                      >
+                      <Button type="submit" variant="danger" className="px-3 py-1.5 text-sm">
                         Skryť inzerát a vybaviť
-                      </button>
+                      </Button>
                     </form>
                   </div>
                 ) : null}
@@ -226,16 +221,9 @@ export default async function AdminPage() {
                     isAdmin={u.role === "ADMIN"}
                   />
                   <form action={setUserBlocked.bind(null, u.id, !u.is_blocked)}>
-                    <button
-                      type="submit"
-                      className={
-                        u.is_blocked
-                          ? "rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-pressed"
-                          : "rounded-xl border border-danger bg-surface px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10"
-                      }
-                    >
-                    {u.is_blocked ? "Odblokovať" : "Zablokovať"}
-                  </button>
+                    <Button type="submit" variant={u.is_blocked ? "secondary" : "danger"} className="px-3 py-1.5 text-sm">
+                      {u.is_blocked ? "Odblokovať" : "Zablokovať"}
+                    </Button>
                   </form>
                 </div>
               ) : null}

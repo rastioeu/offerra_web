@@ -99,27 +99,17 @@ export function ViewingCard({
                     <Button type="button" onClick={() => confirm(v)} disabled={pending} className="px-4 py-2 text-sm">
                       {t("viewing.confirmButton")}
                     </Button>
-                    <button
-                      type="button"
-                      onClick={() => mark(v, "CANCELLED")}
-                      disabled={pending}
-                      className="rounded-xl border border-border-strong bg-surface px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface-pressed disabled:opacity-60"
-                    >
+                    <Button type="button" variant="secondary" onClick={() => mark(v, "CANCELLED")} disabled={pending} className="px-4 py-2 text-sm">
                       {t("viewing.declineButton")}
-                    </button>
+                    </Button>
                   </div>
                 </>
               ) : (
                 <>
                   <p className="text-sm text-text-secondary">{t("viewing.requesterPendingHint")}</p>
-                  <button
-                    type="button"
-                    onClick={() => mark(v, "CANCELLED")}
-                    disabled={pending}
-                    className="w-fit rounded-xl border border-border-strong bg-surface px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface-pressed disabled:opacity-60"
-                  >
+                  <Button type="button" variant="secondary" onClick={() => mark(v, "CANCELLED")} disabled={pending} className="w-fit px-4 py-2 text-sm">
                     {t("viewing.withdrawButton")}
-                  </button>
+                  </Button>
                 </>
               )
             ) : revealed && c ? (
@@ -135,22 +125,12 @@ export function ViewingCard({
 
             {revealed ? (
               <div className="flex gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => mark(v, "COMPLETED")}
-                  disabled={pending}
-                  className="rounded-xl border border-border-strong bg-surface px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface-pressed disabled:opacity-60"
-                >
+                <Button type="button" variant="secondary" onClick={() => mark(v, "COMPLETED")} disabled={pending} className="px-4 py-2 text-sm">
                   {t("viewing.attendedButton")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => mark(v, "CANCELLED")}
-                  disabled={pending}
-                  className="rounded-xl border border-danger bg-surface px-4 py-2 text-sm font-medium text-danger hover:bg-danger/10 disabled:opacity-60"
-                >
+                </Button>
+                <Button type="button" variant="danger" onClick={() => mark(v, "CANCELLED")} disabled={pending} className="px-4 py-2 text-sm">
                   Zrušiť
-                </button>
+                </Button>
               </div>
             ) : null}
           </div>

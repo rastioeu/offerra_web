@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 
 import { setUserRole, setUserVerified } from "@/app/admin/actions";
+import { Button } from "@/components/button";
 
 /**
  * Overenie a rola správcu — appka: `toggleVerified`/`toggleAdmin`.
@@ -44,22 +45,12 @@ export function AdminUserActions({
 
   return (
     <div className="flex flex-wrap gap-2">
-      <button
-        type="button"
-        onClick={verify}
-        disabled={pending}
-        className="rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-pressed disabled:opacity-60"
-      >
+      <Button type="button" variant="secondary" onClick={verify} disabled={pending} className="px-3 py-1.5 text-sm">
         {isVerified ? "Odobrať overenie" : "Overiť používateľa"}
-      </button>
-      <button
-        type="button"
-        onClick={toggleRole}
-        disabled={pending}
-        className="rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-pressed disabled:opacity-60"
-      >
+      </Button>
+      <Button type="button" variant="secondary" onClick={toggleRole} disabled={pending} className="px-3 py-1.5 text-sm">
         {isAdmin ? "Odobrať práva správcu" : "Urobiť správcom"}
-      </button>
+      </Button>
     </div>
   );
 }
