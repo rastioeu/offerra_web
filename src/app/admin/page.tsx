@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { resolveReport } from "@/app/admin/actions";
-import { fetchAdminStats, fetchReports } from "@/lib/admin-data";
+import { resolveReport, setUserBlocked } from "@/app/admin/actions";
+import { fetchAdminStats, fetchAdminUsers, fetchReports } from "@/lib/admin-data";
 import { getReportReasonLabel, getReportStatusLabel } from "@/lib/report";
 import { createClient } from "@/lib/supabase/server";
 import { t } from "@/i18n";
@@ -38,8 +38,9 @@ export default async function AdminPage() {
 
   let stats;
   let reports;
+  let users;
   try {
-    [stats, reports] = await Promise.all([fetchAdminStats(), fetchReports()]);
+    [stats, reports, users] = await Promise.all([fetchAdminStats(), fetchReports(), fetchAdminUsers()]);
   } catch {
     return (
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-2 px-4 py-16 text-center">
@@ -109,6 +110,43 @@ export default async function AdminPage() {
             ))}
           </div>
         )}
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-text-primary">Používatelia</h2>
+        <div className="flex flex-col gap-3">
+          {users.map((u) => (
+            <div key={u.id} className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-text-primary">{u.nickname}</span>
+                  {u.role === "ADMIN" ? (
+                    <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent-deep">ADMIN</span>
+                  ) : null}
+                  {u.is_blocked ? (
+                    <span className="rounded-full bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger">Zablokovaný</span>
+                  ) : null}
+                </div>
+                <span className="text-sm text-text-muted">{u.email}</span>
+                <span className="text-xs text-text-muted">{u.inzeraty} inzerátov</span>
+              </div>
+              {u.id !== user.id ? (
+                <form action={setUserBlocked.bind(null, u.id, !u.is_blocked)}>
+                  <button
+                    type="submit"
+                    className={
+                      u.is_blocked
+                        ? "rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-pressed"
+                        : "rounded-xl border border-danger bg-surface px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10"
+                    }
+                  >
+                    {u.is_blocked ? "Odblokovať" : "Zablokovať"}
+                  </button>
+                </form>
+              ) : null}
+            </div>
+          ))}
+        </div>
       </section>
     </main>
   );

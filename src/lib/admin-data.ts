@@ -9,7 +9,7 @@
  * zavolá RPC a chybu nechá prejsť volajúcemu (stránka ju vyhodnotí ako
  * „nie si admin").
  */
-import type { AdminStats, ReportRow } from "@/lib/admin";
+import type { AdminStats, AdminUser, ReportRow } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 
 export async function fetchAdminStats(): Promise<AdminStats> {
@@ -31,4 +31,11 @@ export async function fetchReports(): Promise<ReportRow[]> {
     .limit(200);
   if (error) throw error;
   return (data ?? []) as ReportRow[];
+}
+
+export async function fetchAdminUsers(): Promise<AdminUser[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.schema("offerra").rpc("admin_users");
+  if (error) throw error;
+  return (data ?? []) as AdminUser[];
 }

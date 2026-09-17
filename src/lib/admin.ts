@@ -24,3 +24,15 @@ export type ReportRow = {
   status: string;
   created_at: string;
 };
+
+export type AdminUser = {
+  id: string;
+  nickname: string;
+  email: string;
+  role: 'USER' | 'ADMIN';
+  is_blocked: boolean;
+  inzeraty: number;
+  created_at: string;
+  verified_at: string | null;
+  verified_note: string | null;
+};
