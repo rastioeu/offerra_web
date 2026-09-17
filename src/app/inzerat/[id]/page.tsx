@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
+import { DeadlineBadge } from "@/components/deadline-badge";
 import { MessagesSection } from "@/components/messages-section";
 import { MortgageCalculatorCard } from "@/components/mortgage-calculator";
 import { OffersSection } from "@/components/offers-section";
@@ -9,7 +10,6 @@ import { PhotoGallery } from "@/components/photo-gallery";
 import { RatingsSection } from "@/components/ratings-section";
 import { ViewingSection } from "@/components/viewing-section";
 import { fetchProperty } from "@/lib/detail";
-import { deadlineLabel, deadlineUrgency } from "@/lib/deadline";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { buildingRows, formatArea, formatPrice, formatRooms, rentalRows } from "@/lib/property";
 import { fetchOffers } from "@/lib/property-offers";
@@ -76,8 +76,6 @@ export default async function PropertyDetailPage({
   const rooms = formatRooms(t, language, property.rooms);
   const area = formatArea(property.area_m2);
   const meta = [property.city, property.district, rooms, area].filter(Boolean).join(" · ");
-  const deadline = deadlineLabel(t, language, property.offer_deadline);
-  const urgency = deadlineUrgency(property.offer_deadline);
   const rows = [...buildingRows(t, language, property), ...rentalRows(t, language, property)];
 
   const jsonLd = {
@@ -125,17 +123,7 @@ export default async function PropertyDetailPage({
         </div>
       </div>
 
-      {deadline ? (
-        <p
-          className={`w-fit rounded-full px-3 py-1.5 text-sm font-medium ${
-            urgency === "SOON" || urgency === "PASSED"
-              ? "bg-danger/10 text-danger"
-              : "bg-surface-pressed text-text-secondary"
-          }`}
-        >
-          {deadline}
-        </p>
-      ) : null}
+      <DeadlineBadge iso={property.offer_deadline} />
 
       {property.description ? (
         <section className="flex flex-col gap-2">

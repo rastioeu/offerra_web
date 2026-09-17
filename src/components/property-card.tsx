@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { DeadlineBadge } from "@/components/deadline-badge";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { formatArea, formatPrice, formatRooms, type PropertyWithMedia } from "@/lib/property";
 import { t, language } from "@/i18n";
@@ -48,6 +49,7 @@ export function PropertyCard({ property }: { property: PropertyWithMedia }) {
           {property.title || typeLabel}
         </h2>
         {meta ? <p className="text-sm text-text-muted">{meta}</p> : null}
+        <DeadlineBadge iso={property.offer_deadline} className="text-xs" />
         {price ? (
           <p
             className="mt-1 font-money text-xl font-bold text-accent"
