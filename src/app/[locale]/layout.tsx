@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import "../globals.css";
 
+import { NotificationsProvider } from "@/hooks/use-notifications";
 import { SiteHeader } from "@/components/site-header";
 import { isLocale, LOCALES, type Locale } from "@/i18n";
+import { createClient } from "@/lib/supabase/server";
 
 /**
  * Popis prevzatý z appky (`src/i18n/locales/sk.json` → `howItWorks.lead`
@@ -99,6 +101,11 @@ export default async function RootLayout({ children, params }: { children: React
   if (!isLocale(rawLocale)) notFound();
   const { orgJsonLd, siteJsonLd } = jsonLdFor(locale);
 
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html lang={locale} className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-background text-text-primary">
@@ -110,8 +117,10 @@ export default async function RootLayout({ children, params }: { children: React
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
-        <SiteHeader />
-        {children}
+        <NotificationsProvider userId={user?.id ?? null}>
+          <SiteHeader />
+          {children}
+        </NotificationsProvider>
       </body>
     </html>
   );

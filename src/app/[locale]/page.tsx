@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { CatalogFilters } from "@/components/catalog-filters";
+import { HowItWorksCard } from "@/components/how-it-works-card";
 import { PropertyCard } from "@/components/property-card";
 import { fetchCatalog } from "@/lib/catalog";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
 import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/lib/search";
-import { getT } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
 
 /**
  * Katalóg = domovská stránka. SEO je hlavný dôvod projektu (Rastio) —
@@ -82,7 +83,7 @@ export default async function CatalogPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const t = await getT();
+  const [t, language] = await Promise.all([getT(), getLocale()]);
   const params = await searchParams;
   const { filter, understood } = buildFilter(params);
   const sort: CatalogSort = one(params.sort) === "ENDING_SOON" ? "ENDING_SOON" : "NEWEST";
@@ -109,12 +110,17 @@ export default async function CatalogPage({
       {properties.length > 0 ? (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       ) : null}
-      <header className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-text-primary">Nehnuteľnosti</h1>
-        <p className="text-text-secondary">
-          Obrátený trh s nehnuteľnosťami — predávajúci nemusí povedať cenu,
-          záujemcovia predkladajú vlastné ponuky.
-        </p>
+      <header className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-bold text-text-primary">Nehnuteľnosti</h1>
+          <p className="text-text-secondary">
+            Obrátený trh s nehnuteľnosťami — predávajúci nemusí povedať cenu,
+            záujemcovia predkladajú vlastné ponuky.
+          </p>
+        </div>
+        <div className="max-w-md">
+          <HowItWorksCard locale={language} />
+        </div>
       </header>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">

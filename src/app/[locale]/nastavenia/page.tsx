@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 import { signOut } from "@/app/auth/actions";
 import { DeleteAccountButton } from "@/components/delete-account-button";
 import { ExportDataButton } from "@/components/export-data-button";
+import { HowItWorksCard } from "@/components/how-it-works-card";
 import { createClient } from "@/lib/supabase/server";
+import { getLocale } from "@/i18n/server";
 
 export const metadata: Metadata = {
   title: "Nastavenia",
@@ -13,12 +15,12 @@ export const metadata: Metadata = {
 /**
  * Zámerne UŽŠIE než appková obrazovka (push notifikácie, motív, kontaktné
  * údaje) — to, čo web zatiaľ reálne má. Prepínač jazyka (SK/EN/DE) tu
- * ZÁMERNE nie je: web zatiaľ renderuje len SK (otvorené rozhodnutie,
- * `reports/OFFERRA_WEB_MILNIK1.md`) — vypínač, čo nič neprepne, by len
- * klamal.
+ * zatiaľ chýba — EN/DE sa dá otvoriť len ručnou zmenou URL
+ * (`/en/nastavenia`, `/de/nastavenia`), samotné texty appky sú od
+ * 17.9.2026 preložené (`reports/OFFERRA_WEB_MILNIK1.md`).
  */
 export default async function NastaveniaPage() {
-  const supabase = await createClient();
+  const [supabase, language] = await Promise.all([createClient(), getLocale()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -42,6 +44,11 @@ export default async function NastaveniaPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Moje dáta</h2>
         <ExportDataButton />
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Offerra</h2>
+        <HowItWorksCard locale={language} />
       </section>
 
       <section className="flex flex-col gap-3 border-t border-border pt-6">

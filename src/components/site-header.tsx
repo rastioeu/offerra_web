@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Logo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
+import { NotificationBell } from "@/components/notification-bell";
 import type { Locale } from "@/i18n";
 import { localizeHref } from "@/i18n/href";
 import { getLocale } from "@/i18n/server";
@@ -71,6 +72,7 @@ export async function SiteHeader() {
               <Link href={href("/nastavenia")} className="text-sm text-text-secondary hover:text-text-primary">
                 {l.settings}
               </Link>
+              <NotificationBell locale={locale} />
             </>
           ) : (
             <Link
@@ -90,7 +92,9 @@ export async function SiteHeader() {
             >
               {l.login}
             </Link>
-          ) : null}
+          ) : (
+            <NotificationBell locale={locale} />
+          )}
           <MobileNav links={user ? loggedInLinks : loggedOutLinks} />
         </div>
       </div>
