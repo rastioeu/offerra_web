@@ -13,7 +13,9 @@
     "sendFailed": "Sending failed",
     "publishFailed": "Publishing failed",
     "createFailed": "Creation failed",
-    "actionFailed": "Failed"
+    "actionFailed": "Failed",
+    "notLoggedIn": "You're not signed in.",
+    "fileTransferFailed": "The file could not be transferred."
   },
   "labels": {
     "transactionSale": "For sale",
@@ -1176,7 +1178,8 @@
     "nothingYet": "Nothing yet. Send the first message — for example, what you'd like to ask before making an offer.",
     "readSuffix": " · read",
     "inputPlaceholder": "e.g. Is the kitchen included in the price?",
-    "sendButton": "Send"
+    "sendButton": "Send",
+    "chattingWith": "You are chatting with {{name}}."
   },
   "demandMessages": {
     "withRequesterName": "the requester",

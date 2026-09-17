@@ -56,7 +56,7 @@ export function MessageSendForm({
       {blocked ? <p className="text-xs text-danger">{contactBlockedText(t, blocked)}</p> : null}
       {error && !blocked ? <p className="text-xs text-danger">{error}</p> : null}
       <Button type="submit" disabled={pending || !value.trim() || !!blocked} className="w-fit px-5 py-2 text-sm">
-        {pending ? "Odosielam…" : t("messages.sendButton")}
+        {pending ? t("dopytDetail.sendingButton") : t("messages.sendButton")}
       </Button>
     </form>
   );

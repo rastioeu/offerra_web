@@ -3,13 +3,14 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
+import { getT } from "@/i18n/server";
 
 export async function createOutreachAction(requestId: string, propertyId: string, message: string | null) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const { error } = await supabase.schema("offerra").from("request_outreach").insert({
     request_id: requestId,
@@ -19,7 +20,7 @@ export async function createOutreachAction(requestId: string, propertyId: string
   });
   if (error) {
     if (/duplicate key/i.test(error.message)) {
-      throw new Error("Týmto inzerátom si tento dopyt už oslovil.");
+      throw new Error(t("dopytDetail.outreachDuplicate"));
     }
     throw error;
   }

@@ -132,7 +132,7 @@ export function ViewingCard({
                   {t("viewing.attendedButton")}
                 </Button>
                 <Button type="button" variant="danger" onClick={() => mark(v, "CANCELLED")} disabled={pending} className="px-4 py-2 text-sm">
-                  Zrušiť
+                  {t("common.cancel")}
                 </Button>
               </div>
             ) : null}

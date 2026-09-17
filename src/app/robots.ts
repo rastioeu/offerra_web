@@ -13,7 +13,29 @@ import type { MetadataRoute } from "next";
  * disallow-ov ako `*` — AI nemá vidieť prihlásením chránené stránky o
  * nič viac než bežný vyhľadávač.
  */
-const PRIVATE_PATHS = ["/login", "/moje-inzeraty", "/moje-ponuky", "/moje-dopyty", "/nastavenia", "/admin", "/auth/"];
+const PRIVATE_PATH_NAMES = [
+  "/login",
+  "/moje-inzeraty",
+  "/moje-ponuky",
+  "/moje-dopyty",
+  "/oblubene",
+  "/oznamenia",
+  "/prezyvka",
+  "/nastavenia",
+  "/admin",
+];
+
+/**
+ * SK je bez predpony, EN/DE majú `/en`/`/de` (i18n kolo, 17.9.2026) —
+ * bez tohto by `disallow` chránilo len SK cestu a `/en/nastavenia`
+ * alebo `/de/moje-inzeraty` by ostali indexovateľné.
+ */
+const PRIVATE_PATHS = [
+  ...PRIVATE_PATH_NAMES,
+  ...PRIVATE_PATH_NAMES.map((p) => `/en${p}`),
+  ...PRIVATE_PATH_NAMES.map((p) => `/de${p}`),
+  "/auth/",
+];
 
 const AI_BOTS = [
   "GPTBot", // OpenAI — trénovanie

@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { redirectLocalized } from "@/i18n/server";
+import { getT, redirectLocalized } from "@/i18n/server";
 
 /**
  * Nový inzerát vzniká hneď ako DRAFT v DB (appka: `pridat.tsx`) — nie až
@@ -11,11 +11,11 @@ import { redirectLocalized } from "@/i18n/server";
  * nestratí.
  */
 export async function createDraftAction() {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const { data, error } = await supabase
     .schema("offerra")

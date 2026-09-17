@@ -7,16 +7,16 @@ import { createClient } from "@/lib/supabase/server";
 import { getT } from "@/i18n/server";
 
 async function requireOwnedProperty(propertyId: string) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const db = supabase.schema("offerra");
   const { data: property, error } = await db.from("property").select("*").eq("id", propertyId).maybeSingle();
   if (error) throw error;
-  if (!property || property.owner_id !== user.id) throw new Error("Inzerát nenájdený.");
+  if (!property || property.owner_id !== user.id) throw new Error(t("propertyDetail.notFound"));
 
   return { supabase, db, property };
 }
@@ -41,7 +41,7 @@ export async function publishListingAction(propertyId: string) {
   const t = await getT();
   const missing = missingForPublish(t, property, count ?? 0);
   if (missing.length > 0) {
-    throw new Error(`Chýba: ${missing.join(", ")}.`);
+    throw new Error(t("inzeratEdit.missingPrefix", { list: missing.join(", ") }));
   }
 
   const { error } = await db.from("property").update({ status: "ACTIVE" }).eq("id", propertyId);

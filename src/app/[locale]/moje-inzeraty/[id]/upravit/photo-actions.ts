@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
+import { getT } from "@/i18n/server";
 
 const BUCKET = "offerra-media";
 /** Bucket má limit 10 MB (appka: `lib/photo.ts`) — zastavíme sa skôr, s vysvetlením. */
@@ -14,16 +15,16 @@ const MAX_BYTES = 8 * 1024 * 1024;
  * Cesta MUSÍ začínať `auth.uid()` — to isté vynucuje aj Storage RLS.
  */
 export async function uploadPhotoAction(propertyId: string, formData: FormData) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const file = formData.get("file");
-  if (!(file instanceof File)) throw new Error("Súbor sa neprenies.");
+  if (!(file instanceof File)) throw new Error(t("common.fileTransferFailed"));
   if (file.size > MAX_BYTES) {
-    throw new Error(`Fotka je príliš veľká (${(file.size / 1048576).toFixed(1)} MB, limit 8 MB).`);
+    throw new Error(t("photo.tooLarge", { mb: (file.size / 1048576).toFixed(1) }));
   }
 
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
@@ -53,11 +54,11 @@ export async function uploadPhotoAction(propertyId: string, formData: FormData) 
  * fotka, ktorá sa „nedá zmazať".
  */
 export async function removePhotoAction(propertyId: string, mediaId: string, url: string) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const db = supabase.schema("offerra");
   const { error } = await db.from("media").delete().eq("id", mediaId);

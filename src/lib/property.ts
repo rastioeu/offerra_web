@@ -108,7 +108,7 @@ export function getStatusLabel(t: TFunc): Record<PropertyStatus, string> {
   };
 }
 
-function localeTag(language: string): string {
+export function localeTag(language: string): string {
   return language === 'sk' ? 'sk-SK' : language === 'de' ? 'de-DE' : 'en-GB';
 }
 

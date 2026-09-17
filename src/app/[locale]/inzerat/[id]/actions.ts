@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
+import { getT } from "@/i18n/server";
 
 /**
  * Podanie / úprava ponuky — presne tá istá logika ako appka
@@ -15,16 +16,16 @@ import { createClient } from "@/lib/supabase/server";
  * jedna transakcia/RPC (appkový vzor, nie zjednodušenie webu).
  */
 export async function submitOffer(propertyId: string, existingOfferId: string | null, formData: FormData) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const rawAmount = String(formData.get("amount") ?? "").replace(",", ".").trim();
   const amount = Number(rawAmount);
   if (!rawAmount || !Number.isFinite(amount) || amount <= 0) {
-    throw new Error("Zadaj sumu ponuky.");
+    throw new Error(t("ponukaForm.amountRequired"));
   }
   const message = String(formData.get("message") ?? "").trim() || null;
   const validUntil = String(formData.get("validUntil") ?? "") || null;

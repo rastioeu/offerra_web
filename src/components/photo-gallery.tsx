@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { createT, type Locale } from "@/i18n";
 import type { Media } from "@/lib/property";
 
 /**
@@ -10,13 +11,14 @@ import type { Media } from "@/lib/property";
  * aktívnej fotky (`useState`) — zvyšok stránky okolo nej ostáva Server
  * Component, aby SSR/SEO pokrylo aj text.
  */
-export function PhotoGallery({ media, title }: { media: Media[]; title: string }) {
+export function PhotoGallery({ media, title, language }: { media: Media[]; title: string; language: Locale }) {
+  const t = createT(language);
   const [active, setActive] = useState(0);
 
   if (media.length === 0) {
     return (
       <div className="flex aspect-[16/10] w-full items-center justify-center rounded-2xl bg-surface-pressed text-text-muted">
-        Bez fotky
+        {t("propertyDetail.noPhoto")}
       </div>
     );
   }

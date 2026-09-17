@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import type { ViewingStatus } from "@/lib/viewing";
 import { createClient } from "@/lib/supabase/server";
+import { getT } from "@/i18n/server";
 
 /**
  * ZNOVU-ŽIADOSŤ (appka, 19.8.2026): `viewing` má `unique(property_id,
@@ -12,11 +13,11 @@ import { createClient } from "@/lib/supabase/server";
  * to isté presadzuje nezávisle, toto len volí správnu cestu.
  */
 export async function requestViewingAction(propertyId: string, existingCancelledId: string | null) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const db = supabase.schema("offerra");
   if (existingCancelledId) {

@@ -13,7 +13,9 @@
     "sendFailed": "Odoslanie zlyhalo",
     "publishFailed": "Zverejnenie zlyhalo",
     "createFailed": "Vytvorenie zlyhalo",
-    "actionFailed": "Zlyhalo"
+    "actionFailed": "Zlyhalo",
+    "notLoggedIn": "Nie si prihlásený.",
+    "fileTransferFailed": "Súbor sa neprenies."
   },
   "labels": {
     "transactionSale": "Predaj",
@@ -1182,7 +1184,8 @@
     "nothingYet": "Zatiaľ nič. Napíš prvú správu — napríklad na čo sa chceš spýtať pred ponukou.",
     "readSuffix": " · prečítané",
     "inputPlaceholder": "napr. Je v cene aj kuchynská linka?",
-    "sendButton": "Odoslať"
+    "sendButton": "Odoslať",
+    "chattingWith": "Píšeš s {{name}}."
   },
   "demandMessages": {
     "withRequesterName": "zadávateľom",

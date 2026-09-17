@@ -117,7 +117,7 @@ export function OutreachPicker({
           {pending ? t("dopytDetail.sendingButton") : t("dopytDetail.sendButton")}
         </Button>
         <Button type="button" variant="secondary" onClick={() => setOpen(false)} className="px-5 py-2 text-sm">
-          Zrušiť
+          {t("common.cancel")}
         </Button>
       </div>
     </div>

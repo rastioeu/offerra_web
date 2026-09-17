@@ -13,7 +13,9 @@
     "sendFailed": "Senden fehlgeschlagen",
     "publishFailed": "Veröffentlichen fehlgeschlagen",
     "createFailed": "Erstellen fehlgeschlagen",
-    "actionFailed": "Fehlgeschlagen"
+    "actionFailed": "Fehlgeschlagen",
+    "notLoggedIn": "Du bist nicht angemeldet.",
+    "fileTransferFailed": "Die Datei konnte nicht übertragen werden."
   },
   "labels": {
     "transactionSale": "Verkauf",
@@ -1176,7 +1178,8 @@
     "nothingYet": "Noch nichts. Schreib die erste Nachricht — zum Beispiel, was du vor einem Angebot fragen möchtest.",
     "readSuffix": " · gelesen",
     "inputPlaceholder": "z. B. Ist die Küche im Preis enthalten?",
-    "sendButton": "Senden"
+    "sendButton": "Senden",
+    "chattingWith": "Du schreibst mit {{name}}."
   },
   "demandMessages": {
     "withRequesterName": "dem Anfragenden",

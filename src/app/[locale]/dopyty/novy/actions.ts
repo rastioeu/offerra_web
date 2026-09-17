@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { redirectLocalized } from "@/i18n/server";
+import { getT, redirectLocalized } from "@/i18n/server";
 
 function num(text: string): number | null {
   const c = text.replace(",", ".").trim();
@@ -20,19 +20,19 @@ function num(text: string): number | null {
  * a kraj ostávajú `null`. Priznané v reporte, nie tichá medzera.
  */
 export async function createDemandAction(formData: FormData) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const description = String(formData.get("description") ?? "").trim();
-  if (!description) throw new Error("Popíš, čo hľadáš.");
+  if (!description) throw new Error(t("dopytNovy.descriptionRequired"));
 
   const min = num(String(formData.get("budgetMin") ?? ""));
   const max = num(String(formData.get("budgetMax") ?? ""));
   if (min != null && max != null && max < min) {
-    throw new Error("Horná hranica rozpočtu nemôže byť nižšia než dolná.");
+    throw new Error(t("dopytNovy.budgetMaxTooLow"));
   }
 
   const transaction = String(formData.get("transaction") ?? "SALE");

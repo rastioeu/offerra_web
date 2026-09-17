@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
+import { getT } from "@/i18n/server";
 
 export async function saveRatingAction(
   propertyId: string,
@@ -10,11 +11,11 @@ export async function saveRatingAction(
   stars: number,
   comment: string | null
 ) {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Nie si prihlásený.");
+  if (!user) throw new Error(t("common.notLoggedIn"));
 
   const { error } = await supabase
     .schema("offerra")

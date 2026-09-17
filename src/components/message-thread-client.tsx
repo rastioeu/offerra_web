@@ -7,6 +7,7 @@ import { Avatar } from "@/components/avatar";
 import { MessageSendForm } from "@/components/message-send-form";
 import { useRealtimeChannel } from "@/hooks/use-realtime-channel";
 import { subjectIds, type Message, type MessageSubject } from "@/lib/messages";
+import { localeTag } from "@/lib/property";
 import { createT, type Locale } from "@/i18n";
 
 /**
@@ -68,7 +69,7 @@ export function MessageThreadClient({
         <div className="flex flex-col gap-2">
           {messages.map((m) => {
             const mine = m.sender_id === myId;
-            const time = new Intl.DateTimeFormat("sk-SK", { hour: "2-digit", minute: "2-digit" }).format(
+            const time = new Intl.DateTimeFormat(localeTag(language), { hour: "2-digit", minute: "2-digit" }).format(
               new Date(m.created_at)
             );
             return (
@@ -93,7 +94,7 @@ export function MessageThreadClient({
       <MessageSendForm onSend={handleSend} t={t} />
       <p className="flex items-center gap-2 text-xs text-text-muted">
         <Avatar name={otherName} size={20} />
-        Píšeš s {otherName}.
+        {t("messages.chattingWith", { name: otherName })}
       </p>
     </div>
   );
