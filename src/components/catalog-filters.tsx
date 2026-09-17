@@ -21,19 +21,19 @@ function hrefWith(locale: Locale, current: URLSearchParams, key: string, value: 
 }
 
 /**
- * Filter nad katalógom — ŠTVRTÝ POKUS (Rastio, 17.9.2026): bočný stĺpec
+ * Filter nad katalógom — PIATY POKUS (Rastio, 17.9.2026): bočný stĺpec
  * voľne plávajúcich čipov („pôsobí divne") → horná lišta s rozbaľovacími
- * menu („klikateľný filter je lepší") → klikateľné čipy v troch
- * stlačených riadkoch hore („je to lepšie ale nie dobre, sú to tri
- * riadky, je to moc veľké").
+ * menu („klikateľný filter je lepší") → tri stlačené riadky čipov („moc
+ * veľké") → jeden zhustený riadok bez viditeľného odstupu medzi skupinami
+ * („lepšie ale medzi tými troma filtrami daj medzeru alebo niečo na
+ * dizajn").
  *
- * Tri samostatné, vypchaté riadky (appkové rozloženie „tri riadky podľa
- * významu") na webe zaberali zbytočne veľa VÝŠKY — appka na to má celú
- * obrazovku, web má vedľa toho ešte hlavičku aj mriežku kariet. Preto sú
- * všetky skupiny čipov teraz v JEDNOM riadku, ktorý sa zalomí len keď na
- * to nie je miesto (nie vynútene vždy) — oddelené tenkou zvislou čiarou,
- * nie samostatnými `<div>` blokmi s vlastným odsadením. Menšie čipy
- * (`text-xs`, menší padding) a menší padding celého panela.
+ * Tri skupiny (typ obchodu / typ nehnuteľnosti / triedenie) sú teraz
+ * VLASTNÉ `<div>` bloky vo vnútri jedného panela — každá ďalšia (od
+ * druhej) má na `sm:` a vyššie `border-l` + `pl-5`, čo dáva skutočný
+ * vizuálny odstup A deliacu čiaru naraz, nie len 1px čiarku na dotyk.
+ * Na mobile sa `border-l`/`pl` vypína (`sm:` variant) — čiara nalepená
+ * na ľavý okraj zalomeného riadku by vyzerala ako chyba, nie dizajn.
  *
  * Čipy sú obyčajné odkazy (funguje bez JS, vlastná indexovateľná URL na
  * filter), nie `<select>`.
@@ -74,44 +74,47 @@ export async function CatalogFilters({
         ? "border-accent-deep bg-accent-soft text-accent-deep"
         : "border-border bg-surface text-text-secondary hover:border-border-strong"
     }`;
-  const groupDivider = <span aria-hidden className="mx-0.5 hidden h-4 w-px shrink-0 bg-border sm:block" />;
+  const groupCls = "flex flex-wrap items-center gap-1.5";
+  const separatedGroupCls = `${groupCls} sm:border-l sm:border-border sm:pl-5`;
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-2 shadow-[var(--shadow-card)]">
-      <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
-        {t("catalog.filterAll")}
-      </Link>
-      {TRANSACTIONS.map((tr) => (
-        <Link key={tr} href={hrefWith(locale, searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
-          {transactionLabel[tr]}
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-border bg-surface px-4 py-2.5 shadow-[var(--shadow-card)]">
+      <div className={groupCls}>
+        <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
+          {t("catalog.filterAll")}
         </Link>
-      ))}
+        {TRANSACTIONS.map((tr) => (
+          <Link key={tr} href={hrefWith(locale, searchParams, "transaction", tr)} className={chip(activeTransaction === tr)}>
+            {transactionLabel[tr]}
+          </Link>
+        ))}
+      </div>
 
-      {groupDivider}
-
-      <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
-        {t("catalog.filterAllTypes")}
-      </Link>
-      {PROPERTY_TYPES.map((pt) => (
-        <Link key={pt} href={hrefWith(locale, searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
-          {propertyLabel[pt]}
+      <div className={separatedGroupCls}>
+        <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
+          {t("catalog.filterAllTypes")}
         </Link>
-      ))}
+        {PROPERTY_TYPES.map((pt) => (
+          <Link key={pt} href={hrefWith(locale, searchParams, "type", pt)} className={chip(activePropertyType === pt)}>
+            {propertyLabel[pt]}
+          </Link>
+        ))}
+      </div>
 
-      {groupDivider}
-
-      {SORT_VALUES.map((sortValue) => (
-        <Link
-          key={sortValue}
-          href={hrefWith(locale, searchParams, "sort", sortValue === "NEWEST" ? null : sortValue)}
-          className={chip(activeSort === sortValue)}
-        >
-          {sortLabel[sortValue]}
-        </Link>
-      ))}
+      <div className={separatedGroupCls}>
+        {SORT_VALUES.map((sortValue) => (
+          <Link
+            key={sortValue}
+            href={hrefWith(locale, searchParams, "sort", sortValue === "NEWEST" ? null : sortValue)}
+            className={chip(activeSort === sortValue)}
+          >
+            {sortLabel[sortValue]}
+          </Link>
+        ))}
+      </div>
 
       {!isFilterEmpty(filter) ? (
-        <Link href={localizeHref(locale, "/")} className="ml-auto pl-1 text-xs font-medium text-link hover:underline">
+        <Link href={localizeHref(locale, "/")} className="ml-auto text-xs font-medium text-link hover:underline">
           {t("catalog.clearFilter")}
         </Link>
       ) : null}
