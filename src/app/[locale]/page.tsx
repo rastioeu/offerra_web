@@ -117,14 +117,22 @@ export default async function CatalogPage({
           vizuálne skrytý (`sr-only`) — nie je to duplicita obsahu, je to
           JEDINÝ viditeľný výskyt textu na stránke okrem hlavičky. */}
       <h1 className="sr-only">{t("catalog.title")}</h1>
-      <div className="mx-auto w-full max-w-[420px]">
-        <SearchBox initialValue={one(params.q) ?? ""} />
-      </div>
-
-      <div className="mx-auto w-full max-w-md">
-        <DismissibleCard storageKey="offerra-hiw-home-dismissed">
-          <HowItWorksCard locale={language} />
-        </DismissibleCard>
+      {/* Vyhľadávacie pole a karta „Ako funguje" boli KAŽDÉ na vlastnom
+          vycentrovanom riadku („veľa miesta prázdneho vôkol", Rastio
+          17.9.2026) — dva úzke, izolované bloky uprostred širokej
+          stránky, každý obklopený veľkými prázdnymi okrajmi. Teraz sú
+          v JEDNOM riadku vedľa seba, zarovnané k ľavému okraju rovnako
+          ako zvyšok stránky (filtre/mriežka nižšie), nie vycentrované
+          — plnšie využitie šírky, žiadny osamotený ostrov. */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:gap-6">
+        <div className="w-full lg:max-w-[460px]">
+          <SearchBox initialValue={one(params.q) ?? ""} />
+        </div>
+        <div className="w-full lg:max-w-md">
+          <DismissibleCard storageKey="offerra-hiw-home-dismissed">
+            <HowItWorksCard locale={language} />
+          </DismissibleCard>
+        </div>
       </div>
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
