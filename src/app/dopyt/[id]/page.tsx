@@ -21,7 +21,23 @@ export async function generateMetadata({
   const { id } = await params;
   const demand = await fetchDemand(id);
   if (!demand) return { title: "Dopyt nenájdený" };
-  return { title: demand.description?.slice(0, 60) || t("dopytDetail.screenTitle") };
+
+  const demandLabel = getDemandLabel(t)[demand.transaction_type];
+  const typeLabel = demand.property_type
+    ? getPropertyLabel(t)[demand.property_type as PropertyType]
+    : t("dopytDetail.typeAny");
+  const budget = formatBudget(t, demand.budget_min, demand.budget_max);
+  const title = [typeLabel, demandLabel, demand.city].filter(Boolean).join(" — ") || t("dopytDetail.screenTitle");
+  const description = [demand.city, budget, demand.description?.slice(0, 140)].filter(Boolean).join(" · ");
+  const url = `https://app.offerra.sk/dopyt/${demand.id}`;
+
+  return {
+    title,
+    description: description || undefined,
+    alternates: { canonical: url },
+    openGraph: { type: "website", url, title, description },
+    twitter: { card: "summary", title, description },
+  };
 }
 
 /**

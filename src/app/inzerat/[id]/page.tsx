@@ -38,13 +38,25 @@ export async function generateMetadata({
     .filter(Boolean)
     .join(" · ");
 
+  const url = `https://app.offerra.sk/inzerat/${property.id}`;
+  const images = property.media.map((m) => m.url);
+
   return {
     title,
     description: description || undefined,
+    alternates: { canonical: url },
     openGraph: {
+      type: "website",
+      url,
       title,
       description,
-      images: property.media[0]?.url ? [property.media[0].url] : undefined,
+      images: images.length > 0 ? images : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: images.length > 0 ? [images[0]] : undefined,
     },
   };
 }
@@ -85,9 +97,28 @@ export default async function PropertyDetailPage({
     description: property.description ?? undefined,
     url: `https://app.offerra.sk/inzerat/${property.id}`,
     image: property.media.map((m) => m.url),
-    address: property.city ? { "@type": "PostalAddress", addressLocality: property.city } : undefined,
+    datePosted: property.created_at,
+    address: property.city
+      ? {
+          "@type": "PostalAddress",
+          addressLocality: property.city,
+          addressRegion: property.district ?? undefined,
+          addressCountry: "SK",
+        }
+      : undefined,
+    geo:
+      property.latitude != null && property.longitude != null
+        ? { "@type": "GeoCoordinates", latitude: property.latitude, longitude: property.longitude }
+        : undefined,
+    numberOfRooms: property.rooms ?? undefined,
+    floorSize: property.area_m2 != null ? { "@type": "QuantitativeValue", value: property.area_m2, unitCode: "MTK" } : undefined,
     offers: property.asking_price_hint
-      ? { "@type": "Offer", price: property.asking_price_hint, priceCurrency: "EUR" }
+      ? {
+          "@type": "Offer",
+          price: property.asking_price_hint,
+          priceCurrency: "EUR",
+          availability: property.status === "ACTIVE" ? "https://schema.org/InStock" : "https://schema.org/SoldOut",
+        }
       : undefined,
   };
 

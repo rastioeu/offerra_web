@@ -4,24 +4,51 @@ import Link from "next/link";
 import { CatalogFilters } from "@/components/catalog-filters";
 import { PropertyCard } from "@/components/property-card";
 import { fetchCatalog } from "@/lib/catalog";
+import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
 import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/lib/search";
+import { t } from "@/i18n";
 
 /**
  * Katalóg = domovská stránka. SEO je hlavný dôvod projektu (Rastio) —
  * verejný zoznam inzerátov patrí na `/`, nie za prihlásenie.
  * Filtre idú cez URL parametre (`?q=&transaction=&type=&sort=`), nie
  * klientský stav — filtrovaný výsledok má vlastnú indexovateľnú URL a
- * funguje aj bez JS (obyčajné odkazy/GET formulár).
+ * funguje aj bez JS (obyčajné odkazy/GET formulár). Každá filtrovaná
+ * URL má preto VLASTNÝ title/description a self-referencing canonical
+ * (nie zbiehanie na `/`) — je to samostatná, zmysluplná stránka
+ * („Byty na prenájom v Bratislave"), nie duplicita domovskej.
  */
-export const metadata: Metadata = {
-  title: "Nehnuteľnosti",
-};
-
 type SearchParams = Record<string, string | string[] | undefined>;
 
 function one(v: string | string[] | undefined): string | null {
   return typeof v === "string" && v.length > 0 ? v : null;
+}
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const params = await searchParams;
+  const { filter } = buildFilter(params);
+
+  const transactionLabel = filter.transaction ? getTransactionLabel(t)[filter.transaction] : null;
+  const typeLabel = filter.propertyType ? getPropertyLabel(t)[filter.propertyType] : null;
+  const parts = [typeLabel, transactionLabel && `na ${transactionLabel.toLowerCase()}`, filter.city && `v ${filter.city}`].filter(
+    Boolean
+  );
+  const title = parts.length > 0 ? parts.join(" ") : "Nehnuteľnosti";
+
+  const qs = new URLSearchParams(
+    Object.entries(params).flatMap(([k, v]) => (v == null ? [] : Array.isArray(v) ? v.map((x) => [k, x] as [string, string]) : [[k, v] as [string, string]]))
+  ).toString();
+  const canonical = qs ? `https://app.offerra.sk/?${qs}` : "https://app.offerra.sk/";
+
+  return {
+    title,
+    description:
+      parts.length > 0
+        ? `${title} — obrátený trh s nehnuteľnosťami, kde predávajúci nemusí povedať cenu.`
+        : undefined,
+    alternates: { canonical },
+  };
 }
 
 /**
@@ -59,8 +86,21 @@ export default async function CatalogPage({
     )
   );
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: properties.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `https://app.offerra.sk/inzerat/${p.id}`,
+    })),
+  };
+
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+      {properties.length > 0 ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      ) : null}
       <header className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold text-text-primary">Nehnuteľnosti</h1>
         <p className="text-text-secondary">

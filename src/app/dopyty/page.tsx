@@ -10,6 +10,9 @@ import { t } from "@/i18n";
 
 export const metadata: Metadata = {
   title: "Dopyty",
+  description:
+    "Zoznam dopytov po nehnuteľnostiach na Offerra — čo ľudia hľadajú, s akým rozpočtom a v ktorej lokalite.",
+  alternates: { canonical: "https://app.offerra.sk/dopyty" },
 };
 
 type SearchParams = Record<string, string | string[] | undefined>;
