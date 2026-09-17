@@ -39,6 +39,18 @@ function hrefWith(locale: Locale, current: URLSearchParams, key: string, value: 
  * rozbaľovania — presne to, čo Rastio žiadal aj pre notebook šírky
  * (panel má pevnú, kompaktnú `lg:w-64`, nie plávajúcu šírku, ktorá by sa
  * pri užšom okne notebooku nafúkla).
+ *
+ * MOBIL (Rastio, 17.9.2026: „pole je dobre, filtre neprehľadné") — pod
+ * `lg:` je tento panel PLNOU šírkou NAD mriežkou (appka aj web
+ * webu nemá zatiaľ mobilnú dvojstĺpcovú alternatívu k bočnému panelu),
+ * takže zabalené (`flex-wrap`) čipy pri piatich typoch nehnuteľností
+ * vedeli natiahnuť sekciu na viacero riadkov nepredvídateľne — vyzeralo
+ * to ako stena čipov, nie usporiadaný zoznam. Každý riadok čipov je
+ * teraz pod `lg:` VODOROVNE POSÚVATEĽNÝ (`overflow-x-auto`, žiadne
+ * zalamovanie) — pevná, predvídateľná výška na sekciu bez ohľadu na
+ * počet čipov, nadpis sekcie ostáva čitateľný nad ním. Od `lg:` sa
+ * vracia späť na zalamovanie (`lg:flex-wrap`), kde je šírka panela
+ * pevná a menší počet čipov na sekciu sa zmestí bez potreby posúvania.
  */
 export async function CatalogFilters({
   searchParams,
@@ -71,7 +83,7 @@ export async function CatalogFilters({
   };
 
   const chip = (active: boolean) =>
-    `rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
+    `shrink-0 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors ${
       active
         ? "border-accent-deep bg-accent-soft text-accent-deep"
         : "border-border bg-surface text-text-secondary hover:border-border-strong"
@@ -92,7 +104,7 @@ export async function CatalogFilters({
 
       <div className="flex flex-col gap-2">
         <p className={sectionTitleCls}>{t("filterRows.transactionTitle")}</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-0.5 lg:flex-wrap lg:overflow-visible lg:pb-0">
           <Link href={hrefWith(locale, searchParams, "transaction", null)} className={chip(activeTransaction == null)}>
             {t("catalog.filterAll")}
           </Link>
@@ -108,7 +120,7 @@ export async function CatalogFilters({
 
       <div className="flex flex-col gap-2">
         <p className={sectionTitleCls}>{t("filterRows.propertyTypeTitle")}</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-0.5 lg:flex-wrap lg:overflow-visible lg:pb-0">
           <Link href={hrefWith(locale, searchParams, "type", null)} className={chip(activePropertyType == null)}>
             {t("catalog.filterAllTypes")}
           </Link>
@@ -124,7 +136,7 @@ export async function CatalogFilters({
 
       <div className="flex flex-col gap-2">
         <p className={sectionTitleCls}>{t("catalog.sortSectionTitle")}</p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-0.5 lg:flex-wrap lg:overflow-visible lg:pb-0">
           {SORT_VALUES.map((sortValue) => (
             <Link
               key={sortValue}
