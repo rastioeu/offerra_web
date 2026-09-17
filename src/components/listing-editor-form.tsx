@@ -49,7 +49,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
         setSavedAt(Date.now());
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Uloženie zlyhalo");
+        setError(e instanceof Error ? e.message : t("common.saveFailed"));
       }
     });
   }
@@ -62,7 +62,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
         await publishListingAction(property.id);
         router.push(localizeHref(language, `/inzerat/${property.id}`));
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Zverejnenie zlyhalo");
+        setError(e instanceof Error ? e.message : t("common.publishFailed"));
       }
     });
   }
@@ -74,7 +74,7 @@ export function ListingEditorForm({ property, language }: { property: Property; 
         await archiveListingAction(property.id);
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Zlyhalo");
+        setError(e instanceof Error ? e.message : t("common.actionFailed"));
       }
     });
   }

@@ -38,7 +38,7 @@ export function MessageSendForm({
         await onSend(content);
         setValue("");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Odoslanie zlyhalo");
+        setError(err instanceof Error ? err.message : t("common.sendFailed"));
       }
     });
   }

@@ -5,9 +5,10 @@ import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { getLocale, getT } from "@/i18n/server";
 import { localizeHref } from "@/i18n/href";
 
-export const metadata: Metadata = {
-  title: "Prihlásenie",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("login.signIn") };
+}
 
 export default async function LoginPage({
   searchParams,

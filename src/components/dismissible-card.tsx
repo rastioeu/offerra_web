@@ -7,9 +7,16 @@
  * kompromis: per-prehliadač, nie per-účet, ale lepšie než karta, čo sa
  * nedá schovať (Rastio, 17.9.2026).
  */
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
+import { createT, isLocale } from "@/i18n";
+
 export function DismissibleCard({ storageKey, children }: { storageKey: string; children: ReactNode }) {
+  const pathname = usePathname();
+  const maybeLocale = pathname.split("/")[1];
+  const locale = isLocale(maybeLocale) && maybeLocale !== "sk" ? maybeLocale : "sk";
+  const t = createT(locale);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
@@ -35,7 +42,7 @@ export function DismissibleCard({ storageKey, children }: { storageKey: string; 
             // nedá sa uložiť — karta sa v tejto relácii aj tak zavrie
           }
         }}
-        aria-label="Zavrieť"
+        aria-label={t("ui.close")}
         className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-surface text-sm text-text-muted hover:text-text-primary"
       >
         ✕

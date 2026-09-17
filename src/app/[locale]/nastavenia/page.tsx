@@ -11,9 +11,10 @@ import { getLocale, getT, redirectLocalized } from "@/i18n/server";
 import { loginRedirectPath } from "@/i18n/href";
 import type { Locale } from "@/i18n";
 
-export const metadata: Metadata = {
-  title: "Nastavenia",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("nastavenia.title") };
+}
 
 /**
  * Nadpisy, čo appka nemá (profil/nebezpečná zóna sekcie sú webové) —

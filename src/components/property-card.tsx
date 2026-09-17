@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { DeadlineBadge } from "@/components/deadline-badge";
+import { FavoriteHeart } from "@/components/favorite-heart";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import { formatArea, formatPrice, formatRooms, type PropertyWithMedia } from "@/lib/property";
 import { getLocale, getT } from "@/i18n/server";
@@ -44,6 +45,9 @@ export async function PropertyCard({ property }: { property: PropertyWithMedia }
         <span className="absolute left-3 top-3 rounded-[10px] bg-primary px-2 py-[3px] text-xs font-semibold tracking-wide text-on-primary">
           {transactionLabel}
         </span>
+        <div className="absolute right-3 top-3">
+          <FavoriteHeart propertyId={property.id} />
+        </div>
         <div className="absolute bottom-3 left-3">
           <DeadlineBadge iso={property.offer_deadline} language={language} onPhoto />
         </div>

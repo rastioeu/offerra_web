@@ -64,7 +64,7 @@ export function OutreachPicker({
         setChosen(null);
         setMessage("");
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Odoslanie zlyhalo");
+        setError(e instanceof Error ? e.message : t("common.sendFailed"));
       }
     });
   }

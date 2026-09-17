@@ -34,7 +34,7 @@ export function OfferForm({
       try {
         await submitOffer(propertyId, existing?.id ?? null, formData);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Odoslanie zlyhalo");
+        setError(e instanceof Error ? e.message : t("common.sendFailed"));
       }
     });
   }

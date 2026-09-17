@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { createT, type Locale } from "@/i18n";
+
 /**
  * Hamburger menu pre mobil — Rastio (17.9.2026): „horné menu je
  * namačknuté, keď testujem na mobile." Desktop ukazuje odkazy v rade
  * (`SiteHeader`, `hidden md:flex`), toto je len mobilná náhrada
  * (`md:hidden`) za ten istý zoznam odkazov.
  */
-export function MobileNav({ links }: { links: { href: string; label: string }[] }) {
+export function MobileNav({ links, language }: { links: { href: string; label: string }[]; language: Locale }) {
+  const t = createT(language);
   const [open, setOpen] = useState(false);
 
   return (
@@ -17,7 +20,7 @@ export function MobileNav({ links }: { links: { href: string; label: string }[] 
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? "Zavrieť menu" : "Otvoriť menu"}
+        aria-label={open ? t("rootLayout.closeMenu") : t("rootLayout.openMenu")}
         aria-expanded={open}
         className="flex h-9 w-9 items-center justify-center rounded-xl border border-border-strong text-text-primary"
       >

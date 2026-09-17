@@ -9,9 +9,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT, redirectLocalized } from "@/i18n/server";
 import { loginRedirectPath, localizeHref } from "@/i18n/href";
 
-export const metadata: Metadata = {
-  title: "Správy",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("messages.messagesTitle") };
+}
 
 /**
  * Konverzácia MAJITEĽA s jedným konkrétnym záujemcom — appka: rovnaké

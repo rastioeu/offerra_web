@@ -48,7 +48,7 @@ export function RatingCard({
       try {
         await saveRatingAction(propertyId, rateeId, stars, comment.trim() || null);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Uloženie zlyhalo");
+        setError(e instanceof Error ? e.message : t("common.saveFailed"));
       }
     });
   }

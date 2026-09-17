@@ -8,7 +8,12 @@
     "start": "Začať",
     "next": "Ďalej",
     "yes": "Áno",
-    "no": "Nie"
+    "no": "Nie",
+    "saveFailed": "Uloženie zlyhalo",
+    "sendFailed": "Odoslanie zlyhalo",
+    "publishFailed": "Zverejnenie zlyhalo",
+    "createFailed": "Vytvorenie zlyhalo",
+    "actionFailed": "Zlyhalo"
   },
   "labels": {
     "transactionSale": "Predaj",
@@ -471,7 +476,8 @@
     "closeDealTo": "{{label}} tomuto záujemcovi",
     "closeDealConfirmTitle": "{{label}}?",
     "closeDealConfirmBody": "Inzerát zmizne z katalógu, ostatné čakajúce ponuky sa uzavrú a vy dvaja sa budete môcť navzájom ohodnotiť. Späť sa to vziať nedá.",
-    "closeDealConfirmYes": "Uzavrieť obchod"
+    "closeDealConfirmYes": "Uzavrieť obchod",
+    "rejectButton": "Odmietnuť"
   },
   "propertyMap": {
     "notInThisVersion": "Mapa v tejto verzii nie je",
@@ -534,7 +540,8 @@
     "clearFilters": "Zrušiť filtre",
     "sample": "UKÁŽKA",
     "yourDemand": "TVOJ DOPYT",
-    "fromArea": "od {{area}}"
+    "fromArea": "od {{area}}",
+    "metaDescription": "Zoznam dopytov po nehnuteľnostiach na Offerra — čo ľudia hľadajú, s akým rozpočtom a v ktorej lokalite."
   },
   "pridat": {
     "createFailedTitle": "Nepodarilo sa založiť inzerát",
@@ -577,7 +584,8 @@
     "myOffersEmpty": "Zatiaľ si nikomu neponúkol.",
     "seenByOwner": "videná",
     "myDemandsCount": "MOJE DOPYTY ({{count}})",
-    "myDemandsEmpty": "Zatiaľ žiadne. Pridaj ich cez tab „Pridať\"."
+    "myDemandsEmpty": "Zatiaľ žiadne. Pridaj ich cez tab „Pridať\".",
+    "favoritesEmptyWeb": "Zatiaľ nič. Klikni na srdiečko pri inzeráte."
   },
   "dopytNovy": {
     "budgetMaxTooLow": "Horná hranica rozpočtu nemôže byť nižšia než dolná.",
@@ -727,7 +735,8 @@
     "unpublishButton": "Stiahnuť z katalógu",
     "publishButton": "Zverejniť",
     "deleteButton": "Zmazať inzerát",
-    "saveButton": "Uložiť"
+    "saveButton": "Uložiť",
+    "editScreenTitle": "Upraviť inzerát"
   },
   "propertyDetail": {
     "screenTitle": "Detail",
@@ -761,7 +770,8 @@
     "editListingAction": "Upraviť inzerát",
     "loginToOfferAction": "Prihlás sa a ponúkni",
     "editMyOfferAction": "Upraviť moju ponuku",
-    "makeOfferAction": "Podať ponuku"
+    "makeOfferAction": "Podať ponuku",
+    "detailsSection": "Podrobnosti"
   },
   "ponukaForm": {
     "amountRequired": "Zadaj sumu ponuky.",
@@ -1322,7 +1332,9 @@
   "rootLayout": {
     "back": "Späť",
     "profileLoadFailedTitle": "Nepodarilo sa načítať profil",
-    "retryButton": "Skúsiť znova"
+    "retryButton": "Skúsiť znova",
+    "openMenu": "Otvoriť menu",
+    "closeMenu": "Zavrieť menu"
   },
   "_": {},
   "notFoundPage": {

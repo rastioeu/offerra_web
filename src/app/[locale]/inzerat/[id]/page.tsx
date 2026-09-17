@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { DeadlineBadge } from "@/components/deadline-badge";
+import { FavoriteHeart } from "@/components/favorite-heart";
 import { MessagesSection } from "@/components/messages-section";
 import { MortgageCalculatorCard } from "@/components/mortgage-calculator";
 import { OffersSection } from "@/components/offers-section";
@@ -134,7 +135,7 @@ export default async function PropertyDetailPage({
       />
 
       <Link href={localizeHref(language, "/")} className="text-sm text-link hover:underline">
-        ← Späť do katalógu
+        ← {t("notFoundPage.backToCatalog")}
       </Link>
 
       {/* Desktop: galéria + popis vľavo, cena/ponuky/obhliadka vpravo (sticky) —
@@ -153,14 +154,14 @@ export default async function PropertyDetailPage({
 
           {property.description ? (
             <section className="flex flex-col gap-2">
-              <h2 className="text-lg font-semibold text-text-primary">Popis</h2>
+              <h2 className="text-lg font-semibold text-text-primary">{t("inzeratEdit.descriptionLabel")}</h2>
               <p className="whitespace-pre-wrap text-text-secondary">{property.description}</p>
             </section>
           ) : null}
 
           {rows.length > 0 ? (
             <section className="flex flex-col gap-2">
-              <h2 className="text-lg font-semibold text-text-primary">Podrobnosti</h2>
+              <h2 className="text-lg font-semibold text-text-primary">{t("propertyDetail.detailsSection")}</h2>
               <dl className="grid grid-cols-1 gap-x-6 gap-y-2 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-2">
                 {rows.map((row) => (
                   <div key={row.label} className="flex justify-between gap-4 border-b border-border py-1.5 last:border-0 sm:border-0">
@@ -173,7 +174,7 @@ export default async function PropertyDetailPage({
           ) : null}
 
           {property.owner?.nickname ? (
-            <p className="text-sm text-text-muted">Inzerent: {property.owner.nickname}</p>
+            <p className="text-sm text-text-muted">{t("propertyDetail.addedBy", { who: property.owner.nickname })}</p>
           ) : null}
 
           <RatingsSection property={property} userId={user?.id ?? null} />
@@ -182,11 +183,14 @@ export default async function PropertyDetailPage({
 
         <div className="flex flex-col gap-5 lg:sticky lg:top-6 lg:w-[380px] lg:shrink-0">
           <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-5 shadow-[var(--shadow-card)]">
-            {price ? (
-              <p className="font-money text-[27px] font-bold leading-[30px] text-accent">{price}</p>
-            ) : (
-              <p className="text-text-muted">{t("catalog.priceOnRequest")}</p>
-            )}
+            <div className="flex items-start justify-between gap-3">
+              {price ? (
+                <p className="font-money text-[27px] font-bold leading-[30px] text-accent">{price}</p>
+              ) : (
+                <p className="text-text-muted">{t("catalog.priceOnRequest")}</p>
+              )}
+              <FavoriteHeart propertyId={property.id} />
+            </div>
             <DeadlineBadge iso={property.offer_deadline} language={language} />
           </div>
 

@@ -26,7 +26,7 @@ export function OwnerOfferActions({
   const [pending, startTransition] = useTransition();
 
   function decide(status: "ACCEPTED" | "REJECTED") {
-    if (status === "REJECTED" && !window.confirm("Odmietnuť túto ponuku?")) return;
+    if (status === "REJECTED" && !window.confirm(`${t("ownerOffers.willBeRejected")}?`)) return;
     startTransition(() => {
       void decideOfferAction(propertyId, offerId, status);
     });
@@ -34,11 +34,7 @@ export function OwnerOfferActions({
 
   function close() {
     const label = closedLabel(t, transaction);
-    if (
-      !window.confirm(
-        `${label} tomuto záujemcovi? Inzerát zmizne z katalógu, ostatné čakajúce ponuky sa uzavrú. Späť sa to vziať nedá.`
-      )
-    ) {
+    if (!window.confirm(`${t("ownerOffers.closeDealTo", { label })}?\n\n${t("ownerOffers.closeDealConfirmBody")}`)) {
       return;
     }
     startTransition(() => {
@@ -51,10 +47,10 @@ export function OwnerOfferActions({
       {offerStatus === "PENDING" ? (
         <>
           <Button type="button" onClick={() => decide("ACCEPTED")} disabled={pending} className="px-4 py-2 text-sm">
-            Prijať ponuku
+            {t("ownerOffers.acceptOffer")}
           </Button>
           <Button type="button" variant="secondary" onClick={() => decide("REJECTED")} disabled={pending} className="px-4 py-2 text-sm">
-            Odmietnuť
+            {t("ownerOffers.rejectButton")}
           </Button>
         </>
       ) : null}
@@ -65,7 +61,7 @@ export function OwnerOfferActions({
           disabled={pending}
           className="rounded-xl border border-accent-deep bg-surface px-4 py-2 text-sm font-medium text-accent-deep hover:bg-accent-soft disabled:opacity-60"
         >
-          Uzavrieť obchod
+          {t("ownerOffers.closeDealConfirmYes")}
         </button>
       ) : null}
     </div>

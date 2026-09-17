@@ -41,7 +41,7 @@ export function NewDemandForm({ language }: { language: Locale }) {
         ) {
           throw e;
         }
-        setError(e instanceof Error ? e.message : "Vytvorenie zlyhalo");
+        setError(e instanceof Error ? e.message : t("common.createFailed"));
       }
     });
   }

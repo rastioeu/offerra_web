@@ -9,12 +9,14 @@ import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/l
 import { getLocale, getT } from "@/i18n/server";
 import { localizeHref } from "@/i18n/href";
 
-export const metadata: Metadata = {
-  title: "Dopyty",
-  description:
-    "Zoznam dopytov po nehnuteľnostiach na Offerra — čo ľudia hľadajú, s akým rozpočtom a v ktorej lokalite.",
-  alternates: { canonical: "https://app.offerra.sk/dopyty" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const [t, locale] = await Promise.all([getT(), getLocale()]);
+  return {
+    title: t("dopyty.title"),
+    description: t("dopyty.metaDescription"),
+    alternates: { canonical: `https://app.offerra.sk${localizeHref(locale, "/dopyty")}` },
+  };
+}
 
 type SearchParams = Record<string, string | string[] | undefined>;
 

@@ -10,9 +10,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT, redirectLocalized } from "@/i18n/server";
 import { loginRedirectPath, localizeHref } from "@/i18n/href";
 
-export const metadata: Metadata = {
-  title: "Upraviť inzerát",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("inzeratEdit.editScreenTitle") };
+}
 
 /**
  * Editor inzerátu (appka: `inzerat/[id].tsx`, jedna obrazovka na

@@ -7,9 +7,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT, redirectLocalized } from "@/i18n/server";
 import { loginRedirectPath } from "@/i18n/href";
 
-export const metadata: Metadata = {
-  title: "Moje dopyty",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("pridat.myDemandsTitle") };
+}
 
 export default async function MyRequestsPage() {
   const [t, locale] = await Promise.all([getT(), getLocale()]);

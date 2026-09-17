@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import "../globals.css";
 
+import { FavoritesProvider } from "@/hooks/use-favorites";
 import { NotificationsProvider } from "@/hooks/use-notifications";
 import { SiteHeader } from "@/components/site-header";
 import { isLocale, LOCALES, type Locale } from "@/i18n";
@@ -118,8 +119,10 @@ export default async function RootLayout({ children, params }: { children: React
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
         <NotificationsProvider userId={user?.id ?? null}>
-          <SiteHeader />
-          {children}
+          <FavoritesProvider userId={user?.id ?? null}>
+            <SiteHeader />
+            {children}
+          </FavoritesProvider>
         </NotificationsProvider>
       </body>
     </html>

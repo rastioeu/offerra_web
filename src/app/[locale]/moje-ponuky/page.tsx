@@ -8,9 +8,10 @@ import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT, redirectLocalized } from "@/i18n/server";
 import { loginRedirectPath, localizeHref } from "@/i18n/href";
 
-export const metadata: Metadata = {
-  title: "Moje ponuky",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return { title: t("pridat.myOffersTitle") };
+}
 
 const STATUS_COLOR: Record<string, string> = {
   PENDING: "bg-surface-pressed text-text-secondary",
