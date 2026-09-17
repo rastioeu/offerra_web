@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import { createT, type Locale } from "@/i18n";
@@ -15,6 +16,10 @@ import { createT, type Locale } from "@/i18n";
  * 17.9.2026), vykreslí sa POD odkazmi. Server Component (`MobileNavContact`)
  * odovzdaný sem zo `SiteHeader`-u — bezpečné, ide medzi dvoma Server
  * Components, kým sa výsledok nedostane sem ako už vykreslené deti.
+ *
+ * AKTÍVNY ODKAZ TMAVŠÍ (Rastio, 17.9.2026, rovnaký dôvod ako desktopový
+ * `NavLink`) — táto komponenta je klientská už aj tak (`useState` na
+ * otvorenie/zatvorenie), takže `usePathname` sem patrí priamo.
  */
 export function MobileNav({
   links,
@@ -26,6 +31,7 @@ export function MobileNav({
   children?: ReactNode;
 }) {
   const t = createT(language);
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   return (
@@ -50,16 +56,22 @@ export function MobileNav({
 
       {open ? (
         <div className="absolute right-0 top-11 z-20 flex w-56 flex-col gap-1 rounded-2xl border border-border bg-surface p-2 shadow-[var(--shadow-card)]">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="rounded-xl px-3 py-2 text-sm text-text-secondary hover:bg-surface-pressed hover:text-text-primary"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {links.map((link) => {
+            const active = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                aria-current={active ? "page" : undefined}
+                className={`rounded-xl px-3 py-2 text-sm hover:bg-surface-pressed hover:text-text-primary ${
+                  active ? "font-semibold text-text-primary" : "text-text-secondary"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           {children}
         </div>
       ) : null}

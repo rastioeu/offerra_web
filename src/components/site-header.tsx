@@ -4,6 +4,7 @@ import { HeaderContact, MobileNavContact } from "@/components/contact-links";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
+import { NavLink } from "@/components/nav-link";
 import { NotificationBell } from "@/components/notification-bell";
 import type { Locale } from "@/i18n";
 import { localizeHref } from "@/i18n/href";
@@ -45,12 +46,21 @@ const LABELS: Record<
  * (hamburger, `md:hidden`) so ROVNAKÝM zoznamom odkazov. Odkazy sú
  * lokalizované (17.9.2026, i18n kolo) — `/dopyty` v SK, `/en/dopyty` v EN.
  *
- * MOTTO VEDĽA LOGA (Rastio, 17.9.2026: veľký nadpis „Nehnuteľnosti" +
- * dlhý popis na katalógovej stránke „nie je to pekné", navrhol presunúť
- * popis hore vedľa loga ako motto a skrátiť ho) — `catalog.motto` je
- * len `lg:block`, nie `md:block`: nav má pre prihláseného veľa odkazov
- * a na `md` (768px) je to už tesné, motto navyše by ho pretláčalo do
- * ďalšieho riadku. Od `lg` (1024px) je miesto voľné.
+ * MOTTO POD LOGOM (Rastio, 17.9.2026: veľký nadpis „Nehnuteľnosti" +
+ * dlhý popis na katalógovej stránke „nie je to pekné", presunuté vedľa
+ * loga ako motto). DRUHÉ KOLO (Rastio, 17.9.2026): „motto daj pod logo
+ * tmavším písmom" — bolo VEDĽA loga (`border-l` oddeľovač) svetlou
+ * `text-muted` farbou, teraz je POD logom (`flex-col`, žiadny
+ * oddeľovač) v `text-secondary` (tmavšia). Stohovanie namiesto radenia
+ * vedľa seba zároveň neberie nav-u vodorovné miesto, takže sa dá
+ * ukázať už od `md:` (768px), nie až `lg:`.
+ *
+ * AKTÍVNY ODKAZ TMAVŠÍ (Rastio, 17.9.2026: „keď mám niečo hore
+ * stlačené, nech je to tiež tmavšie, žeby som videl") — odkazy predtým
+ * mali len `hover:`, žiadny signál PRE AKTUÁLNU stránku. `NavLink`
+ * (klientská komponenta, `usePathname`) zvýrazní odkaz na stránku, na
+ * ktorej používateľ práve je — `text-primary` + tučné namiesto
+ * `text-secondary`.
  */
 export async function SiteHeader() {
   const [supabase, locale, t] = await Promise.all([createClient(), getLocale(), getT()]);
@@ -78,48 +88,30 @@ export async function SiteHeader() {
   return (
     <header className="border-b border-border bg-surface">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 flex-col">
           <Link href={href("/")} aria-label="Offerra" className="shrink-0">
             <Logo />
           </Link>
-          <span className="hidden border-l border-border pl-3 text-sm text-text-muted lg:block">
-            {t("catalog.motto")}
-          </span>
+          <span className="hidden text-xs font-medium text-text-secondary md:block">{t("catalog.motto")}</span>
         </div>
 
         <nav className="hidden items-center gap-5 md:flex">
-          <Link href={href("/dopyty")} className="text-sm text-text-secondary hover:text-text-primary">
-            {l.demands}
-          </Link>
+          <NavLink href={href("/dopyty")}>{l.demands}</NavLink>
           {user ? (
             <>
-              <Link href={href("/moje-inzeraty")} className="text-sm text-text-secondary hover:text-text-primary">
-                {l.myListings}
-              </Link>
-              <Link href={href("/moje-ponuky")} className="text-sm text-text-secondary hover:text-text-primary">
-                {l.myOffers}
-              </Link>
-              <Link href={href("/moje-dopyty")} className="text-sm text-text-secondary hover:text-text-primary">
-                {l.myDemands}
-              </Link>
-              <Link href={href("/oblubene")} className="text-sm text-text-secondary hover:text-text-primary">
-                {l.favorites}
-              </Link>
-              <Link href={href("/nastavenia")} className="text-sm text-text-secondary hover:text-text-primary">
-                {l.settings}
-              </Link>
-              <Link href={href("/ako-to-funguje")} className="text-sm text-text-secondary hover:text-text-primary">
-                {l.howItWorks}
-              </Link>
+              <NavLink href={href("/moje-inzeraty")}>{l.myListings}</NavLink>
+              <NavLink href={href("/moje-ponuky")}>{l.myOffers}</NavLink>
+              <NavLink href={href("/moje-dopyty")}>{l.myDemands}</NavLink>
+              <NavLink href={href("/oblubene")}>{l.favorites}</NavLink>
+              <NavLink href={href("/nastavenia")}>{l.settings}</NavLink>
+              <NavLink href={href("/ako-to-funguje")}>{l.howItWorks}</NavLink>
               <NotificationBell locale={locale} />
               <LanguageSwitcher />
               <HeaderContact t={t} />
             </>
           ) : (
             <>
-              <Link href={href("/ako-to-funguje")} className="text-sm text-text-secondary hover:text-text-primary">
-                {l.howItWorks}
-              </Link>
+              <NavLink href={href("/ako-to-funguje")}>{l.howItWorks}</NavLink>
               <LanguageSwitcher />
               <HeaderContact t={t} />
               <Link
