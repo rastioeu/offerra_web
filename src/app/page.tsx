@@ -34,7 +34,13 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const parts = [typeLabel, transactionLabel && `na ${transactionLabel.toLowerCase()}`, filter.city && `v ${filter.city}`].filter(
     Boolean
   );
-  const title = parts.length > 0 ? parts.join(" ") : "Nehnuteľnosti";
+  // `generateMetadata` na koreňovej `/` route z nejasného dôvodu
+  // neaplikuje `title.template` z `layout.tsx` (zmerané, nie odvodené
+  // — `/dopyty` aj `/login`, obe so statickým `export const metadata`,
+  // príponu " | Offerra" dostanú správne, len táto dynamická route
+  // nie) — prípona je preto tu explicitne, nie spoliehanie sa na dedenie.
+  const baseTitle = parts.length > 0 ? parts.join(" ") : "Nehnuteľnosti";
+  const title = `${baseTitle} | Offerra`;
 
   const qs = new URLSearchParams(
     Object.entries(params).flatMap(([k, v]) => (v == null ? [] : Array.isArray(v) ? v.map((x) => [k, x] as [string, string]) : [[k, v] as [string, string]]))
@@ -45,7 +51,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
     title,
     description:
       parts.length > 0
-        ? `${title} — obrátený trh s nehnuteľnosťami, kde predávajúci nemusí povedať cenu.`
+        ? `${baseTitle} — obrátený trh s nehnuteľnosťami, kde predávajúci nemusí povedať cenu.`
         : undefined,
     alternates: { canonical },
   };
