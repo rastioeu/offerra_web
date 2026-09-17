@@ -7,7 +7,7 @@ import { PropertyCard } from "@/components/property-card";
 import { SearchBox } from "@/components/search-box";
 import { fetchCatalog } from "@/lib/catalog";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
-import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
+import { catalogCountLabel, type CatalogSort, type PropertyType, type TransactionType } from "@/lib/property";
 import { EMPTY_FILTER, parseQuery, type CatalogFilter } from "@/lib/search";
 import { getLocale, getT } from "@/i18n/server";
 
@@ -136,6 +136,12 @@ export default async function CatalogPage({
         />
 
         <div className="flex flex-1 flex-col gap-4">
+          {properties.length > 0 ? (
+            <p className="text-sm font-medium text-text-secondary">
+              {catalogCountLabel(t, language, properties.length)}
+            </p>
+          ) : null}
+
           {understood.length > 0 ? (
             <p className="text-sm text-text-muted">
               {t("catalog.understoodPrefix")}

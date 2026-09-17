@@ -259,3 +259,16 @@ export function sortProperties<T extends { created_at: string; offer_deadline: s
     return ba === 0 ? ta - tb : tb - ta;
   });
 }
+
+/**
+ * „48 inzerátov" nad zoznamom — koľko presne vyhovuje aktuálnemu
+ * filtru (appka: `catalog.count*` kľúče, `app/(tabs)/index.tsx`).
+ * SK má tri skloňovacie tvary, EN/DE len jednotné/množné číslo.
+ */
+export function catalogCountLabel(t: TFunc, language: string, count: number): string {
+  if (language === 'sk') {
+    const key = count === 1 ? 'countOne' : count < 5 ? 'countFew' : 'countMany';
+    return t(`catalog.${key}`, { count });
+  }
+  return t(count === 1 ? 'catalog.countOne' : 'catalog.countMany', { count });
+}
