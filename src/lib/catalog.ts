@@ -8,9 +8,51 @@
  * `useProperties`) — bez `onlyFavorites` (vyžaduje prihlásenie, ktoré
  * web zatiaľ nemá).
  */
+import { isOfferExpired } from '@/lib/offer-validity';
 import { sortProperties, type CatalogSort, type Media, type Property, type PropertyWithMedia } from '@/lib/property';
 import { stemQuery, type CatalogFilter } from '@/lib/search';
 import { createClient } from '@/lib/supabase/server';
+
+/**
+ * Súhrn ponúk pre karty v katalógu — najvyššia ŽIVÁ ponuka a ich počet.
+ * Port appkového `attachOfferStats` (`use-properties.ts`) — jeden dotaz na
+ * celú stránku, nie jeden na kartu. Platnosť sa počíta ŽIVO
+ * (`isOfferExpired`), nie len zo `status`, z toho istého dôvodu ako appka:
+ * cron `offerra.expire_offers()` beží len raz za pár minút.
+ */
+async function attachOfferStats(
+  db: ReturnType<Awaited<ReturnType<typeof createClient>>['schema']>,
+  rows: PropertyWithMedia[]
+): Promise<PropertyWithMedia[]> {
+  if (rows.length === 0) return rows;
+  const { data, error } = await db
+    .from('property_offer')
+    .select('property_id, amount, status, valid_until')
+    .in(
+      'property_id',
+      rows.map((r) => r.id)
+    );
+  if (error) throw error;
+
+  const best = new Map<string, { top: number | null; topValidUntil: string | null; count: number }>();
+  for (const o of (data ?? []) as { property_id: string; amount: number; status: string; valid_until: string | null }[]) {
+    if (o.status !== 'PENDING' && o.status !== 'ACCEPTED') continue;
+    if (o.status === 'PENDING' && isOfferExpired(o.status, o.valid_until)) continue;
+    const cur = best.get(o.property_id) ?? { top: null, topValidUntil: null, count: 0 };
+    cur.count += 1;
+    if (cur.top == null || o.amount > cur.top) {
+      cur.top = o.amount;
+      cur.topValidUntil = o.valid_until;
+    }
+    best.set(o.property_id, cur);
+  }
+  return rows.map((r) => ({
+    ...r,
+    top_offer: best.get(r.id)?.top ?? null,
+    top_offer_valid_until: best.get(r.id)?.topValidUntil ?? null,
+    offer_count: best.get(r.id)?.count ?? 0,
+  }));
+}
 
 export async function fetchCatalog(
   filter?: Partial<CatalogFilter> | null,
@@ -59,5 +101,6 @@ export async function fetchCatalog(
   }
 
   const withMedia = rows.map((r) => ({ ...r, media: byProperty.get(r.id) ?? [] }));
-  return sortProperties(withMedia, sort);
+  const withOffers = await attachOfferStats(db, withMedia);
+  return sortProperties(withOffers, sort);
 }

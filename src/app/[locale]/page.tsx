@@ -5,6 +5,7 @@ import { CatalogFilters } from "@/components/catalog-filters";
 import { DismissibleCard } from "@/components/dismissible-card";
 import { HowItWorksCard } from "@/components/how-it-works-card";
 import { PropertyCard } from "@/components/property-card";
+import { SearchBox } from "@/components/search-box";
 import { fetchCatalog } from "@/lib/catalog";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
@@ -123,6 +124,8 @@ export default async function CatalogPage({
           </DismissibleCard>
         </div>
       </header>
+
+      <SearchBox initialValue={one(params.q) ?? ""} />
 
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">
         <CatalogFilters

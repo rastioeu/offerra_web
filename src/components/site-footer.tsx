@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import { CONTACT_EMAIL, CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/contact";
+import { FooterMailLink } from "@/components/contact-links";
+import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/contact";
 import { localizeHref } from "@/i18n/href";
 import { getLocale, getT } from "@/i18n/server";
 
@@ -35,13 +36,7 @@ export async function SiteFooter() {
             <span aria-hidden className="text-border-strong">
               ·
             </span>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              aria-label={t("footer.emailAriaLabel", { email: CONTACT_EMAIL })}
-              className="hover:text-text-primary"
-            >
-              {CONTACT_EMAIL}
-            </a>
+            <FooterMailLink t={t} className="hover:text-text-primary" />
           </div>
 
           <nav className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary">

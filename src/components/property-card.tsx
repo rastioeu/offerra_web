@@ -3,7 +3,10 @@ import Link from "next/link";
 
 import { DeadlineBadge } from "@/components/deadline-badge";
 import { FavoriteHeart } from "@/components/favorite-heart";
+import { OfferCountdownPill } from "@/components/offer-countdown-pill";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
+import { formatAmount } from "@/lib/offers";
+import { offerCountLabel, priceDisplay } from "@/lib/price-display";
 import { formatArea, formatPrice, formatRooms, type PropertyWithMedia } from "@/lib/property";
 import { getLocale, getT } from "@/i18n/server";
 import { localizeHref } from "@/i18n/href";
@@ -12,16 +15,37 @@ import { localizeHref } from "@/i18n/href";
  * Katalógová karta — desktop rozloženie (foto hore, obsah dole v
  * paddingu), nie zmenšená mobilná karta. Farby výhradne z paletových
  * tried v `globals.css` (`bg-surface`, `text-text-primary`, ...).
+ *
+ * CENA (Rastio, 17.9.2026): predtým jedno číslo — orientačná cena alebo
+ * „Cena na dohodu", vyzeralo to ako bežný realitný portál s pevnou cenou.
+ * Hlavné číslo je teraz NAJVYŠŠIA PONUKA, keď nejaká je (`priceDisplay`,
+ * port appkového `property-card.tsx`) — akcentovou farbou, orientačná
+ * cena vedľa menšia a sivá. Skutočná ponuka je dôležitejšia než želanie
+ * predávajúceho, presne ako v appke.
  */
 export async function PropertyCard({ property }: { property: PropertyWithMedia }) {
   const [t, language] = await Promise.all([getT(), getLocale()]);
   const photo = property.media[0]?.url;
   const transactionLabel = getTransactionLabel(t)[property.transaction_type];
   const typeLabel = getPropertyLabel(t)[property.property_type];
-  const price = formatPrice(t, property.asking_price_hint, property.transaction_type);
   const rooms = formatRooms(t, language, property.rooms);
   const area = formatArea(property.area_m2);
   const meta = [property.city, rooms, area].filter(Boolean).join(" · ");
+
+  const pd = priceDisplay(t, property.asking_price_hint, property.top_offer ?? null, property.offer_count ?? 0);
+  const isOffer = pd.headline === "TOP_OFFER" && pd.topOffer != null;
+  const headlineLabel = isOffer ? t("propertyCard.topOffer") : t("propertyCard.askingPrice");
+  const headlineValue = isOffer
+    ? formatAmount(t, pd.topOffer as number, property.transaction_type)
+    : formatPrice(t, pd.asking, property.transaction_type);
+  const asideLines = isOffer
+    ? pd.asking != null
+      ? [t("priceDisplay.indicative"), formatPrice(t, pd.asking, property.transaction_type) as string]
+      : [t("propertyCard.priceNotGiven1"), t("propertyCard.priceNotGiven2")]
+    : [
+        offerCountLabel(t, language, pd.offerCount) ?? t("propertyCard.noOffersYet1"),
+        offerCountLabel(t, language, pd.offerCount) ? "" : t("propertyCard.noOffersYet2"),
+      ].filter(Boolean);
 
   return (
     <Link
@@ -63,11 +87,33 @@ export async function PropertyCard({ property }: { property: PropertyWithMedia }
           {property.title || typeLabel}
         </h2>
         {meta ? <p className="text-sm text-text-muted">{meta}</p> : null}
-        {price ? (
-          <p className="mt-1 font-money text-[22px] font-bold leading-[25px] text-accent">{price}</p>
-        ) : (
-          <p className="mt-1 text-sm text-text-muted">{t("catalog.priceOnRequest")}</p>
-        )}
+
+        <div className="mt-1 flex items-end justify-between gap-2">
+          <div className="flex min-w-0 flex-col gap-0.5">
+            {headlineValue ? (
+              <>
+                <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">{headlineLabel}</p>
+                <p className={`font-money text-[22px] font-bold leading-[25px] ${isOffer ? "text-accent" : "text-primary"}`}>
+                  {headlineValue}
+                </p>
+                {isOffer && property.top_offer_valid_until ? (
+                  <OfferCountdownPill status="PENDING" validUntil={property.top_offer_valid_until} language={language} />
+                ) : null}
+              </>
+            ) : (
+              <p className="text-sm text-text-muted">{pd.note}</p>
+            )}
+          </div>
+          {headlineValue && asideLines.length > 0 ? (
+            <div className="flex shrink-0 flex-col items-end text-right">
+              {asideLines.map((line) => (
+                <p key={line} className="text-xs text-text-muted">
+                  {line}
+                </p>
+              ))}
+            </div>
+          ) : null}
+        </div>
       </div>
     </Link>
   );

@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { SearchBox } from "@/components/search-box";
 import { getPropertyLabel, getTransactionLabel } from "@/lib/labels";
 import type { CatalogSort, PropertyType, TransactionType } from "@/lib/property";
 import { getLocale, getT } from "@/i18n/server";
@@ -24,8 +23,11 @@ function hrefWith(locale: Locale, current: URLSearchParams, key: string, value: 
  * Tri riadky filtra (Predaj/Prenájom · typ nehnuteľnosti · triedenie) sú
  * obyčajné odkazy (bez JS), takže filtrovaný katalóg je stále SSR a má
  * vlastnú indexovateľnú URL (napr. `/?transaction=SALE&type=APARTMENT`).
- * Voľné vyhľadávanie (`SearchBox`) JE klientské — appka vyhľadáva živo
- * (debounce 350ms), nie až po kliknutí na tlačidlo.
+ *
+ * `SearchBox` (voľné vyhľadávanie, appka: živo, debounce 350ms) tu ZÁMERNE
+ * NIE JE — presunuté nad tento riadok na celú šírku stránky (Rastio,
+ * 17.9.2026: v úzkom `lg:w-64` bočnom stĺpci si ho pri prezeraní webu
+ * nevšimol a nahlásil ho ako chýbajúci pole).
  */
 export async function CatalogFilters({
   searchParams,
@@ -55,8 +57,6 @@ export async function CatalogFilters({
 
   return (
     <div className="flex flex-col gap-5 lg:w-64 lg:shrink-0">
-      <SearchBox initialValue={searchParams.get("q") ?? ""} />
-
       <div className="flex flex-col gap-2">
         <p className="hidden text-xs font-semibold uppercase tracking-wide text-text-muted lg:block">
           {t("filterRows.transactionTitle")}

@@ -54,6 +54,13 @@ export type Property = {
   is_seed: boolean;
   created_at: string;
   updated_at: string;
+  /**
+   * Súhrn ŽIVÝCH ponúk — dopĺňa `attachOfferStats` v `catalog.ts`,
+   * v DB stĺpci nie sú (rovnaký vzor ako appka, `use-properties.ts`).
+   */
+  top_offer?: number | null;
+  top_offer_valid_until?: string | null;
+  offer_count?: number;
 };
 
 export type Media = {
