@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { CatalogFilters } from "@/components/catalog-filters";
+import { CatalogFilterBar } from "@/components/catalog-filter-bar";
 import { DismissibleCard } from "@/components/dismissible-card";
 import { HowItWorksCard } from "@/components/how-it-works-card";
 import { PropertyCard } from "@/components/property-card";
@@ -92,11 +92,6 @@ export default async function CatalogPage({
   const sort: CatalogSort = one(params.sort) === "ENDING_SOON" ? "ENDING_SOON" : "NEWEST";
 
   const properties = await fetchCatalog(filter, sort);
-  const currentSearchParams = new URLSearchParams(
-    Object.entries(params).flatMap(([k, v]) =>
-      v == null ? [] : Array.isArray(v) ? v.map((x) => [k, x] as [string, string]) : [[k, v] as [string, string]]
-    )
-  );
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -125,40 +120,35 @@ export default async function CatalogPage({
         </div>
       </header>
 
-      <SearchBox initialValue={one(params.q) ?? ""} />
+      <div className="w-full lg:max-w-[460px]">
+        <SearchBox initialValue={one(params.q) ?? ""} />
+      </div>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-10">
-        <CatalogFilters
-          searchParams={currentSearchParams}
-          activeTransaction={filter.transaction}
-          activePropertyType={filter.propertyType}
-          activeSort={sort}
-        />
+      <CatalogFilterBar />
 
-        <div className="flex flex-1 flex-col gap-4">
-          {understood.length > 0 ? (
-            <p className="text-sm text-text-muted">
-              {t("catalog.understoodPrefix")}
-              {understood.join(", ")}
-            </p>
-          ) : null}
+      <div className="flex flex-col gap-4">
+        {understood.length > 0 ? (
+          <p className="text-sm text-text-muted">
+            {t("catalog.understoodPrefix")}
+            {understood.join(", ")}
+          </p>
+        ) : null}
 
-          {!isFilterEmpty(filter) ? (
-            <Link href={localizeHref(language, "/")} className="w-fit text-sm text-link hover:underline">
-              {t("catalog.clearFilter")}
-            </Link>
-          ) : null}
+        {!isFilterEmpty(filter) ? (
+          <Link href={localizeHref(language, "/")} className="w-fit text-sm text-link hover:underline">
+            {t("catalog.clearFilter")}
+          </Link>
+        ) : null}
 
-          {properties.length === 0 ? (
-            <p className="text-text-muted">{t("catalog.noMatchTitle")}</p>
-          ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
-              ))}
-            </div>
-          )}
-        </div>
+        {properties.length === 0 ? (
+          <p className="text-text-muted">{t("catalog.noMatchTitle")}</p>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {properties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
