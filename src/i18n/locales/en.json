@@ -1340,5 +1340,13 @@
     "title": "This page could not be found",
     "body": "The listing or page may have disappeared in the meantime — for example if the property already sold.",
     "backToCatalog": "Back to the catalog"
+  },
+  "footer": {
+    "contactSection": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "rights": "© {{year}} Offerra. All rights reserved.",
+    "callAriaLabel": "Call {{phone}}",
+    "emailAriaLabel": "Email {{email}}"
   }
 }

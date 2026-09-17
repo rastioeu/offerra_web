@@ -5,8 +5,10 @@ import "../globals.css";
 
 import { FavoritesProvider } from "@/hooks/use-favorites";
 import { NotificationsProvider } from "@/hooks/use-notifications";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { isLocale, LOCALES, type Locale } from "@/i18n";
+import { CONTACT_EMAIL, CONTACT_PHONE_TEL } from "@/lib/contact";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -81,6 +83,20 @@ function jsonLdFor(locale: Locale) {
     url: "https://app.offerra.sk",
     description: DESCRIPTION[locale],
     logo: "https://app.offerra.sk/brand/wordmark.png",
+    // Rastio, 17.9.2026: kontakt aj do štruktúrovaných dát, nech ho
+    // Google vie ukázať priamo vo výsledkoch vyhľadávania.
+    telephone: CONTACT_PHONE_TEL,
+    email: CONTACT_EMAIL,
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: CONTACT_PHONE_TEL,
+        email: CONTACT_EMAIL,
+        contactType: "customer service",
+        areaServed: "SK",
+        availableLanguage: ["sk", "en", "de"],
+      },
+    ],
   };
   const siteJsonLd = {
     "@context": "https://schema.org",
@@ -124,6 +140,7 @@ export default async function RootLayout({ children, params }: { children: React
             {children}
           </FavoritesProvider>
         </NotificationsProvider>
+        <SiteFooter />
       </body>
     </html>
   );

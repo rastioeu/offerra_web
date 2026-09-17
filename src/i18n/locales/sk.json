@@ -1346,5 +1346,13 @@
     "title": "Túto stránku sa nepodarilo nájsť",
     "body": "Inzerát alebo stránka mohli medzičasom zmiznúť — napríklad ak sa nehnuteľnosť už predala.",
     "backToCatalog": "Späť do katalógu"
+  },
+  "footer": {
+    "contactSection": "Kontakt",
+    "privacyPolicy": "Ochrana osobných údajov",
+    "termsOfUse": "Podmienky používania",
+    "rights": "© {{year}} Offerra. Všetky práva vyhradené.",
+    "callAriaLabel": "Zavolať na {{phone}}",
+    "emailAriaLabel": "Napísať na {{email}}"
   }
 }

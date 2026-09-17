@@ -1340,5 +1340,13 @@
     "title": "Diese Seite wurde nicht gefunden",
     "body": "Das Inserat oder die Seite könnte inzwischen verschwunden sein — zum Beispiel wenn die Immobilie bereits verkauft wurde.",
     "backToCatalog": "Zurück zum Katalog"
+  },
+  "footer": {
+    "contactSection": "Kontakt",
+    "privacyPolicy": "Datenschutz",
+    "termsOfUse": "Nutzungsbedingungen",
+    "rights": "© {{year}} Offerra. Alle Rechte vorbehalten.",
+    "callAriaLabel": "{{phone}} anrufen",
+    "emailAriaLabel": "E-Mail an {{email}}"
   }
 }

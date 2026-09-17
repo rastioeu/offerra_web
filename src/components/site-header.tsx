@@ -1,12 +1,13 @@
 import Link from "next/link";
 
+import { HeaderContact, MobileNavContact } from "@/components/contact-links";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logo } from "@/components/logo";
 import { MobileNav } from "@/components/mobile-nav";
 import { NotificationBell } from "@/components/notification-bell";
 import type { Locale } from "@/i18n";
 import { localizeHref } from "@/i18n/href";
-import { getLocale } from "@/i18n/server";
+import { getLocale, getT } from "@/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -45,7 +46,7 @@ const LABELS: Record<
  * lokalizované (17.9.2026, i18n kolo) — `/dopyty` v SK, `/en/dopyty` v EN.
  */
 export async function SiteHeader() {
-  const [supabase, locale] = await Promise.all([createClient(), getLocale()]);
+  const [supabase, locale, t] = await Promise.all([createClient(), getLocale(), getT()]);
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -100,6 +101,7 @@ export async function SiteHeader() {
               </Link>
               <NotificationBell locale={locale} />
               <LanguageSwitcher />
+              <HeaderContact t={t} />
             </>
           ) : (
             <>
@@ -107,6 +109,7 @@ export async function SiteHeader() {
                 {l.howItWorks}
               </Link>
               <LanguageSwitcher />
+              <HeaderContact t={t} />
               <Link
                 href={href("/login")}
                 className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-on-primary hover:opacity-90"
@@ -128,7 +131,9 @@ export async function SiteHeader() {
               {l.login}
             </Link>
           ) : null}
-          <MobileNav links={user ? loggedInLinks : loggedOutLinks} language={locale} />
+          <MobileNav links={user ? loggedInLinks : loggedOutLinks} language={locale}>
+            <MobileNavContact t={t} />
+          </MobileNav>
         </div>
       </div>
     </header>

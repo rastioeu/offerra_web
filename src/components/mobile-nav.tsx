@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { createT, type Locale } from "@/i18n";
 
@@ -10,8 +10,21 @@ import { createT, type Locale } from "@/i18n";
  * namačknuté, keď testujem na mobile." Desktop ukazuje odkazy v rade
  * (`SiteHeader`, `hidden md:flex`), toto je len mobilná náhrada
  * (`md:hidden`) za ten istý zoznam odkazov.
+ *
+ * `children` (nepovinné) — appka: kontakt „schovaný do menu" (Rastio,
+ * 17.9.2026), vykreslí sa POD odkazmi. Server Component (`MobileNavContact`)
+ * odovzdaný sem zo `SiteHeader`-u — bezpečné, ide medzi dvoma Server
+ * Components, kým sa výsledok nedostane sem ako už vykreslené deti.
  */
-export function MobileNav({ links, language }: { links: { href: string; label: string }[]; language: Locale }) {
+export function MobileNav({
+  links,
+  language,
+  children,
+}: {
+  links: { href: string; label: string }[];
+  language: Locale;
+  children?: ReactNode;
+}) {
   const t = createT(language);
   const [open, setOpen] = useState(false);
 
@@ -47,6 +60,7 @@ export function MobileNav({ links, language }: { links: { href: string; label: s
               {link.label}
             </Link>
           ))}
+          {children}
         </div>
       ) : null}
     </div>
