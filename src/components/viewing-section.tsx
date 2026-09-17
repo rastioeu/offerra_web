@@ -21,12 +21,13 @@ export async function ViewingSection({ property, userId }: { property: PropertyD
   }
 
   const viewings = await fetchViewings(property.id);
+  const revealedViewings = viewings.filter((v) => REVEALED.includes(v.status));
+  const contactResults = await Promise.all(revealedViewings.map((v) => fetchViewingContact(v.id).catch(() => null)));
   const contacts: Record<string, ViewingContact> = {};
-  for (const v of viewings) {
-    if (!REVEALED.includes(v.status)) continue;
-    const c = await fetchViewingContact(v.id).catch(() => null);
+  revealedViewings.forEach((v, i) => {
+    const c = contactResults[i];
     if (c) contacts[v.id] = c;
-  }
+  });
 
   const closed = isDeadlinePassed(property.offer_deadline) || property.status !== "ACTIVE";
   const isOwner = userId === property.owner_id;

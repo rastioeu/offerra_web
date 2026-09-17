@@ -34,20 +34,24 @@ export async function OffersSection({ property, userId }: { property: PropertyDe
   const isRent = property.transaction_type === "RENT";
   const mine = userId ? offers.find((o) => o.bidder_id === userId && o.status !== "WITHDRAWN") : undefined;
 
+  // Paralelne, nie sekvenčne v cykle — pri N ponukách by `for`+`await`
+  // spravilo až 2N dopytov za sebou (reálna sieťová latencia sa sčíta,
+  // priamo predlžuje SSR čas tejto server-renderovanej stránky).
   const contacts: Record<string, OfferContact | null> = {};
   const tenants: Record<string, TenantProfile | null> = {};
-  if (isOwner && isRent) {
-    for (const offer of offers) {
-      tenants[offer.id] = await fetchTenantProfile(offer.id).catch(() => null);
-      if (offer.status === "ACCEPTED") {
-        contacts[offer.id] = await fetchOfferContact(offer.id).catch(() => null);
-      }
-    }
-  } else if (isOwner) {
-    for (const offer of offers) {
-      if (offer.status === "ACCEPTED") {
-        contacts[offer.id] = await fetchOfferContact(offer.id).catch(() => null);
-      }
+  if (isOwner) {
+    const acceptedOffers = offers.filter((o) => o.status === "ACCEPTED");
+    const [contactResults, tenantResults] = await Promise.all([
+      Promise.all(acceptedOffers.map((o) => fetchOfferContact(o.id).catch(() => null))),
+      isRent ? Promise.all(offers.map((o) => fetchTenantProfile(o.id).catch(() => null))) : Promise.resolve([]),
+    ]);
+    acceptedOffers.forEach((o, i) => {
+      contacts[o.id] = contactResults[i];
+    });
+    if (isRent) {
+      offers.forEach((o, i) => {
+        tenants[o.id] = tenantResults[i];
+      });
     }
   }
   const myTenant = isRent && mine ? await fetchTenantProfile(mine.id).catch(() => null) : null;
