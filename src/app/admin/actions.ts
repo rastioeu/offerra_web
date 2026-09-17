@@ -21,11 +21,6 @@ export async function resolveReport(reportId: string, hide: boolean) {
 }
 
 /**
- * Blokovanie/odblokovanie používateľa — appka: `toggleBlock` v
- * `(tabs)/admin.tsx`. Dôvod sa posiela len pri blokovaní (appka: pevný
- * text `t('admin.blockedReason')`), pri odblokovaní vždy `null`.
- */
-/**
  * Overenie používateľa — appka: `toggleVerified`. Poznámka je POVINNÁ pri
  * overovaní (nie pri odobratí) — odznak bez dôvodu je len ozdoba a pri
  * nehnuteľnostiach nebezpečná, drží to aj databáza.
@@ -62,6 +57,20 @@ export async function setUserBlocked(userId: string, blocked: boolean) {
     p_user_id: userId,
     p_blocked: blocked,
     p_reason: blocked ? "Zablokované administrátorom" : null,
+  });
+  if (error) throw error;
+  revalidatePath("/admin");
+}
+
+/**
+ * Nastaviteľný prah — appka: `SETTINGS` tab, `admin_set_config()`. Platí
+ * OKAMŽITE, nový build netreba (appkový princíp, rovnaký text v i18n).
+ */
+export async function setAppConfig(key: string, value: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.schema("offerra").rpc("admin_set_config", {
+    p_key: key,
+    p_value: value,
   });
   if (error) throw error;
   revalidatePath("/admin");

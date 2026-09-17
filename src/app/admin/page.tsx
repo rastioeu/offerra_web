@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { resolveReport, setUserBlocked } from "@/app/admin/actions";
+import { AdminConfigRow } from "@/components/admin-config-row";
 import { AdminUserActions } from "@/components/admin-user-actions";
-import { fetchAdminStats, fetchAdminUsers, fetchReports, fetchSuspiciousPatterns } from "@/lib/admin-data";
+import { fetchAdminStats, fetchAdminUsers, fetchAppConfig, fetchReports, fetchSuspiciousPatterns } from "@/lib/admin-data";
 import { getReportReasonLabel, getReportStatusLabel } from "@/lib/report";
 import { createClient } from "@/lib/supabase/server";
 import { t } from "@/i18n";
@@ -41,12 +42,14 @@ export default async function AdminPage() {
   let reports;
   let users;
   let suspicious;
+  let config;
   try {
-    [stats, reports, users, suspicious] = await Promise.all([
+    [stats, reports, users, suspicious, config] = await Promise.all([
       fetchAdminStats(),
       fetchReports(),
       fetchAdminUsers(),
       fetchSuspiciousPatterns(),
+      fetchAppConfig(),
     ]);
   } catch {
     return (
@@ -252,6 +255,40 @@ export default async function AdminPage() {
         suspicious.duplicates.length === 0 ? (
           <p className="text-text-muted">Nič také sa nenašlo.</p>
         ) : null}
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-lg font-semibold text-text-primary">Nastavenia — prahy</h2>
+        <p className="text-sm text-text-muted">Platí okamžite, nový build netreba.</p>
+
+        <div className="flex flex-col gap-2">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Limit inzerátov</h3>
+          {config
+            .filter((c) => c.key === "max_active_listings")
+            .map((c) => (
+              <AdminConfigRow key={c.key} configKey={c.key} value={c.value} label={c.label} hint={c.hint} />
+            ))}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
+            Podozriví používatelia — prahy
+          </h3>
+          {config
+            .filter((c) => c.key.startsWith("suspicious_"))
+            .map((c) => (
+              <AdminConfigRow key={c.key} configKey={c.key} value={c.value} label={c.label} hint={c.hint} />
+            ))}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">Rate limiting — prahy</h3>
+          {config
+            .filter((c) => c.key.startsWith("rate_limit_"))
+            .map((c) => (
+              <AdminConfigRow key={c.key} configKey={c.key} value={c.value} label={c.label} hint={c.hint} />
+            ))}
+        </div>
       </section>
     </main>
   );

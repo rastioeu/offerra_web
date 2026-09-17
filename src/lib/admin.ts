@@ -52,6 +52,9 @@ export type SuspiciousShill = {
 };
 export type DuplicateContact = { kind: string; value: string; accounts: number; nicknames: string };
 
+/** Nastaviteľný prah — appka: `ConfigRow` (`app_config` tabuľka). */
+export type ConfigRow = { key: string; value: string; label: string; hint: string | null };
+
 export type AdminUser = {
   id: string;
   nickname: string;

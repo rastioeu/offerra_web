@@ -12,6 +12,7 @@
 import type {
   AdminStats,
   AdminUser,
+  ConfigRow,
   DuplicateContact,
   ReportRow,
   SuspiciousFlood,
@@ -77,4 +78,16 @@ export async function fetchSuspiciousPatterns(): Promise<{
     shills: (sh.data ?? []) as SuspiciousShill[],
     duplicates: (dc.data ?? []) as DuplicateContact[],
   };
+}
+
+/** Nastaviteľné prahy — appka: `app_config` tabuľka + `admin_set_config()`. */
+export async function fetchAppConfig(): Promise<ConfigRow[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .schema("offerra")
+    .from("app_config")
+    .select("key,value,label,hint")
+    .order("key");
+  if (error) throw error;
+  return (data ?? []) as ConfigRow[];
 }
