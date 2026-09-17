@@ -150,13 +150,16 @@ export default async function CatalogPage({
               len hneď vedľa poľa. S `justify-between`/`flex` by sa
               stred posúval podľa šírky poľa aj CTA; `grid-cols-3`
               s `justify-self` drží tri veci PRESNE vľavo/stred/vpravo
-              bez ohľadu na šírku susedných buniek. */}
+              bez ohľadu na šírku susedných buniek. DRUHÉ KOLO (Rastio,
+              17.9.2026: „daj ho ešte doprava kúsok") — `translate-x`
+              posúva CTA z geometrického stredu o kúsok bližšie k počtu
+              inzerátov, `justify-self-center` ostáva ako základ. */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:items-center">
             <div className="w-full sm:max-w-[380px] sm:justify-self-start">
               <SearchBox initialValue={one(params.q) ?? ""} />
             </div>
             {user ? (
-              <div className="sm:justify-self-center">
+              <div className="sm:justify-self-center sm:translate-x-10">
                 <AddListingCta
                   locale={language}
                   addListingLabel={ADD_LISTING_LABELS[language].addListing}
