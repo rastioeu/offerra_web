@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { resolveReport, setUserBlocked } from "@/app/admin/actions";
+import { AdminUserActions } from "@/components/admin-user-actions";
 import { fetchAdminStats, fetchAdminUsers, fetchReports } from "@/lib/admin-data";
 import { getReportReasonLabel, getReportStatusLabel } from "@/lib/report";
 import { createClient } from "@/lib/supabase/server";
@@ -123,26 +124,40 @@ export default async function AdminPage() {
                   {u.role === "ADMIN" ? (
                     <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent-deep">ADMIN</span>
                   ) : null}
+                  {u.verified_at ? (
+                    <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">OVERENÝ</span>
+                  ) : null}
                   {u.is_blocked ? (
                     <span className="rounded-full bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger">Zablokovaný</span>
                   ) : null}
                 </div>
                 <span className="text-sm text-text-muted">{u.email}</span>
                 <span className="text-xs text-text-muted">{u.inzeraty} inzerátov</span>
+                {u.verified_note ? (
+                  <span className="text-xs text-text-muted">Overené: {u.verified_note}</span>
+                ) : null}
               </div>
               {u.id !== user.id ? (
-                <form action={setUserBlocked.bind(null, u.id, !u.is_blocked)}>
-                  <button
-                    type="submit"
-                    className={
-                      u.is_blocked
-                        ? "rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-pressed"
-                        : "rounded-xl border border-danger bg-surface px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10"
-                    }
-                  >
+                <div className="flex flex-wrap items-center gap-2">
+                  <AdminUserActions
+                    userId={u.id}
+                    nickname={u.nickname}
+                    isVerified={u.verified_at != null}
+                    isAdmin={u.role === "ADMIN"}
+                  />
+                  <form action={setUserBlocked.bind(null, u.id, !u.is_blocked)}>
+                    <button
+                      type="submit"
+                      className={
+                        u.is_blocked
+                          ? "rounded-xl border border-border-strong bg-surface px-3 py-1.5 text-sm font-medium text-text-primary hover:bg-surface-pressed"
+                          : "rounded-xl border border-danger bg-surface px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10"
+                      }
+                    >
                     {u.is_blocked ? "Odblokovať" : "Zablokovať"}
                   </button>
-                </form>
+                  </form>
+                </div>
               ) : null}
             </div>
           ))}
