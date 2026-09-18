@@ -150,26 +150,33 @@ export default async function CatalogPage({
               len hneď vedľa poľa. S `justify-between`/`flex` by sa
               stred posúval podľa šírky poľa aj CTA; `grid-cols`
               s `justify-self` drží tri veci PRESNE vľavo/stred/vpravo
-              bez ohľadu na šírku susedných buniek. DRUHÉ KOLO (Rastio,
-              17.9.2026: „daj ho ešte doprava kúsok") — `translate-x`
-              posúva CTA z geometrického stredu o kúsok bližšie k počtu
-              inzerátov, `justify-self-center` ostáva ako základ.
+              bez ohľadu na šírku susedných buniek.
               TRETIE KOLO (Rastio, 17.9.2026: „pole je príliš krátke,
               placeholder sa oreže, predĺž ho — CTA a počet nech
               zostanú na mieste") — stĺpce boli TRI ROVNAKÉ (`1fr`
               každý), pole malo navyše vlastný strop `max-w-[380px]`,
               takže aj keby stĺpec bol širší, pole samo sa nenatiahlo.
-              Teraz `[minmax(0,1fr)_auto_auto]`: pole dostane VŠETOK
-              voľný priestor (žiaden vlastný strop), CTA aj počet sú
-              `auto` — veľké presne na svoj obsah, teda vizuálne na tom
-              istom mieste pri pravom okraji ako predtým, len bez
-              súperenia o rovnaký diel šírky s poľom. */}
+              `[minmax(0,1fr)_auto_auto]`: pole dostane VŠETOK voľný
+              priestor, CTA aj počet sú `auto` — veľké presne na svoj
+              obsah.
+              ŠTVRTÉ KOLO (Rastio, 18.9.2026: „pridať inzerát sa
+              prekrýva s počtom inzerátov, kúsok skráť vyhľadávacie
+              pole") — príčina prekrytia: predošlý posun CTA
+              (`translate-x`, vizuálny transform) NEPOSÚVA hranicu
+              mriežkovej bunky, len prekreslí obsah mimo nej — pri
+              malej medzere (`gap-3`) to vizuálne zasahovalo do
+              stĺpca s počtom. `translate-x` nahradené `ml-6`
+              (skutočný margin, posúva aj reálnu šírku bunky, takže
+              stĺpec s počtom sa bezpečne posunie s ním, nie prekryje).
+              Pole má navyše späť rozumný strop (`sm:max-w-[480px]`,
+              menej než pôvodných 380px, ale menej než „neobmedzené"),
+              aby mala CTA aj s posunom vždy dosť miesta. */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center">
-            <div className="w-full sm:justify-self-start">
+            <div className="w-full sm:max-w-[480px] sm:justify-self-start">
               <SearchBox initialValue={one(params.q) ?? ""} />
             </div>
             {user ? (
-              <div className="sm:justify-self-center sm:translate-x-10">
+              <div className="sm:ml-6">
                 <AddListingCta
                   locale={language}
                   addListingLabel={ADD_LISTING_LABELS[language].addListing}
