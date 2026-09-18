@@ -75,3 +75,51 @@ export async function setAppConfig(key: string, value: string) {
   if (error) throw error;
   revalidatePath("/admin");
 }
+
+/**
+ * Zamietnutie nahlásenia — appka: `dismissReportButton` →
+ * `admin_set_report_status(DISMISSED)`. Na rozdiel od `resolveReport`
+ * NEROBÍ nič s inzerátom ani s počtom potvrdených priestupkov —
+ * nahlásenie sa označí za neopodstatnené. Predtým na webe chýbalo
+ * úplne, dalo sa len „Vybaviť" (čo VŽDY počíta ako potvrdené).
+ */
+export async function dismissReport(reportId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.schema("offerra").rpc("admin_set_report_status", {
+    p_report_id: reportId,
+    p_status: "DISMISSED",
+  });
+  if (error) throw error;
+  revalidatePath("/admin");
+}
+
+/**
+ * Schválenie / skrytie inzerátu — appka: `PROPERTIES` tab,
+ * `admin_set_property_status`. Web túto sekciu predtým nemal vôbec —
+ * inzerát sa dal skryť LEN cez nahlásenie, nie priamo.
+ */
+export async function setPropertyStatus(propertyId: string, status: "ACTIVE" | "REJECTED", reason: string | null) {
+  const supabase = await createClient();
+  const { error } = await supabase.schema("offerra").rpc("admin_set_property_status", {
+    p_property_id: propertyId,
+    p_status: status,
+    p_reason: reason,
+  });
+  if (error) throw error;
+  revalidatePath("/admin");
+}
+
+/**
+ * Trvalé zmazanie inzerátu — appka: `admin_delete_property`. Na rozdiel
+ * od skrytia (`REJECTED`, dá sa vrátiť) je toto nezvratné — appka aj web
+ * preto vyžadujú explicitné potvrdenie v klientskej komponente pred
+ * volaním.
+ */
+export async function deleteProperty(propertyId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.schema("offerra").rpc("admin_delete_property", {
+    p_property_id: propertyId,
+  });
+  if (error) throw error;
+  revalidatePath("/admin");
+}

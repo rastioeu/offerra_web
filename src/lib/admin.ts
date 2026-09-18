@@ -83,3 +83,13 @@ export type AdminUser = {
   verified_at: string | null;
   verified_note: string | null;
 };
+
+/** Inzerát v admin prehľade — appka: `AdminProperty` (`(tabs)/admin.tsx`). */
+export type AdminProperty = {
+  id: string;
+  title: string;
+  status: 'DRAFT' | 'ACTIVE' | 'REJECTED' | 'ARCHIVED' | 'CLOSED';
+  city: string | null;
+  created_at: string;
+  rejection_reason: string | null;
+};

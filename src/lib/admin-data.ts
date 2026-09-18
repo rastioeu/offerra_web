@@ -10,6 +10,7 @@
  * „nie si admin").
  */
 import type {
+  AdminProperty,
   AdminStats,
   AdminUser,
   Alert,
@@ -108,6 +109,23 @@ export async function fetchAdminAttention(): Promise<{
     repeatOffenders: (ro.data ?? []) as RepeatOffender[],
     topListers: (t.data ?? []) as TopLister[],
   };
+}
+
+/**
+ * VŠETKY inzeráty pre správu — appka: `PROPERTIES` tab (`(tabs)/admin.tsx`).
+ * Predtým web nemal žiadnu obrazovku na schvaľovanie/skrývanie/mazanie
+ * inzerátov, len ich videl nepriamo cez nahlásenia.
+ */
+export async function fetchAdminProperties(): Promise<AdminProperty[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .schema("offerra")
+    .from("property")
+    .select("id,title,status,city,created_at,rejection_reason")
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  return (data ?? []) as AdminProperty[];
 }
 
 /** Nastaviteľné prahy — appka: `app_config` tabuľka + `admin_set_config()`. */

@@ -1,45 +1,69 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
-import { resolveReport, setUserBlocked } from "@/app/[locale]/admin/actions";
+import { dismissReport, resolveReport, setUserBlocked } from "@/app/[locale]/admin/actions";
 import { AdminConfigRow } from "@/components/admin-config-row";
+import { AdminPropertyActions } from "@/components/admin-property-actions";
 import { AdminUserActions } from "@/components/admin-user-actions";
 import { Button } from "@/components/button";
 import {
   fetchAdminAttention,
+  fetchAdminProperties,
   fetchAdminStats,
   fetchAdminUsers,
   fetchAppConfig,
   fetchReports,
   fetchSuspiciousPatterns,
 } from "@/lib/admin-data";
+import { getStatusLabel } from "@/lib/property";
 import { getReportReasonLabel, getReportStatusLabel } from "@/lib/report";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT, redirectLocalized } from "@/i18n/server";
-import { loginRedirectPath } from "@/i18n/href";
+import { loginRedirectPath, localizeHref } from "@/i18n/href";
 
 export const metadata: Metadata = {
   title: "Správa",
 };
 
-const STAT_LABELS: { key: keyof Awaited<ReturnType<typeof fetchAdminStats>>; label: string }[] = [
-  { key: "inzeraty_aktivne", label: "Aktívne inzeráty" },
-  { key: "inzeraty_spolu", label: "Inzeráty spolu" },
+const STAT_LABELS: { key: keyof Awaited<ReturnType<typeof fetchAdminStats>>; label: string; href?: string }[] = [
+  { key: "inzeraty_aktivne", label: "Aktívne inzeráty", href: "?propertyStatus=ACTIVE#nehnutelnosti" },
+  { key: "inzeraty_spolu", label: "Inzeráty spolu", href: "#nehnutelnosti" },
   { key: "ponuky", label: "Ponuky" },
   { key: "dopyty", label: "Dopyty" },
-  { key: "pouzivatelia", label: "Používatelia" },
-  { key: "zablokovani", label: "Zablokovaní" },
-  { key: "nahlasenia_otvorene", label: "Otvorené nahlásenia" },
+  { key: "pouzivatelia", label: "Používatelia", href: "#pouzivatelia" },
+  { key: "zablokovani", label: "Zablokovaní", href: "?onlyBlocked=1#pouzivatelia" },
+  { key: "nahlasenia_otvorene", label: "Otvorené nahlásenia", href: "?onlyPending=1#nahlasenia" },
 ];
 
 /**
- * Admin konzola — ZATIAĽ len prehľad a nahlásenia (Fáza 6, časť).
+ * Admin konzola — appkovú paritu (Rastio, 18.9.2026: „v admin konzole na
+ * webe to nefunguje rovnako ako v iOS appke, daj tam všetky funkcie").
+ * Predtým chýbala CELÁ appková sekcia „Nehnuteľnosti" (schváliť/skryť/
+ * zmazať inzerát priamo, nie len cez nahlásenie), zamietnutie nahlásenia
+ * (dalo sa len vybaviť — čo VŽDY počíta ako potvrdené) a klikacie
+ * dlaždice štatistík (appka: ťuknutie vedie do vyfiltrovaného zoznamu).
+ * Web je server-rendered stránka bez appkových tabov/lokálneho stavu —
+ * filtre preto idú cez `?query=` parametre + kotvy (`#nahlasenia`...),
+ * rovnaký vzor ako katalógové filtre (`src/app/[locale]/page.tsx`),
+ * nie klientský React state.
+ *
  * Skrytie za prihlásením je pohodlie, nie ochrana — skutočná ochrana je
  * `offerra.is_admin()` V DATABÁZE (presne ako appka): bežnému účtu
  * `admin_stats` vráti chybu, tá sa tu vyhodnotí ako „nemáš prístup",
  * nie ako pád stránky.
  */
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const [t, locale] = await Promise.all([getT(), getLocale()]);
+  const params = await searchParams;
+  const one = (v: string | string[] | undefined) => (typeof v === "string" && v.length > 0 ? v : null);
+  const propertyStatusFilter = one(params.propertyStatus);
+  const onlyBlocked = one(params.onlyBlocked) === "1";
+  const onlyPending = one(params.onlyPending) === "1";
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -53,14 +77,16 @@ export default async function AdminPage() {
   let suspicious;
   let config;
   let attention;
+  let properties;
   try {
-    [stats, reports, users, suspicious, config, attention] = await Promise.all([
+    [stats, reports, users, suspicious, config, attention, properties] = await Promise.all([
       fetchAdminStats(),
       fetchReports(),
       fetchAdminUsers(),
       fetchSuspiciousPatterns(),
       fetchAppConfig(),
       fetchAdminAttention(),
+      fetchAdminProperties(),
     ]);
   } catch {
     return (
@@ -73,18 +99,33 @@ export default async function AdminPage() {
 
   const reasonLabel = getReportReasonLabel(t);
   const statusLabel = getReportStatusLabel(t);
+  const propertyStatusLabel = getStatusLabel(t);
+  const shownProperties = propertyStatusFilter ? properties.filter((p) => p.status === propertyStatusFilter) : properties;
+  const shownReports = onlyPending ? reports.filter((r) => r.status === "PENDING") : reports;
+  const shownUsers = onlyBlocked ? users.filter((u) => u.is_blocked) : users;
 
   return (
     <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-2xl font-bold text-text-primary">Správa</h1>
 
       <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {STAT_LABELS.map(({ key, label }) => (
-          <div key={key} className="rounded-2xl border border-border bg-surface p-4">
-            <div className="text-2xl font-bold text-text-primary">{stats[key]}</div>
-            <div className="text-sm text-text-muted">{label}</div>
-          </div>
-        ))}
+        {STAT_LABELS.map(({ key, label, href }) => {
+          const tile = (
+            <>
+              <div className="text-2xl font-bold text-text-primary">{stats[key]}</div>
+              <div className="text-sm text-text-muted">{label}</div>
+            </>
+          );
+          return href ? (
+            <Link key={key} href={href} className="rounded-2xl border border-border bg-surface p-4 hover:border-border-strong">
+              {tile}
+            </Link>
+          ) : (
+            <div key={key} className="rounded-2xl border border-border bg-surface p-4">
+              {tile}
+            </div>
+          );
+        })}
       </section>
 
       {attention.alerts.length > 0 ? (
@@ -149,13 +190,20 @@ export default async function AdminPage() {
         </section>
       ) : null}
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-text-primary">Nahlásenia</h2>
-        {reports.length === 0 ? (
-          <p className="text-text-muted">Žiadne nahlásenia.</p>
+      <section id="nahlasenia" className="flex flex-col gap-3 scroll-mt-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-text-primary">Nahlásenia</h2>
+          {onlyPending ? (
+            <Link href={`${localizeHref(locale, "/admin")}#nahlasenia`} className="text-xs font-medium text-link hover:underline">
+              Zrušiť filter „len otvorené"
+            </Link>
+          ) : null}
+        </div>
+        {shownReports.length === 0 ? (
+          <p className="text-text-muted">{onlyPending ? "Žiadne otvorené nahlásenia." : "Žiadne nahlásenia."}</p>
         ) : (
           <div className="flex flex-col gap-3">
-            {reports.map((report) => (
+            {shownReports.map((report) => (
               <div key={report.id} className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-semibold text-text-primary">
@@ -167,10 +215,25 @@ export default async function AdminPage() {
                   </span>
                 </div>
                 {report.note ? <p className="text-sm text-text-secondary">{report.note}</p> : null}
-                <p className="text-xs text-text-muted">Cieľ: {report.target_id}</p>
+                <p className="text-xs text-text-muted">
+                  Cieľ: {report.target_id}
+                  {report.target_type === "PROPERTY" ? (
+                    <>
+                      {" · "}
+                      <a
+                        href={`/inzerat/${report.target_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-link hover:underline"
+                      >
+                        zobraziť inzerát
+                      </a>
+                    </>
+                  ) : null}
+                </p>
 
                 {report.status === "PENDING" ? (
-                  <div className="flex gap-2 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1">
                     <form action={resolveReport.bind(null, report.id, false)}>
                       <Button type="submit" variant="secondary" className="px-3 py-1.5 text-sm">
                         Vybaviť
@@ -181,6 +244,11 @@ export default async function AdminPage() {
                         Skryť inzerát a vybaviť
                       </Button>
                     </form>
+                    <form action={dismissReport.bind(null, report.id)}>
+                      <Button type="submit" variant="secondary" className="px-3 py-1.5 text-sm">
+                        Zamietnuť (neopodstatnené)
+                      </Button>
+                    </form>
                   </div>
                 ) : null}
               </div>
@@ -189,10 +257,65 @@ export default async function AdminPage() {
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-lg font-semibold text-text-primary">Používatelia</h2>
+      <section id="nehnutelnosti" className="flex flex-col gap-3 scroll-mt-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-text-primary">Nehnuteľnosti</h2>
+          {propertyStatusFilter ? (
+            <Link href={`${localizeHref(locale, "/admin")}#nehnutelnosti`} className="text-xs font-medium text-link hover:underline">
+              Zrušiť filter stavu
+            </Link>
+          ) : null}
+        </div>
+        <p className="text-sm text-text-muted">
+          Schvaľovanie, skrytie z katalógu a trvalé zmazanie inzerátov — nezávisle od nahlásení vyššie.
+        </p>
+        {shownProperties.length === 0 ? (
+          <p className="text-text-muted">Žiadne inzeráty v tomto stave.</p>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {shownProperties.map((p) => (
+              <div key={p.id} className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <a
+                    href={`/inzerat/${p.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-text-primary hover:underline"
+                  >
+                    {p.title || "Bez názvu"}
+                  </a>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      p.status === "ACTIVE" ? "bg-accent-soft text-accent-deep" : "bg-surface-pressed text-text-secondary"
+                    }`}
+                  >
+                    {p.status === "REJECTED" ? "Skrytý" : propertyStatusLabel[p.status]}
+                  </span>
+                </div>
+                <p className="text-xs text-text-muted">
+                  {[p.city, new Intl.DateTimeFormat("sk-SK", { day: "numeric", month: "long", year: "numeric" }).format(new Date(p.created_at))]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+                {p.rejection_reason ? <p className="text-sm text-warning">{p.rejection_reason}</p> : null}
+                <AdminPropertyActions propertyId={p.id} status={p.status} />
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section id="pouzivatelia" className="flex flex-col gap-3 scroll-mt-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold text-text-primary">Používatelia</h2>
+          {onlyBlocked ? (
+            <Link href={`${localizeHref(locale, "/admin")}#pouzivatelia`} className="text-xs font-medium text-link hover:underline">
+              Zrušiť filter „len zablokovaní"
+            </Link>
+          ) : null}
+        </div>
         <div className="flex flex-col gap-3">
-          {users.map((u) => (
+          {shownUsers.map((u) => (
             <div key={u.id} className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-2">
