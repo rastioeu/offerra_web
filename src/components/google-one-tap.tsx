@@ -95,7 +95,7 @@ export function GoogleOneTap({ clientId, next, locale }: { clientId: string; nex
         if (!n.isNotDisplayed()) return;
         const reason = n.getNotDisplayedReason();
         console.warn("[one-tap] 2 nezobrazené, dôvod:", reason);
-        if (!ROUTINE_REASONS.has(reason)) setError(l.notAvailable);
+        if (!ROUTINE_REASONS.has(reason)) setError(`${l.notAvailable} (${reason || "?"})`);
       });
     }
 
