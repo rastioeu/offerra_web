@@ -154,7 +154,8 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     // Vynechať statické assety a obrázkovú optimalizáciu — inak by
-    // proxy bežal aj na nich zbytočne.
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // proxy bežal aj na nich zbytočne. `google*.html` = overovací súbor
+    // Search Console — bez výnimky ho proxy prepísal na `/sk/…` (404).
+    '/((?!_next/static|_next/image|favicon.ico|google[a-z0-9]+\\.html$|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };
