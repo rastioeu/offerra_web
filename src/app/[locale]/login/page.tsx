@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AppleSignInButton } from "@/components/apple-sign-in-button";
+import { GoogleOneTap } from "@/components/google-one-tap";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
 import { getLocale, getT } from "@/i18n/server";
 import { localizeHref } from "@/i18n/href";
@@ -21,6 +22,9 @@ export default async function LoginPage({
   // prihlásenie z `/en`/`/de` vždy skončilo na SK (Rastio, 17.9.2026:
   // „vyberiem jazyk a hneď zmení naspäť").
   const nextPath = next ?? localizeHref(locale, "/");
+  // Google „web" klient — ten istý, ktorý je v Supabase Auth → Google.
+  // Verejné ID (je v každej prihlasovacej požiadavke), nie tajomstvo.
+  const oneTapClientId = process.env.GOOGLE_WEB_CLIENT_ID || null;
 
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-6 px-4 py-16">
@@ -28,6 +32,8 @@ export default async function LoginPage({
         <h1 className="text-2xl font-bold text-text-primary">{t("login.signIn")}</h1>
         <p className="text-text-secondary">{t("login.pageSubtitle")}</p>
       </div>
+
+      {oneTapClientId ? <GoogleOneTap clientId={oneTapClientId} next={nextPath} locale={locale} /> : null}
 
       {error ? (
         <p className="rounded-xl bg-danger/10 px-4 py-2 text-sm text-danger">{t("login.errorBody")}</p>
