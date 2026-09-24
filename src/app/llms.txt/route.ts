@@ -1,3 +1,4 @@
+import { SITE_URL } from "@/lib/site";
 /**
  * `llms.txt` — vznikajúci štandard (llmstxt.org), obdoba `robots.txt`,
  * ale pre AI asistentov: krátky, čitateľný Markdown popis webu a
@@ -22,13 +23,13 @@ osloviť.
 
 ## Kľúčové stránky
 
-- [Katalóg nehnuteľností](https://app.offerra.sk/): verejný zoznam
+- [Katalóg nehnuteľností](${SITE_URL}/): verejný zoznam
   všetkých aktívnych inzerátov na predaj aj prenájom, s filtrami
   (typ obchodu, typ nehnuteľnosti, lokalita) a voľným textovým
   vyhľadávaním.
-- [Dopyty](https://app.offerra.sk/dopyty): verejný zoznam toho, čo
+- [Dopyty](${SITE_URL}/dopyty): verejný zoznam toho, čo
   ľudia hľadajú.
-- [sitemap.xml](https://app.offerra.sk/sitemap.xml): úplný, strojovo
+- [sitemap.xml](${SITE_URL}/sitemap.xml): úplný, strojovo
   čitateľný zoznam všetkých aktívnych inzerátov a dopytov, každý s
   vlastnou URL a dátumom poslednej zmeny.
 

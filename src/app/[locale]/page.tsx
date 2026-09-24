@@ -13,6 +13,7 @@ import { catalogCountLabel, type CatalogSort, type PropertyType, type Transactio
 import { EMPTY_FILTER, parseQuery, type CatalogFilter } from "@/lib/search";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT } from "@/i18n/server";
+import { SITE_URL } from "@/lib/site";
 
 /**
  * Katalóg = domovská stránka. SEO je hlavný dôvod projektu (Rastio) —
@@ -51,7 +52,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const qs = new URLSearchParams(
     Object.entries(params).flatMap(([k, v]) => (v == null ? [] : Array.isArray(v) ? v.map((x) => [k, x] as [string, string]) : [[k, v] as [string, string]]))
   ).toString();
-  const canonical = qs ? `https://app.offerra.sk/?${qs}` : "https://app.offerra.sk/";
+  const canonical = qs ? `${SITE_URL}/?${qs}` : `${SITE_URL}/`;
 
   return {
     title,
@@ -108,7 +109,7 @@ export default async function CatalogPage({
     itemListElement: properties.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `https://app.offerra.sk/inzerat/${p.id}`,
+      url: `${SITE_URL}/inzerat/${p.id}`,
     })),
   };
 

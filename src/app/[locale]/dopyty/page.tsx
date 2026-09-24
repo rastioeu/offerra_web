@@ -8,13 +8,14 @@ import type { PropertyType, TransactionType } from "@/lib/property";
 import { EMPTY_FILTER, isFilterEmpty, parseQuery, type CatalogFilter } from "@/lib/search";
 import { getLocale, getT } from "@/i18n/server";
 import { localizeHref } from "@/i18n/href";
+import { SITE_URL } from "@/lib/site";
 
 export async function generateMetadata(): Promise<Metadata> {
   const [t, locale] = await Promise.all([getT(), getLocale()]);
   return {
     title: t("dopyty.title"),
     description: t("dopyty.metaDescription"),
-    alternates: { canonical: `https://app.offerra.sk${localizeHref(locale, "/dopyty")}` },
+    alternates: { canonical: `${SITE_URL}${localizeHref(locale, "/dopyty")}` },
   };
 }
 

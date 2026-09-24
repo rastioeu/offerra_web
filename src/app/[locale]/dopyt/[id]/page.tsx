@@ -13,6 +13,7 @@ import { formatArea, formatDate, formatPrice, formatRooms, type PropertyType } f
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT } from "@/i18n/server";
 import { localizeHref } from "@/i18n/href";
+import { SITE_URL } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -31,7 +32,7 @@ export async function generateMetadata({
   const budget = formatBudget(t, demand.budget_min, demand.budget_max);
   const title = [typeLabel, demandLabel, demand.city].filter(Boolean).join(" — ") || t("dopytDetail.screenTitle");
   const description = [demand.city, budget, demand.description?.slice(0, 140)].filter(Boolean).join(" · ");
-  const url = `https://app.offerra.sk/dopyt/${demand.id}`;
+  const url = `${SITE_URL}/dopyt/${demand.id}`;
 
   return {
     title,

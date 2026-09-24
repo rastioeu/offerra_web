@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 
 import { createClient } from "@/lib/supabase/server";
+import { SITE_URL } from "@/lib/site";
 
-const BASE_URL = "https://app.offerra.sk";
+const BASE_URL = SITE_URL;
 
 /**
  * SEO je hlavný dôvod projektu (Rastio) — každý zverejnený inzerát a

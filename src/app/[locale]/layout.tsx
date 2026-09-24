@@ -10,6 +10,7 @@ import { SiteHeader } from "@/components/site-header";
 import { isLocale, LOCALES, type Locale } from "@/i18n";
 import { CONTACT_EMAIL, CONTACT_PHONE_TEL } from "@/lib/contact";
 import { createClient } from "@/lib/supabase/server";
+import { SITE_URL } from "@/lib/site";
 
 /**
  * Popis prevzatý z appky (`src/i18n/locales/sk.json` → `howItWorks.lead`
@@ -46,11 +47,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "sk";
 
   return {
-    metadataBase: new URL("https://app.offerra.sk"),
+    metadataBase: new URL(SITE_URL),
     title: { default: TITLE[locale], template: "%s | Offerra" },
     description: DESCRIPTION[locale],
     alternates: {
-      languages: Object.fromEntries(LOCALES.map((l) => [l, l === "sk" ? "https://app.offerra.sk" : `https://app.offerra.sk/${l}`])),
+      languages: Object.fromEntries(LOCALES.map((l) => [l, l === "sk" ? SITE_URL : `${SITE_URL}/${l}`])),
     },
     openGraph: {
       siteName: "Offerra",
@@ -80,9 +81,9 @@ function jsonLdFor(locale: Locale) {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Offerra",
-    url: "https://app.offerra.sk",
+    url: SITE_URL,
     description: DESCRIPTION[locale],
-    logo: "https://app.offerra.sk/brand/wordmark.png",
+    logo: `${SITE_URL}/brand/wordmark.png`,
     // Rastio, 17.9.2026: kontakt aj do štruktúrovaných dát, nech ho
     // Google vie ukázať priamo vo výsledkoch vyhľadávania.
     telephone: CONTACT_PHONE_TEL,
@@ -102,10 +103,10 @@ function jsonLdFor(locale: Locale) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Offerra",
-    url: "https://app.offerra.sk",
+    url: SITE_URL,
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://app.offerra.sk/?q={search_term_string}",
+      target: `${SITE_URL}/?q={search_term_string}`,
       "query-input": "required name=search_term_string",
     },
   };

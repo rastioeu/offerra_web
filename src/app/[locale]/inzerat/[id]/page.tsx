@@ -17,6 +17,7 @@ import { fetchOffers } from "@/lib/property-offers";
 import { createClient } from "@/lib/supabase/server";
 import { getLocale, getT } from "@/i18n/server";
 import { localizeHref } from "@/i18n/href";
+import { SITE_URL } from "@/lib/site";
 
 /**
  * SEO je hlavný dôvod projektu — každý inzerát je vlastná, indexovateľná
@@ -41,7 +42,7 @@ export async function generateMetadata({
     .filter(Boolean)
     .join(" · ");
 
-  const url = `https://app.offerra.sk/inzerat/${property.id}`;
+  const url = `${SITE_URL}/inzerat/${property.id}`;
   const images = property.media.map((m) => m.url);
 
   return {
@@ -98,7 +99,7 @@ export default async function PropertyDetailPage({
     "@type": "RealEstateListing",
     name: property.title,
     description: property.description ?? undefined,
-    url: `https://app.offerra.sk/inzerat/${property.id}`,
+    url: `${SITE_URL}/inzerat/${property.id}`,
     image: property.media.map((m) => m.url),
     datePosted: property.created_at,
     address: property.city

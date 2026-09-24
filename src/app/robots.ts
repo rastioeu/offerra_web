@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
 
 /**
  * SEO je hlavný dôvod projektu (Rastio) — verejný katalóg/detail majú
@@ -55,12 +56,20 @@ const AI_BOTS = [
   "DuckAssistBot", // DuckDuckGo AI
 ];
 
+/**
+ * DYNAMICKÝ (nie predgenerovaný pri builde) — `Sitemap:` riadok berie
+ * `SITE_URL`, a ten sa mení pri presune domény (24.9.2026,
+ * `app.offerra.sk` → `offerra.sk`). Staticky zapečený `robots.txt` by po
+ * prepnutí `SITE_URL` bez rebuildu ďalej ukazoval na starú doménu.
+ */
+export const dynamic = "force-dynamic";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       { userAgent: "*", allow: "/", disallow: PRIVATE_PATHS },
       ...AI_BOTS.map((userAgent) => ({ userAgent, allow: "/", disallow: PRIVATE_PATHS })),
     ],
-    sitemap: "https://app.offerra.sk/sitemap.xml",
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

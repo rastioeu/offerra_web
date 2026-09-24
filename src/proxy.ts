@@ -11,6 +11,8 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 import { DEFAULT_LOCALE, isLocale } from '@/i18n';
+import { legacyRedirectTarget } from '@/lib/legacy-redirects';
+import { ALIAS_HOSTS, SITE_URL } from '@/lib/site';
 
 /**
  * Cesty MIMO `[locale]` stromu — root-level metadata routy (appka
@@ -34,6 +36,39 @@ function isLocaleExempt(pathname: string): boolean {
  */
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // KANONICKÝ HOST + STARÉ WORDPRESS URL (Rastio, 24.9.2026, presun z
+  // `app.offerra.sk` na `offerra.sk`) — PRED čímkoľvek iným, aby zbytočne
+  // nebežal Supabase refresh na požiadavke, ktorá sa aj tak presmeruje.
+  // Za Cloudflare Tunnel nesie skutočný verejný host `x-forwarded-host`
+  // (`request.url` ukazuje na `localhost:3001`, viď `auth/callback`).
+  //  - `www.`/`app.`/apex, ktorý NIE JE `SITE_URL`, sa 301 presmeruje na
+  //    `SITE_URL` (jedna verejná kópia = nerozdelené SEO). `/auth/`
+  //    ostáva VÝNIMKA: PKCE `code_verifier` cookie vznikla na hoste, kde
+  //    sa prihlásenie začalo — presmerovanie callbacku na iný host by ju
+  //    stratilo a prihlásenie by ticho zlyhalo.
+  //  - stará WordPress cesta (`/faq/`, `/o-nas/`…) sa presmeruje na
+  //    najbližší ekvivalent (`legacy-redirects.ts`) — v JEDNOM kroku
+  //    aj s prepnutím hosta, nie reťaz dvoch presmerovaní.
+  const forwardedHost = (request.headers.get('x-forwarded-host') ?? '').split(',')[0].trim().toLowerCase();
+  const rawHost = forwardedHost || (request.headers.get('host') ?? '').toLowerCase();
+  const host = rawHost.replace(/:\d+$/, '');
+  const onAlias = ALIAS_HOSTS.includes(host) && !pathname.startsWith('/auth/');
+  const legacy = legacyRedirectTarget(pathname);
+  // Koncové lomítko (`skipTrailingSlashRedirect` v `next.config.ts`):
+  // Next.js ho neškriabe, robíme to tu — s VEREJNÝM pôvodom (nie `localhost`).
+  const hasTrailingSlash = pathname.length > 1 && pathname.endsWith('/');
+  if (onAlias || legacy || hasTrailingSlash) {
+    const stripped = hasTrailingSlash ? pathname.replace(/\/+$/, '') : pathname;
+    const proto = (request.headers.get('x-forwarded-proto') ?? 'https').split(',')[0].trim();
+    const publicOrigin = forwardedHost ? `${proto}://${forwardedHost}` : request.nextUrl.origin;
+    const dest = legacy
+      ? new URL(legacy, SITE_URL)
+      : new URL(`${stripped}${request.nextUrl.search}`, onAlias ? SITE_URL : publicOrigin);
+    const idempotent = request.method === 'GET' || request.method === 'HEAD';
+    return NextResponse.redirect(dest, idempotent ? 301 : 308);
+  }
+
   const exempt = isLocaleExempt(pathname);
 
   let locale: string = DEFAULT_LOCALE;
