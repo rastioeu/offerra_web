@@ -24,5 +24,12 @@ doménu/DNS).
   CLAUDE.md §9 — netreba to riskovať kvôli webu).
 - **Hosting:** Hetzner `142.132.187.27` (tento istý server), `systemd`
   (nie pm2 — server to takto má zavedené pre ostatné služby), verejne
-  cez Cloudflare Tunnel na poddoméne (`app.offerra.sk`, nie apex —
-  `offerra.sk` má vlastný WordPress web a poštu, tie sa nedotýkajú).
+  cez Cloudflare Tunnel na **apexe `offerra.sk`** (od 24.9.2026, Rastio:
+  „potrebujem to teraz tak aby to išlo na offerra.sk nie na
+  app.offerra.sk"). Verejná adresa je JEDNA premenná `SITE_URL`
+  (`.env.local`, potom `npm run build` + reštart) — `src/lib/site.ts`,
+  nikdy natvrdo v kóde. `www.`/`app.offerra.sk` a staré WordPress URL sa
+  301 presmerúvajú v `src/proxy.ts`. **Poštu na `offerra.sk` (MX, SPF,
+  DKIM, `mail.`/`webmail.` — Websupport) sa NIKDY nedotýkať**; starý
+  WordPress hosting na Websupporte ostal nedotknutý (rollback, pozri
+  `reports/OFFERRA_WEB_MILNIK1.md`, sekcia Presun domény).
