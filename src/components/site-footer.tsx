@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { FooterMailLink } from "@/components/contact-links";
+import { ConsentSettingsButton } from "@/components/consent-settings-button";
+import { CONSENT_LABELS } from "@/lib/consent-labels";
 import { CONTACT_PHONE_DISPLAY, CONTACT_PHONE_TEL } from "@/lib/contact";
 import { localizeHref } from "@/i18n/href";
 import { getLocale, getT } from "@/i18n/server";
@@ -16,7 +18,7 @@ import { getLocale, getT } from "@/i18n/server";
  */
 const LEGAL_BASE = "https://rastioeu.github.io/offerra_web";
 
-export async function SiteFooter() {
+export async function SiteFooter({ showCookieSettings = false }: { showCookieSettings?: boolean }) {
   const [locale, t] = await Promise.all([getLocale(), getT()]);
   const href = (path: string) => localizeHref(locale, path);
   const year = new Date().getFullYear();
@@ -49,6 +51,7 @@ export async function SiteFooter() {
             <a href={`${LEGAL_BASE}/terms.html`} target="_blank" rel="noopener noreferrer" className="hover:text-text-primary">
               {t("footer.termsOfUse")}
             </a>
+            {showCookieSettings ? <ConsentSettingsButton label={CONSENT_LABELS[locale].settings} /> : null}
           </nav>
         </div>
 

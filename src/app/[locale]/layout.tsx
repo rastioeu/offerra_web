@@ -5,6 +5,7 @@ import "../globals.css";
 
 import { FavoritesProvider } from "@/hooks/use-favorites";
 import { NotificationsProvider } from "@/hooks/use-notifications";
+import { Analytics } from "@/components/analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { isLocale, LOCALES, type Locale } from "@/i18n";
@@ -48,6 +49,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     metadataBase: new URL(SITE_URL),
+    // Google Search Console — overenie vlastníctva cez meta tag (alternatíva
+    // k DNS TXT). Vykreslí sa len keď je `GOOGLE_SITE_VERIFICATION` nastavená.
+    ...(process.env.GOOGLE_SITE_VERIFICATION
+      ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+      : {}),
     title: { default: TITLE[locale], template: "%s | Offerra" },
     description: DESCRIPTION[locale],
     alternates: {
@@ -118,6 +124,8 @@ export default async function RootLayout({ children, params }: { children: React
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "sk";
   if (!isLocale(rawLocale)) notFound();
   const { orgJsonLd, siteJsonLd } = jsonLdFor(locale);
+  // Čítané za behu na serveri a do klienta ide len ako string (RSC hranica).
+  const gaId = process.env.GA_MEASUREMENT_ID || null;
 
   const supabase = await createClient();
   const {
@@ -141,7 +149,8 @@ export default async function RootLayout({ children, params }: { children: React
             {children}
           </FavoritesProvider>
         </NotificationsProvider>
-        <SiteFooter />
+        <SiteFooter showCookieSettings={gaId !== null} />
+        <Analytics gaId={gaId} locale={locale} />
       </body>
     </html>
   );
