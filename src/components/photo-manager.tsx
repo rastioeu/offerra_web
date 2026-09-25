@@ -88,10 +88,10 @@ export function PhotoManager({ propertyId, media }: { propertyId: string; media:
 
       {media.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {media.map((m, i) => (
+          {media.map((m) => (
             <div key={m.id} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-pressed">
               <Image src={m.url} alt="" fill sizes="200px" className="object-cover" />
-              {i === 0 ? (
+              {m.is_cover ? (
                 <span className="absolute bottom-1.5 left-1.5 rounded-md bg-primary px-2 py-1 text-xs font-bold text-on-primary">
                   {t("inzeratEdit.coverBadge")}
                 </span>
