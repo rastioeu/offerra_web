@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
   // presune na `offerra.sk`. Všetky staré WordPress URL končia `/`, takže
   // by každá z nich (SEO!) skončila na neexistujúcej localhost adrese.
   skipTrailingSlashRedirect: true,
+  // Fotka inzerátu ide na server ako Server Action s `File` (max 8 MB, viď
+  // `photo-actions.ts`). Predvolený limit tela Server Action je 1 MB, takže
+  // by fotka z telefónu/fotoaparátu nad 1 MB padla ešte pred nahratím.
+  experimental: {
+    serverActions: { bodySizeLimit: "10mb" },
+  },
   images: {
     // Fotky inzerátov idú zo Supabase Storage (bucket `offerra-media`,
     // rovnaký projekt ako appka) — next/image potrebuje explicitný

@@ -680,10 +680,10 @@
     "formLead": "Kým je inzerát rozpracovaný, nevidí ho nikto okrem teba. Cena je nepovinná — ak ju necháš prázdnu, ľudia ti navrhnú vlastnú.",
     "visibleInCatalog": "Viditeľné v katalógu",
     "visibleOnlyToYou": "Vidíš len ty, kým nezverejníš",
-    "photosSection": "FOTKY ({{count}})",
-    "photosHint": "Aspoň jedna je povinná. Pridávajú sa po jednej — prvá sa použije ako titulná.",
+    "photosSection": "FOTKY ({{count}}/{{max}})",
+    "photosHint": "Aspoň jedna je povinná, najviac {{max}}. Naraz môžeš vybrať viac fotiek — prvá sa použije ako titulná.",
     "coverBadge": "TITULNÁ",
-    "addPhotoButton": "+ Fotka",
+    "addPhotoButton": "+ Fotky",
     "transactionTypeLabel": "Typ obchodu",
     "propertyTypeLabel": "Typ nehnuteľnosti",
     "titleLabel": "Názov inzerátu (povinné)",
@@ -1298,6 +1298,9 @@
     "uploading": "Nahrávam…",
     "confirmDelete": "Zmazať túto fotku?",
     "uploadFailed": "Nahratie zlyhalo",
+    "limitReached": "Inzerát môže mať najviac {{max}} fotiek. Ak chceš pridať ďalšiu, jednu najprv zmaž.",
+    "droppedOverLimit": "Pridali sme len fotky, ktoré sa zmestili do limitu {{max}}. Zvyšných {{dropped}} sa nepridalo.",
+    "partialFailed": "Uložených {{saved}} z {{total}}. Fotka č. {{n}} zlyhala: {{message}}",
     "deleteFailed": "Zmazanie zlyhalo"
   },
   "pushPrompt": {

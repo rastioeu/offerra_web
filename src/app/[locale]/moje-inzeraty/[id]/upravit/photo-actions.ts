@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 import { getT } from "@/i18n/server";
+import { MAX_PHOTOS } from "@/lib/photo-limits";
 
 const BUCKET = "offerra-media";
 /** Bucket má limit 10 MB (appka: `lib/photo.ts`) — zastavíme sa skôr, s vysvetlením. */
@@ -27,10 +28,17 @@ export async function uploadPhotoAction(propertyId: string, formData: FormData) 
     throw new Error(t("photo.tooLarge", { mb: (file.size / 1048576).toFixed(1) }));
   }
 
+  // Strop stráži server, nie len tlačidlo — viac kariet/rýchle klikanie
+  // by ho inak obišlo.
+  const db = supabase.schema("offerra");
+  const { count } = await db.from("media").select("id", { count: "exact", head: true }).eq("property_id", propertyId);
+  if ((count ?? 0) >= MAX_PHOTOS) throw new Error(t("photo.limitReached", { max: MAX_PHOTOS }));
+
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
   const safeExt = ["jpg", "jpeg", "png", "webp"].includes(ext) ? ext : "jpg";
   const contentType = safeExt === "png" ? "image/png" : safeExt === "webp" ? "image/webp" : "image/jpeg";
-  const path = `${user.id}/${propertyId}/${Date.now()}.${safeExt}`;
+  // Náhodná prípona — viac fotiek sa nahráva za sebou v tej istej milisekunde.
+  const path = `${user.id}/${propertyId}/${Date.now()}-${crypto.randomUUID().slice(0, 8)}.${safeExt}`;
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, bytes, { contentType });
@@ -38,8 +46,6 @@ export async function uploadPhotoAction(propertyId: string, formData: FormData) 
 
   const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
 
-  const db = supabase.schema("offerra");
-  const { count } = await db.from("media").select("id", { count: "exact", head: true }).eq("property_id", propertyId);
   const { error: insertError } = await db
     .from("media")
     .insert({ property_id: propertyId, url: urlData.publicUrl, sort_order: count ?? 0 });

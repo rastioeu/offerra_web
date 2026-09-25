@@ -6,6 +6,7 @@ import { useRef, useState, useTransition } from "react";
 
 import { removePhotoAction, uploadPhotoAction } from "@/app/[locale]/moje-inzeraty/[id]/upravit/photo-actions";
 import { createT, isLocale } from "@/i18n";
+import { MAX_PHOTOS, remainingSlots, takeWithinLimit } from "@/lib/photo-limits";
 import type { Media } from "@/lib/property";
 
 export function PhotoManager({ propertyId, media }: { propertyId: string; media: Media[] }) {
@@ -15,22 +16,42 @@ export function PhotoManager({ propertyId, media }: { propertyId: string; media:
   const t = createT(locale);
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [pending, startTransition] = useTransition();
 
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const all = Array.from(e.target.files ?? []);
+    if (inputRef.current) inputRef.current.value = "";
+    if (all.length === 0) return;
     setError(null);
-    const formData = new FormData();
-    formData.set("file", file);
+    setInfo(null);
+    const slots = remainingSlots(media.length);
+    if (slots === 0) {
+      setError(t("photo.limitReached", { max: MAX_PHOTOS }));
+      return;
+    }
+    const { accepted, dropped } = takeWithinLimit(all, slots);
     startTransition(async () => {
-      try {
-        await uploadPhotoAction(propertyId, formData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : t("photo.uploadFailed"));
-      } finally {
-        if (inputRef.current) inputRef.current.value = "";
+      let saved = 0;
+      for (let i = 0; i < accepted.length; i++) {
+        setProgress({ done: i, total: accepted.length });
+        const formData = new FormData();
+        formData.set("file", accepted[i]);
+        try {
+          await uploadPhotoAction(propertyId, formData);
+          saved++;
+        } catch (err) {
+          // Nič potichu: ktorá fotka zlyhala a koľko je už uložených.
+          console.error("[photo-manager] upload zlyhal:", err);
+          const message = err instanceof Error ? err.message : t("photo.uploadFailed");
+          setError(t("photo.partialFailed", { saved, total: accepted.length, n: i + 1, message }));
+          setProgress(null);
+          return;
+        }
       }
+      setProgress(null);
+      if (dropped > 0) setInfo(t("photo.droppedOverLimit", { dropped, max: MAX_PHOTOS }));
     });
   }
 
@@ -49,7 +70,7 @@ export function PhotoManager({ propertyId, media }: { propertyId: string; media:
   return (
     <div className="flex flex-col gap-3">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">
-        {t("inzeratEdit.photosSection", { count: media.length })}
+        {t("inzeratEdit.photosSection", { count: media.length, max: MAX_PHOTOS })}
       </h3>
 
       {media.length > 0 ? (
@@ -72,15 +93,31 @@ export function PhotoManager({ propertyId, media }: { propertyId: string; media:
         <p className="text-sm text-text-muted">{t("photo.emptyState")}</p>
       )}
 
-      <div>
-        <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} disabled={pending} className="hidden" id="photo-input" />
-        <label
-          htmlFor="photo-input"
-          className={`inline-block w-fit cursor-pointer rounded-xl border border-border-strong bg-surface px-4 py-2 text-sm font-semibold text-text-primary hover:bg-surface-pressed ${pending ? "opacity-60" : ""}`}
-        >
-          {pending ? t("photo.uploading") : t("inzeratEdit.addPhotoButton")}
-        </label>
-      </div>
+      {media.length >= MAX_PHOTOS ? (
+        <p className="text-sm text-text-muted">{t("photo.limitReached", { max: MAX_PHOTOS })}</p>
+      ) : (
+        <div>
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFiles}
+            disabled={pending}
+            className="hidden"
+            id="photo-input"
+          />
+          <label
+            htmlFor="photo-input"
+            className={`inline-block w-fit cursor-pointer rounded-xl border border-border-strong bg-surface px-4 py-2 text-sm font-semibold text-text-primary hover:bg-surface-pressed ${pending ? "opacity-60" : ""}`}
+          >
+            {pending
+              ? `${t("photo.uploading")}${progress ? ` ${progress.done + 1}/${progress.total}` : ""}`
+              : t("inzeratEdit.addPhotoButton")}
+          </label>
+        </div>
+      )}
+      {info ? <p className="text-sm text-text-muted">{info}</p> : null}
       {error ? <p className="text-sm text-danger">{error}</p> : null}
     </div>
   );
