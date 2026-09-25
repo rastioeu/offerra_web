@@ -79,3 +79,22 @@ export async function removePhotoAction(propertyId: string, mediaId: string, url
 
   revalidatePath(`/moje-inzeraty/${propertyId}/upravit`);
 }
+
+/**
+ * appka: `use-photo-upload.ts` → `setCover`. Označí fotku za titulnú a presunie
+ * ju na začiatok (DB funkcia `offerra.set_cover_photo`, RLS platí). Ak ju DB
+ * odmietne (cudzí/zamknutý inzerát), chyba letí von — nie „nič sa nestalo".
+ */
+export async function setCoverPhotoAction(propertyId: string, mediaId: string) {
+  const [supabase, t] = await Promise.all([createClient(), getT()]);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error(t("common.notLoggedIn"));
+
+  const { error } = await supabase.schema("offerra").rpc("set_cover_photo", { p_media_id: mediaId });
+  if (error) throw error;
+
+  revalidatePath(`/moje-inzeraty/${propertyId}/upravit`);
+  revalidatePath("/moje-inzeraty");
+}

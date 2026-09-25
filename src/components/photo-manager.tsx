@@ -4,7 +4,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 
-import { removePhotoAction, uploadPhotoAction } from "@/app/[locale]/moje-inzeraty/[id]/upravit/photo-actions";
+import { removePhotoAction, setCoverPhotoAction, uploadPhotoAction } from "@/app/[locale]/moje-inzeraty/[id]/upravit/photo-actions";
 import { createT, isLocale } from "@/i18n";
 import { MAX_PHOTOS, remainingSlots, takeWithinLimit } from "@/lib/photo-limits";
 import type { Media } from "@/lib/property";
@@ -55,6 +55,19 @@ export function PhotoManager({ propertyId, media }: { propertyId: string; media:
     });
   }
 
+  function handleCover(mediaId: string) {
+    setError(null);
+    setInfo(null);
+    startTransition(async () => {
+      try {
+        await setCoverPhotoAction(propertyId, mediaId);
+      } catch (err) {
+        console.error("[photo-manager] nastavenie titulnej zlyhalo:", err);
+        setError(err instanceof Error ? err.message : t("photo.coverFailedTitle"));
+      }
+    });
+  }
+
   function handleRemove(mediaId: string, url: string) {
     if (!window.confirm(t("photo.confirmDelete"))) return;
     setError(null);
@@ -75,9 +88,23 @@ export function PhotoManager({ propertyId, media }: { propertyId: string; media:
 
       {media.length > 0 ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {media.map((m) => (
+          {media.map((m, i) => (
             <div key={m.id} className="relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-pressed">
               <Image src={m.url} alt="" fill sizes="200px" className="object-cover" />
+              {i === 0 ? (
+                <span className="absolute bottom-1.5 left-1.5 rounded-md bg-primary px-2 py-1 text-xs font-bold text-on-primary">
+                  {t("inzeratEdit.coverBadge")}
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleCover(m.id)}
+                  disabled={pending}
+                  className="absolute bottom-1.5 left-1.5 rounded-md bg-surface px-2 py-1 text-xs font-semibold text-link disabled:opacity-60"
+                >
+                  {t("inzeratEdit.makeCover")}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => handleRemove(m.id, m.url)}

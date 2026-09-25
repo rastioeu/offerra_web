@@ -68,6 +68,8 @@ export type Media = {
   property_id: string;
   url: string;
   sort_order: number;
+  /** Vlastník ju vybral ako titulnú (na webe je titulná vždy prvá podľa `sort_order`). */
+  is_cover?: boolean;
   created_at: string;
 };
 
