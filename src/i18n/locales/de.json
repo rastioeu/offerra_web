@@ -1241,8 +1241,10 @@
   },
   "photoLightbox": {
     "closePhoto": "Foto schließen",
-    "hintSwipe": "Seitlich wischen · ",
-    "hintRest": "Doppeltipp oder Kneifen zum Zoomen · Nach unten wischen zum Schließen"
+    "prevPhoto": "Vorheriges Foto",
+    "nextPhoto": "Nächstes Foto",
+    "counter": "{{n}} / {{total}}",
+    "keyboardHint": "Mit den Pfeilen oder Klick auf die Ränder blättern, Esc schließt."
   },
   "favoriteHeart": {
     "saveFailedTitle": "Speichern fehlgeschlagen",

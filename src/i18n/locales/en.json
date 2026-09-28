@@ -1241,8 +1241,10 @@
   },
   "photoLightbox": {
     "closePhoto": "Close photo",
-    "hintSwipe": "Swipe sideways · ",
-    "hintRest": "Double-tap or pinch to zoom · Swipe down to close"
+    "prevPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "counter": "{{n}} / {{total}}",
+    "keyboardHint": "Use the arrows or click the edges to browse, Esc closes."
   },
   "favoriteHeart": {
     "saveFailedTitle": "Couldn't save",

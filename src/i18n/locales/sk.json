@@ -1247,8 +1247,10 @@
   },
   "photoLightbox": {
     "closePhoto": "Zavrieť fotku",
-    "hintSwipe": "Potiahni do strán · ",
-    "hintRest": "Dvojťap alebo štipni priblíži · Potiahni dole zavrie"
+    "prevPhoto": "Predchádzajúca fotka",
+    "nextPhoto": "Ďalšia fotka",
+    "counter": "{{n}} / {{total}}",
+    "keyboardHint": "Šípkami alebo klikom na okraje listuješ, Esc zavrie."
   },
   "favoriteHeart": {
     "saveFailedTitle": "Nepodarilo sa uložiť",

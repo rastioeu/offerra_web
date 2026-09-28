@@ -5,15 +5,20 @@ import { useState } from "react";
 
 import { createT, type Locale } from "@/i18n";
 import type { Media } from "@/lib/property";
+import { PhotoLightbox } from "@/components/photo-lightbox";
 
 /**
  * Hlavná fotka + pás náhľadov. Klientská komponenta LEN kvôli prepínaniu
  * aktívnej fotky (`useState`) — zvyšok stránky okolo nej ostáva Server
  * Component, aby SSR/SEO pokrylo aj text.
+ *
+ * Klik na hlavnú fotku otvorí `PhotoLightbox` (Rastio, 28.9.2026: „nech sa
+ * zväčší a dá sa ďalej listovať").
  */
 export function PhotoGallery({ media, title, language }: { media: Media[]; title: string; language: Locale }) {
   const t = createT(language);
   const [active, setActive] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
 
   if (media.length === 0) {
     return (
@@ -27,7 +32,12 @@ export function PhotoGallery({ media, title, language }: { media: Media[]; title
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-surface-pressed">
+      <button
+        type="button"
+        onClick={() => setLightboxOpen(true)}
+        aria-label={t("propertyDetail.showPhotoFullscreen", { n: active + 1 })}
+        className="relative aspect-[16/10] w-full cursor-zoom-in overflow-hidden rounded-2xl bg-surface-pressed"
+      >
         <Image
           src={current.url}
           alt={title}
@@ -36,7 +46,17 @@ export function PhotoGallery({ media, title, language }: { media: Media[]; title
           sizes="(min-width: 1024px) 66vw, 100vw"
           className="object-cover"
         />
-      </div>
+      </button>
+      {lightboxOpen ? (
+        <PhotoLightbox
+          media={media}
+          title={title}
+          index={active}
+          language={language}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={setActive}
+        />
+      ) : null}
       {media.length > 1 ? (
         <div className="flex gap-2 overflow-x-auto pb-1">
           {media.map((m, i) => (
